@@ -62,3 +62,16 @@ function vms_gluten_registration_form_cgb_editor_assets() { // phpcs:ignore
 
 // Hook: Editor assets.
 add_action( 'enqueue_block_editor_assets', 'vms_gluten_registration_form_cgb_editor_assets' );
+
+
+
+
+function my_plugin_render_block_latest_post( $attributes, $content ) {
+    return sprintf(
+        '<div>asdasd</div>'
+    );
+}
+
+register_block_type( 'vms/block-vms-gluten-login-form', array(
+    'render_callback' => 'my_plugin_render_block_latest_post',
+) );

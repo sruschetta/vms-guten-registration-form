@@ -1,19 +1,26 @@
 /**
- * #.# Common SCSS
+ * #.# Editor Styles
  *
- * Can include things like variables and mixins
- * that are used across the project.
-*/
+ * CSS for just Backend enqueued after style.scss
+ * which makes it higher in priority.
+ */
+.vms-registration-form {
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 10px; }
+  .vms-registration-form input {
+    width: 100%;
+    margin: 8px 0; }
 /**
  * #.# Editor Styles
  *
  * CSS for just Backend enqueued after style.scss
  * which makes it higher in priority.
  */
-.wp-block-cgb-block-vms-gluten-registration-form {
-  background: #bada55;
-  border: 0.2rem solid #292929;
-  color: #292929;
-  margin: 0 auto;
-  max-width: 740px;
-  padding: 2rem; }
+.vms-registration-form {
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 10px; }
+  .vms-registration-form input {
+    width: 100%;
+    margin: 8px 0; }

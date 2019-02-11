@@ -1,18 +1,42 @@
 /**
- * #.# Common SCSS
+ * #.# Styles
  *
- * Can include things like variables and mixins
- * that are used across the project.
-*/
+ * CSS for both Frontend+Backend.
+ */
+.vms_registration_form .vms_form_field {
+  display: block;
+  vertical-align: top;
+  width: 100%;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
+  .vms_registration_form .vms_form_field input, .vms_registration_form .vms_form_field select {
+    width: 100%;
+    margin: 0.25rem 0; }
+  .vms_registration_form .vms_form_field .vms_form_error {
+    color: red;
+    font-size: 0.875rem;
+    min-height: 1rem;
+    display: block; }
 /**
  * #.# Styles
  *
  * CSS for both Frontend+Backend.
  */
-.wp-block-cgb-block-vms-gluten-registration-form {
-  background: orangered;
-  border: 0.2rem solid #292929;
-  color: #292929;
-  margin: 0 auto;
-  max-width: 740px;
-  padding: 2rem; }
+.vms_registration_form .vms_form_field {
+  display: block;
+  vertical-align: top;
+  width: 100%;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
+  .vms_registration_form .vms_form_field input, .vms_registration_form .vms_form_field select {
+    width: 100%;
+    margin: 0.25rem 0; }
+  .vms_registration_form .vms_form_field .vms_form_error {
+    color: red;
+    font-size: 0.875rem;
+    min-height: 1rem;
+    display: block; }
