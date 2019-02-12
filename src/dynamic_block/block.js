@@ -7,6 +7,7 @@
 import './style.scss';
 import './editor.scss';
 
+
 const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
@@ -16,17 +17,9 @@ registerBlockType( 'vms/block-vms-gluten-login-form', {
 	title: 'VMS - Login Form',
 	icon: 'shield',
 	category: 'widgets',
-	attributes: {
-		login_placeholder: { type: 'string' },
-		password_placeholder: { type: 'string' },
-		submit_button_label: { type: 'string' },
-    email_missing_error: { type: 'string' },
-		email_invalid_error: { type: 'string' },
-    password_missing_error: {type: 'string' },
-	},
 	edit: class extends Component {
 
-		constructor(props) {
+	  constructor(props) {
 	      super(...arguments);
 	      this.props = props;
 	  }
@@ -41,7 +34,7 @@ registerBlockType( 'vms/block-vms-gluten-login-form', {
 	      var fieldsAttr = [
 	        { placeholder: "Email placeholder", attr: "email_placeholder" },
 	        { placeholder: "Password placeholder", attr: "password_placeholder" },
-          { placeholder: "Submit button label", attr: "submit_button_label" }
+	        { placeholder: "Submit button label", attr: "submit_button_label" }
 	      ];
 
 	      var errorAttr = [
@@ -81,29 +74,6 @@ registerBlockType( 'vms/block-vms-gluten-login-form', {
 	  }
 	},
 	save: function(){
-    return null;
-  }
-
-
-  /*class extends Component {
-
-		  constructor(props) {
-		      super(...arguments);
-		      this.props = props;
-			}
-
-		  render() {
-		      return (
-						<form class="vms_registration_form" asd="asdasdasd">
-							<div class="vms_form_field">
-								<input type="email" name="email" placeholder={this.props.attributes.email_placeholder} />
-							</div>
-							<div class="vms_form_field">
-								<input type="text" name="password" placeholder={this.props.attributes.password_placeholder}/>
-							</div>
-							<input type="submit" value={this.props.attributes.submit_button_label}/>
-						</form>
-		     );
-		  }
-		},*/
-} );
+	  return null;
+	}
+});

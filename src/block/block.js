@@ -17,7 +17,10 @@ registerBlockType( 'vms/block-vms-gluten-registration-form', {
 	icon: 'shield',
 	category: 'widgets',
 	attributes: {
-		firstname_placeholder: { type: 'string' },
+		firstname_placeholder: {
+			type: 'string' ,
+			default: 'Nome'
+		},
 		lastname_placeholder: { type: 'string' },
 		email_placeholder: { type: 'string' },
 		password_placeholder: { type: 'string' },
