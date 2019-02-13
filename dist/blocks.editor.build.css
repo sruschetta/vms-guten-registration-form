@@ -17,10 +17,10 @@
  * CSS for just Backend enqueued after style.scss
  * which makes it higher in priority.
  */
-.vms-registration-form {
+.vms-form {
   padding: 16px;
   background-color: #fafafa;
   border-radius: 10px; }
-  .vms-registration-form input {
+  .vms-form input {
     width: 100%;
     margin: 8px 0; }

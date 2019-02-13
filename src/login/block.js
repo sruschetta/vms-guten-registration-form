@@ -1,5 +1,5 @@
 /**
- * BLOCK: vms-gluten-registration-form
+ * BLOCK: vms-login-form
  *
  */
 
@@ -12,7 +12,7 @@ const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
 
-registerBlockType( 'vms/block-vms-gluten-login-form', {
+registerBlockType( 'vms/vms-plugin-login-form', {
 
 	title: 'VMS - Login Form',
 	icon: 'shield',
@@ -44,7 +44,7 @@ registerBlockType( 'vms/block-vms-gluten-login-form', {
 	      ];
 
 	      return (
-	        <div class="vms-registration-form">
+	        <div class="vms-form">
 	          <h3><b>VMS- Login form</b></h3>
 	          <div>Placeholders</div>
 	          {

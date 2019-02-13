@@ -11,39 +11,16 @@ const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
 
-registerBlockType( 'vms/block-vms-gluten-registration-form', {
+registerBlockType( 'vms/vms-plugin-registration-form', {
 
 	title: 'VMS - Registration Form',
 	icon: 'shield',
 	category: 'widgets',
-	attributes: {
-		firstname_placeholder: {
-			type: 'string' ,
-			default: 'Nome'
-		},
-		lastname_placeholder: { type: 'string' },
-		email_placeholder: { type: 'string' },
-		password_placeholder: { type: 'string' },
-		password2_placeholder: { type: 'string' },
-		nation_placeholder: { type: 'string' },
-		age_placeholder: { type: 'string' },
-		submit_button_label: { type: 'string' },
-		firstname_error: { type: 'string' },
-		lastname_error: { type: 'string' },
-		email_missing_error: { type: 'string' },
-		email_invalid_error: { type: 'string' },
-		password_missing_error: {type: 'string' },
-		password_format_error: {type: 'string' },
-		password_match_error: {type:'string'},
-		nation_error: { type: 'string' },
-		age_error: { type: 'string' },
-	},
 	edit: class extends Component {
 
 		constructor(props) {
 	      super(...arguments);
 	      this.props = props;
-				console.log(getCurrentPostId());
 	  }
 
 	  handleChange = name => event => {
@@ -106,54 +83,7 @@ registerBlockType( 'vms/block-vms-gluten-registration-form', {
 	      );
 	  }
 	},
-	save: class extends Component {
-
-		  constructor(props) {
-		      super(...arguments);
-		      this.props = props;
-			}
-
-		  render() {
-		      return (
-						<form class="vms_registration_form" asd="asdasdasd">
-							<div class="vms_form_field">
-								{this.props.attributes.firstname_placeholder}
-								<input type="text" name="firstname" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.lastname_placeholder}
-								<input type="text" name="lastname" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.email_placeholder}
-								<input type="email" name="email" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.password_placeholder}
-								<input type="text" name="password" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.password2_placeholder}
-								<input type="text" name="password2" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.nation_placeholder}
-								<input type="text" name="nation" />
-								<span class="vms_form_error"></span>
-							</div>
-							<div class="vms_form_field">
-								{this.props.attributes.age_placeholder}
-								<input type="number" name="age" />
-								<span class="vms_form_error"></span>
-							</div>
-							<input type="submit" value={this.props.attributes.submit_button_label}/>
-						</form>
-		     );
-		  }
-		},
+	save: function(){
+	  return null;
+	}
 } );

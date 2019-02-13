@@ -1,50 +1,33 @@
 <?php
-/**
- * Blocks Initializer
- *
- * Enqueue CSS/JS of all the blocks.
- *
- * @since   1.0.0
- * @package CGB
- */
 
-// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
  * Enqueue Gutenberg block assets for both frontend + backend.
- *
- * @uses {wp-editor} for WP editor styles.
- * @since 1.0.0
- */
-function vms_gluten_registration_form_cgb_block_assets() { // phpcs:ignore
-	// Styles.
+ **/
+
+function vms_plugin_common_assets() {
 	wp_enqueue_style(
-		'vms_gluten_registration_form-cgb-style-css', // Handle.
-		plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ), // Block style CSS.
-		array( 'wp-editor' ) // Dependency to include the CSS after it.
-		// filemtime( plugin_dir_path( __DIR__ ) . 'dist/blocks.style.build.css' ) // Version: File modification time.
+		'vms_gluten_registration_form-cgb-style-css',
+		plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ),
+		array( 'wp-editor' )
 	);
 }
 
 // Hook: Frontend assets.
-add_action( 'enqueue_block_assets', 'vms_gluten_registration_form_cgb_block_assets' );
+add_action( 'enqueue_block_assets', 'vms_plugin_common_assets' );
+
+
+
 
 /**
  * Enqueue Gutenberg block assets for backend editor.
- *
- * @uses {wp-blocks} for block type registration & related functions.
- * @uses {wp-element} for WP Element abstraction — structure of blocks.
- * @uses {wp-i18n} to internationalize the block's text.
- * @uses {wp-editor} for WP editor styles.
- * @since 1.0.0
- */
+ **/
 
-function vms_gluten_registration_form_cgb_editor_assets() { // phpcs:ignore
+function vms_plugin_backend_assets() {
 
-	// Scripts.
 	wp_enqueue_script(
 		'vms_gluten_registration_form-cgb-block-js',
 		plugins_url( '/dist/blocks.build.js', dirname( __FILE__ ) ),
@@ -52,7 +35,6 @@ function vms_gluten_registration_form_cgb_editor_assets() { // phpcs:ignore
 		true
 	);
 
-	// Styles.
 	wp_enqueue_style(
 		'vms_gluten_registration_form-cgb-block-editor-css',
 		plugins_url( 'dist/blocks.editor.build.css', dirname( __FILE__ ) ),
@@ -61,25 +43,37 @@ function vms_gluten_registration_form_cgb_editor_assets() { // phpcs:ignore
 }
 
 // Hook: Editor assets.
-add_action( 'enqueue_block_editor_assets', 'vms_gluten_registration_form_cgb_editor_assets' );
+add_action( 'enqueue_block_editor_assets', 'vms_plugin_backend_assets' );
 
 
 
-function my_plugin_render_block_latest_post( $attributes, $content ) {
+
+/**
+ *	Login block frontend render
+ **/
+
+
+function vms_plugin_login_block_render( $attributes, $content ) {
+
+	//Frontend script
 
 	wp_enqueue_script(
-		'vms-frontend-script',
-		plugins_url( 'src/script/frontend-script.js', dirname( __FILE__ ) ),
+		'vms-plugin-login-frontend-script',
+		plugins_url( 'src/script/vms-login.js', dirname( __FILE__ ) ),
 		array(),
 		true
 	);
 
-	wp_add_action('init', 'ajax_login');
+	wp_localize_script( 'vms-plugin-login-frontend-script', 'ajax_login_object', array(
+      'ajaxurl' => admin_url( 'admin-ajax.php' )
+  ));
 
 
+	//Frontend render
 
 	$nonce = wp_create_nonce('vms-login');
-	$html = '<form class="vms_form vms_login_form" method="post">
+
+	$html = '<form class="vms_form vms_login_form" post_id=' . get_the_ID() .'>
 							<div class="vms_form_field">
 								<input type="email" name="email" placeholder="' . $attributes['email_placeholder'] . '">
 							</div>
@@ -87,16 +81,16 @@ function my_plugin_render_block_latest_post( $attributes, $content ) {
 								<input type="text" name="password" placeholder="' . $attributes['password_placeholder'] . '">
 							</div>
 							<input type="submit" value="' . $attributes['submit_button_label'] . '">
-							<input type="hidden" id="asd" name="asd" value="' . $nonce . '">
+							<input type="hidden" name="vms-login-sec" value="' . $nonce . '">
 						</form>';
 	return $html;
 }
 
-register_block_type( 'vms/block-vms-gluten-login-form', array(
+register_block_type( 'vms/vms-plugin-login-form', array(
 	'attributes' => array(
 		'email_placeholder' => array(
 			'type' => 'string',
-			'default' => 'Email 2',
+			'default' => 'Email',
 		),
 		'password_placeholder' => array(
 			'type' => 'string',
@@ -106,44 +100,181 @@ register_block_type( 'vms/block-vms-gluten-login-form', array(
 			'type' => 'string',
 			'default' => 'Login',
 		),
-    'email_missing_error' => array( 'type' => 'string' ),
-		'email_invalid_error' => array( 'type' => 'string' ),
-    'password_missing_error' => array( 'type' => 'string' ),
+    'email_missing_error' => array(
+			'type' => 'string',
+			//'default' => 'Il campo email è obbligatorio',
+			'source' => 'meta',
+			'meta' => 'email_missing_error'
+		),
+		'email_invalid_error' => array(
+			'type' => 'string',
+			//'default' => 'Il campo email non è valido',
+			'source' => 'meta',
+			'meta' => 'email_invalid_error'
+		),
+    'password_missing_error' => array(
+			'type' => 'string',
+			//'default' => 'Il campo password è obbligatorio',
+			'source' => 'meta',
+			'meta' => 'password_missing_error'
+		)
 	),
-  'render_callback' => 'my_plugin_render_block_latest_post',
+  'render_callback' => 'vms_plugin_login_block_render',
+) );
+
+
+/**
+ *	Registration block frontend render
+ **/
+
+ function vms_plugin_registration_block_render( $attributes, $content ) {
+
+ 	//Frontened script
+ 	wp_enqueue_script(
+ 		'vms-plugin-registration-frontend-script',
+ 		plugins_url( 'src/script/vms-registration.js', dirname( __FILE__ ) ),
+ 		array(),
+ 		true
+ 	);
+
+ 	//Frontend render
+
+ 	$nonce = wp_create_nonce('vms-registration');
+
+ 	$html = '<form class="vms_form" post_id=' . get_the_ID() .'>
+							<div class="vms_form_field">'
+								. $attributes['firstname_placeholder'] .
+								'<input type="text" name="firstname" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['lastname_placeholder'] .
+								'<input type="text" name="lastname" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['email_placeholder'] .
+								'<input type="email" name="email" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['password_placeholder'] .
+								'<input type="text" name="password" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['password2_placeholder'] .
+								'<input type="text" name="password2" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['nation_placeholder'] .
+								'<input type="text" name="nation" />
+								<span class="vms_form_error"></span>
+							</div>
+							<div class="vms_form_field">'
+								. $attributes['age_placeholder'] .
+								'<input type="number" name="age" />
+								<span class="vms_form_error"></span>
+							</div>
+							<input type="submit" value="' . $attributes['submit_button_label'] . '"/>
+							<input type="hidden" name="vms-registration-nonce" value="' . $nonce . '">
+						</form>';
+ 	return $html;
+ }
+
+ register_block_type( 'vms/vms-plugin-registration-form', array(
+	 'attributes' => array(
+	 		'firstname_placeholder' => array(
+ 				'type' => 'string' ,
+ 				'default' => 'Nome',
+			),
+			'lastname_placeholder' => array(
+				 'type' => 'string',
+				 'default' => 'Cognome'
+			),
+ 		 'email_placeholder' => array(
+			  'type' => 'string',
+				'default' => 'Email'
+ 			),
+ 			'password_placeholder' => array(
+				'type' => 'string',
+				'default' => 'Password'
+			),
+ 			'password2_placeholder' => array(
+				'type' => 'string',
+				'default' => 'Conferma password'
+			),
+ 			'nation_placeholder' => array(
+				'type' => 'string',
+				'default' => 'Nazionalità'
+			),
+ 			'age_placeholder' => array(
+				'type' => 'string',
+				'default' => 'Età'
+			),
+ 			'submit_button_label' => array(
+				'type' => 'string',
+				'default' => 'Registrati'
+			),
+ 			'firstname_error' => array(
+				'type' => 'string'
+			),
+		 	'lastname_error' => array(
+				'type' => 'string'
+			),
+		 	'email_missing_error' => array(
+				'type' => 'string'
+			),
+		 	'email_invalid_error' => array(
+				'type' => 'string'
+			),
+		 	'password_missing_error' => array(
+				'type' => 'string'
+			),
+		 	'password_format_error' => array(
+				'type' => 'string'
+			),
+		 	'password_match_error' => array(
+				'type' => 'string'
+			),
+		 	'nation_error' => array(
+				'type' => 'string'
+			),
+		 	'age_error' => array(
+				'type' => 'string'
+			)
+		),
+   	'render_callback' => 'vms_plugin_registration_block_render',
 ) );
 
 
 
-/*-- Login and Registration Actions ---*/
 
+/**
+ *	Ajax Actions
+ **/
 
+//Login
 function vms_login_action(){
 
     // First check the nonce, if it fails the function will break
-    check_ajax_referer( 'ajax-login-nonce', 'security' );
 
-		die("login_action");
+    check_ajax_referer( 'vms-login', 'security' );
 
+		$post_id = $_POST['post_id'];
 
-		/*
-    // Nonce is checked, get the POST data and sign user on
-    $info = array();
-    $info['user_login'] = $_POST['username'];
-    $info['user_password'] = $_POST['password'];
-    $info['remember'] = true;
-
-    $user_signon = wp_signon( $info, false );
-    if ( is_wp_error($user_signon) ){
-        echo json_encode(array('loggedin'=>false, 'message'=>__('Wrong username or password.')));
-    } else {
-        echo json_encode(array('loggedin'=>true, 'message'=>__('Login successful, redirecting...')));
-    }
-
-    die();
-		*/
+		if(isset($post_id)){
+			echo json_encode(array('post_meta' => get_post_meta($post_id)));
+		}
+		die();
 }
 
+add_action( 'wp_ajax_vms_login_action', 'vms_login_action' );
+add_action( 'wp_ajax_nopriv_vms_login_action', 'vms_login_action' );
+
+
+//Registration
 
 function vms_registration_action(){
 
@@ -152,3 +283,5 @@ function vms_registration_action(){
 
     die("registration action!");
 }
+
+add_action( 'wp_ajax_nopriv_vms_registration_action', 'vms_registration_action' );
