@@ -31,7 +31,7 @@ function vms_plugin_backend_assets() {
 	wp_enqueue_script(
 		'vms_gluten_registration_form-cgb-block-js',
 		plugins_url( '/dist/blocks.build.js', dirname( __FILE__ ) ),
-		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+		array( 'wp-blocks', 'wp-element', 'wp-editor' ),
 		true
 	);
 
@@ -76,9 +76,11 @@ function vms_plugin_login_block_render( $attributes, $content ) {
 	$html = '<form class="vms_form vms_login_form" post_id=' . get_the_ID() .'>
 							<div class="vms_form_field">
 								<input type="email" name="email" placeholder="' . $attributes['email_placeholder'] . '">
+								<span class="vms_form_error"></span>
 							</div>
 							<div class="vms_form_field">
 								<input type="text" name="password" placeholder="' . $attributes['password_placeholder'] . '">
+								<span class="vms_form_error"></span>
 							</div>
 							<input type="submit" value="' . $attributes['submit_button_label'] . '">
 							<input type="hidden" name="vms-login-sec" value="' . $nonce . '">
@@ -100,27 +102,88 @@ register_block_type( 'vms/vms-plugin-login-form', array(
 			'type' => 'string',
 			'default' => 'Login',
 		),
+		'pages' => array(
+			'type' => 'array',
+			'default' => get_page_list()
+		),
+		'target_page' => array(
+			'type' => 'string',
+			'source' => 'meta',
+			'meta' => 'target_page'
+		),
     'email_missing_error' => array(
 			'type' => 'string',
-			//'default' => 'Il campo email è obbligatorio',
+			'default' => 'Il campo email è obbligatorio',
 			'source' => 'meta',
 			'meta' => 'email_missing_error'
 		),
 		'email_invalid_error' => array(
 			'type' => 'string',
-			//'default' => 'Il campo email non è valido',
+			'default' => 'Il campo email non è valido',
 			'source' => 'meta',
 			'meta' => 'email_invalid_error'
 		),
     'password_missing_error' => array(
 			'type' => 'string',
-			//'default' => 'Il campo password è obbligatorio',
+			'default' => 'Il campo password è obbligatorio',
 			'source' => 'meta',
 			'meta' => 'password_missing_error'
 		)
 	),
   'render_callback' => 'vms_plugin_login_block_render',
 ) );
+
+
+function get_page_list(){
+	$args = array(
+	'sort_order' => 'asc',
+	'sort_column' => 'post_title',
+	'hierarchical' => 1,
+	'exclude' => '',
+	'include' => '',
+	'meta_key' => '',
+	'meta_value' => '',
+	'authors' => '',
+	'child_of' => 0,
+	'parent' => -1,
+	'exclude_tree' => '',
+	'number' => '',
+	'offset' => 0,
+	'post_type' => 'page',
+	'post_status' => 'publish'
+);
+return  get_pages($args);
+}
+
+
+function gutenberg_my_block_init() {
+
+		register_meta( 'post', 'email_missing_error', array(
+				'show_in_rest' => true,
+				'type' => 'string',
+				'single' => true,
+		) );
+
+		register_meta( 'post', 'email_invalid_error', array(
+				'show_in_rest' => true,
+				'type' => 'string',
+				'single' => true,
+		) );
+
+		register_meta( 'post', 'password_missing_error', array(
+				'show_in_rest' => true,
+				'type' => 'string',
+				'single' => true,
+		) );
+
+		register_meta( 'post', 'target_page', array(
+				'show_in_rest' => true,
+				'type' => 'string',
+				'single' => true,
+		) );
+}
+add_action( 'init', 'gutenberg_my_block_init' );
+
 
 
 /**

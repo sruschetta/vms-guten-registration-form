@@ -27,10 +27,13 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	  handleChange = name => event => {
 	    var value = event.target.value;
 	    this.props.setAttributes({ [name]: value });
+			console.log(value);
 	  }
 
 	  render() {
 	      const { className } = this.props;
+				const {pages} = this.props.attributes;
+				const selected = this.props.attributes.target_page;
 	      var fieldsAttr = [
 	        { placeholder: "Email placeholder", attr: "email_placeholder" },
 	        { placeholder: "Password placeholder", attr: "password_placeholder" },
@@ -42,7 +45,6 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	        { placeholder: "Email invalid format error", attr: "email_invalid_error" },
 	        { placeholder: "Password missing placeholder", attr: "password_missing_error" },
 	      ];
-
 	      return (
 	        <div class="vms-form">
 	          <h3><b>VMS- Login form</b></h3>
@@ -57,6 +59,29 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	              )
 	            })
 	          }
+						<hr/>
+						<div>Redirect page</div>
+						<select onChange={ this.handleChange('target_page') }>
+							{
+								pages.map( (item, index) => {
+
+									var id = item.ID;
+									var post_name = item.post_name;
+									post_name = post_name.charAt(0).toUpperCase() + post_name.slice(1);
+
+									if(selected == id) {
+			              return (
+											<option value={id} selected="selected">{post_name}</option>
+			              );
+									}
+									else {
+										return (
+											<option value={id}>{post_name}</option>
+			              );
+									}
+		            })
+							}
+						</select>
 	          <hr/>
 	          <div>Error messages</div>
 	          {
