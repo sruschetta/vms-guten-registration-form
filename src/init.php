@@ -26,14 +26,13 @@ if ( !class_exists('VMS') ) {
 		function initGutenbergBlocks() {
 
 			//Register Meta
-			add_action( 'init', array( $this, 'registerMeta' ) );
-
+			$this->registerLoginMeta();
 			$this->registerLoginBlock();
 			$this->registerActions();
 
 		}
 
-		function registerMeta() {
+		function registerLoginMeta() {
 
 			register_meta( 'post', 'email_missing_error', array(
 					'show_in_rest' => true,
