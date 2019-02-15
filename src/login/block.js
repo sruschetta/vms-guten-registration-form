@@ -27,7 +27,6 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	  handleChange = name => event => {
 	    var value = event.target.value;
 	    this.props.setAttributes({ [name]: value });
-			console.log(value);
 	  }
 
 	  render() {
@@ -47,7 +46,7 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	      ];
 	      return (
 	        <div class="vms-form">
-	          <h3><b>VMS- Login form</b></h3>
+	          <h3><b>VMS - Login form</b></h3>
 	          <div>Placeholders</div>
 	          {
 	            fieldsAttr.map( (item, index) => {
