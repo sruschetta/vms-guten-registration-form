@@ -38,19 +38,22 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        { placeholder: "Confirm password placeholder", attr: "password2_placeholder" },
 	        { placeholder: "Nation placeholder", attr: "nation_placeholder" },
 	        { placeholder: "Age placeholder", attr: "age_placeholder" },
+					{ placeholder: "Privacy text", attr: "privacy text" },
 	        { placeholder: "Submit button label", attr: "submit_button_label" }
 	      ];
 
 	      var errorAttr = [
-	        { placeholder: "First name missing error", attr: "firstname_error" },
-	        { placeholder: "Last name missing error", attr: "lastname_error" },
+	        { placeholder: "First name missing error", attr: "first_name_missing_error" },
+	        { placeholder: "Last name missing error", attr: "last_name_missing_error" },
 	        { placeholder: "Email missing error", attr: "email_missing_error" },
 	        { placeholder: "Email invalid format error", attr: "email_invalid_error" },
 	        { placeholder: "Password missing placeholder", attr: "password_missing_error" },
 	        { placeholder: "Password format error", attr: "password_format_error" },
 	        { placeholder: "Password match error", attr: "password_match_error" },
-	        { placeholder: "Nation missing error", attr: "nation_error" },
-	        { placeholder: "Age missing error", attr: "age_error" }
+	        { placeholder: "Nation missing error", attr: "nation_missing_error" },
+	        { placeholder: "Age missing error", attr: "age_missing_error" },
+					{ placeholder: "Privacy error", attr: "privacy_error" }
+
 	      ];
 
 	      return (
@@ -66,6 +69,7 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	                       value={ this.props.attributes[item.attr] } />
 	              )
 	            })
+
 	          }
 	          <hr/>
 	          <div>Error messages</div>

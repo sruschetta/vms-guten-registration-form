@@ -40,5 +40,32 @@
     .vms_form .vms_form_field .vms_form_error {
       color: red;
       font-size: 0.875rem;
-      min-height: 1rem;
-      display: block; }
+      height: 1rem;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      -webkit-transition: visibility 0s linear 0.1s,opacity 0.1s linear;
+      -o-transition: visibility 0s linear 0.1s,opacity 0.1s linear;
+      transition: visibility 0s linear 0.1s,opacity 0.1s linear; }
+      .vms_form .vms_form_field .vms_form_error.visible {
+        visibility: visible;
+        opacity: 1;
+        -webkit-transition-delay: 0s;
+             -o-transition-delay: 0s;
+                transition-delay: 0s; }
+    .vms_form .vms_form_field.textual {
+      position: relative; }
+      .vms_form .vms_form_field.textual input[type='checkbox'] {
+        width: auto;
+        -webkit-transform: scale(1.5);
+            -ms-transform: scale(1.5);
+                transform: scale(1.5);
+        position: absolute;
+        top: 0.875rem;
+        left: 0;
+        margin: 0; }
+      .vms_form .vms_form_field.textual span {
+        padding-left: 1.5rem;
+        display: block; }
+  .vms_form input[type="submit"] {
+    margin-top: 1rem; }
