@@ -228,6 +228,9 @@ if ( !class_exists('VMS') ) {
 		 				'type' => 'string',
 		 				'default' => 'Registrati'
 		 			),
+					'privacy_text' => array(
+		 				'type' => 'text',
+		 			),
 		  		'first_name_missing_error' => array(
 		 				'type' => 'string',
 						'source' => 'meta',
@@ -325,7 +328,23 @@ if ( !class_exists('VMS') ) {
 
 		 	$nonce = wp_create_nonce('vms-registration');
 
+			$nations = $this->get_nations_list();
+
+			$nations_html = '<select name="nation" >
+	      									<option disabled selected value></option>';
+
+			foreach ($nations as $nation) {
+	    	$nations_html .= '<option value="' . $nation->id . '">' . $nation->name . '</option>';
+	    }
+	    $nations_html .= '</select>';
+
 		 	$html = '<form class="vms_form vms_registration_form" post_id=' . get_the_ID() .' autocomplete="off">
+									<div class="vms_form_modal">
+										<div class="vms_form_modal_content">
+											<span class="vms_form_close">&times;</span>
+											<p></p>
+										</div>
+									</div>
 									<div class="vms_form_field">'
 										. $attributes['firstname_placeholder'] .
 										'<input type="text" name="firstname" autocomplete="off" />
@@ -343,7 +362,7 @@ if ( !class_exists('VMS') ) {
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['password_placeholder'] .
-										'<input type="password" name="password" autocomplete="off" />
+										'<input type="password" name="password" autocomplete="new-password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
@@ -352,9 +371,8 @@ if ( !class_exists('VMS') ) {
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
-										. $attributes['nation_placeholder'] .
-										'<input type="text" name="nation" autocomplete="off" />
-										<span class="vms_form_error"></span>
+										. $attributes['nation_placeholder'] .$nations_html.
+										'<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['age_placeholder'] .
@@ -362,13 +380,10 @@ if ( !class_exists('VMS') ) {
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field textual">
-										<input type="checkbox" name="privacy_1" />
-										<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-										sed do eiusmod tempor incididunt ut labore et
-										dolore magna aliqua. Ut enim ad minim veniam,
-										quis nostrud exercitation ullamco laboris nisi ut aliquip
-										ex ea commodo consequat. <a href="http://google.com">Duis aute irure dolor in reprehenderit</a>
-										in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</span>
+										<input type="checkbox" name="privacy_1"/>
+										<span>'
+										. $attributes['privacy_text'].
+										'</span>
 										<span class="vms_form_error"></span>
 									</div>
 									<input type="submit" value="' . $attributes['submit_button_label'] . '"/>
@@ -472,11 +487,31 @@ if ( !class_exists('VMS') ) {
 				      $age = trim($_POST['age']);
 				    }
 
-				    if(!$hasError){
-							echo json_encode("tutto regolare!");
+						//Privacy
+						if( trim($_POST['privacy']) == 'false' ) {
+							$errors['privacy_error'] =  $meta['privacy_error'];
+							$hasError = true;
+						} else {
+							$privacy = trim($_POST['privacy']);
+						}
+				    //if(!$hasError){
+						if(true) {
+
+							$res = array(
+								'success' => true,
+								'message' => "Tutto rego raga!"
+							);
+
+							echo json_encode($res);
 				    }
 						else {
-							echo json_encode($errors);
+
+							$res = array(
+								'success' => false,
+								'errors' => $errors
+							);
+
+							echo json_encode($res);
 						}
 				  }
 				}
@@ -488,13 +523,22 @@ if ( !class_exists('VMS') ) {
 		 	* Utilities
 		**/
 
-		function get_page_list(){
+		function get_page_list() {
 			$args = array(
 				'sort_order' => 'asc',
 				'sort_column' => 'post_title',
 				'post_type' => 'page',
 			);
 			return  get_pages($args);
+		}
+
+		function get_nations_list() {
+
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . "vms_nations";
+			$nations = $wpdb->get_results("SELECT * FROM " . $table_name );
+			return $nations;
 		}
 
 	}

@@ -9,10 +9,18 @@
    padding: 16px;
 
    background-color: $ice;
-   border-radius: 10px;
+   border-radius: 5px;
 
    input {
      width: 100%;
-     margin: 8px 0;
+     margin: 0.5rem 0;
    }
+}
+
+.editor-rich-text {
+  background-color: white;
+  border-radius: 5px;
+  padding: 0.5rem;
+  border: 1px solid #8d96a0;
+  font-size: 13px;
 }

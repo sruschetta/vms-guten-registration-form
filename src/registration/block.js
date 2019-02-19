@@ -10,6 +10,8 @@ import './editor.scss';
 const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
+const { TextControl, TextareaControl } = wp.components;
+const RichText = wp.editor.RichText;
 
 registerBlockType( 'vms/vms-plugin-registration-form', {
 
@@ -23,13 +25,13 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	      this.props = props;
 	  }
 
-	  handleChange = name => event => {
-	    var value = event.target.value;
+	  handleChange = name => value => {
 	    this.props.setAttributes({ [name]: value });
 	  }
 
 	  render() {
 	      const { className } = this.props;
+
 	      var fieldsAttr = [
 	        { placeholder: "First name placeholder", attr: "firstname_placeholder" },
 	        { placeholder: "Last name placeholder", attr: "lastname_placeholder" },
@@ -38,7 +40,6 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        { placeholder: "Confirm password placeholder", attr: "password2_placeholder" },
 	        { placeholder: "Nation placeholder", attr: "nation_placeholder" },
 	        { placeholder: "Age placeholder", attr: "age_placeholder" },
-					{ placeholder: "Privacy text", attr: "privacy text" },
 	        { placeholder: "Submit button label", attr: "submit_button_label" }
 	      ];
 
@@ -58,28 +59,31 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 
 	      return (
 	        <div class="vms-registration-form">
+
 	          <h3><b>VMS- Registration form</b></h3>
 	          <div>Placeholders</div>
 	          {
 	            fieldsAttr.map( (item, index) => {
 	              return (
-	                <input type="text"
-	                       placeholder={ item.placeholder }
-	                       onChange={ this.handleChange(item.attr) }
-	                       value={ this.props.attributes[item.attr] } />
+	                <TextControl placeholder={ item.placeholder }
+				                       onChange={ this.handleChange(item.attr) }
+				                       value={ this.props.attributes[item.attr] } />
 	              )
 	            })
 
 	          }
 	          <hr/>
-	          <div>Error messages</div>
+	          <div>Privacy text</div>
+						<RichText onChange={ this.handleChange('privacy_text') }
+											value={ this.props.attributes['privacy_text'] }/>
+						<hr/>
+					 <div>Error messages</div>
 	          {
 	            errorAttr.map( (item, index) => {
 	              return (
-	                <input type="text"
-	                       placeholder={ item.placeholder }
-	                       onChange={ this.handleChange(item.attr) }
-	                       value={ this.props.attributes[item.attr] } />
+	                <TextControl placeholder={ item.placeholder }
+				                       onChange={ this.handleChange(item.attr) }
+				                       value={ this.props.attributes[item.attr] } />
 	              )
 	            })
 	          }
