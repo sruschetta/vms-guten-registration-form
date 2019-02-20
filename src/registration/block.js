@@ -29,8 +29,16 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	    this.props.setAttributes({ [name]: value });
 	  }
 
+		handleSelectChange = name => event => {
+		 var value = event.target.value;
+		 this.props.setAttributes({ [name]: value });
+	 }
+
+
 	  render() {
 	      const { className } = this.props;
+				const {pages} = this.props.attributes;
+				const selected = this.props.attributes.target_page;
 
 	      var fieldsAttr = [
 	        { placeholder: "First name placeholder", attr: "firstname_placeholder" },
@@ -54,7 +62,6 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        { placeholder: "Nation missing error", attr: "nation_missing_error" },
 	        { placeholder: "Age missing error", attr: "age_missing_error" },
 					{ placeholder: "Privacy error", attr: "privacy_error" }
-
 	      ];
 
 	      return (
@@ -70,7 +77,6 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 				                       value={ this.props.attributes[item.attr] } />
 	              )
 	            })
-
 	          }
 	          <hr/>
 	          <div>Privacy text</div>
@@ -87,6 +93,33 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	              )
 	            })
 	          }
+						<hr/>
+						<div>Successful creation message</div>
+							<RichText onChange={ this.handleChange('user_creation_successful_message') }
+												value={ this.props.attributes['user_creation_successful_message'] }/>
+						<hr/>
+						<div>Redirect page</div>
+						<select onChange={ this.handleSelectChange('target_page') }>
+							{
+								pages.map( (item, index) => {
+
+									var id = item.ID;
+									var post_name = item.post_name;
+									post_name = post_name.charAt(0).toUpperCase() + post_name.slice(1);
+
+									if(selected == id) {
+										return (
+											<option value={id} selected="selected">{post_name}</option>
+										);
+									}
+									else {
+										return (
+											<option value={id}>{post_name}</option>
+										);
+									}
+								})
+							}
+						</select>
 	        </div>
 	      );
 	  }

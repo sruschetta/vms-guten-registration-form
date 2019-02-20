@@ -3,6 +3,9 @@
  *
  * CSS for both Frontend+Backend.
  */
+.vms_lock {
+  overflow: hidden; }
+
 .vms_registration_form .vms_form_modal {
   display: none;
   position: fixed;
@@ -30,15 +33,12 @@
     -webkit-animation-name: animatetop;
             animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
-            animation-duration: 0.4s; }
-    .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_close {
-      position: absolute;
-      top: 0;
-      right: 1rem;
-      color: #aaaaaa;
-      font-size: 2rem;
-      font-weight: bold; }
-      .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_close:hover, .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_close:focus {
+            animation-duration: 0.4s;
+    text-align: center; }
+    .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button {
+      color: black;
+      border: 1px solid #bbb; }
+      .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button:hover, .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button:focus {
         color: #000;
         text-decoration: none;
         cursor: pointer; }

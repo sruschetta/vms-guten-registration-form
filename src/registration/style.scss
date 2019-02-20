@@ -4,6 +4,10 @@
  * CSS for both Frontend+Backend.
  */
 
+ .vms_lock {
+   overflow: hidden;
+ }
+
  .vms_registration_form {
 
    .vms_form_modal {
@@ -32,17 +36,14 @@
        padding: 2rem;
        border-radius: 0.25rem;
        width: 80%;
-       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),0 6px 20px 0 rgba(0, 0, 0, 0.19);
+       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
        animation-name: animatetop;
        animation-duration: 0.4s;
+       text-align: center;
 
-       .vms_form_close {
-         position: absolute;
-         top: 0;
-         right: 1rem;
-         color: #aaaaaa;
-         font-size: 2rem;
-         font-weight: bold;
+       .vms_form_button {
+         color: black;
+         border: 1px solid #bbb;
 
          &:hover,
          &:focus {

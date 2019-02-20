@@ -15,6 +15,7 @@ if ( !class_exists('VMS') ) {
 			}
 
 			$this->initGutenbergBlocks();
+			$this->initRoles();
 
 		}
 
@@ -22,15 +23,13 @@ if ( !class_exists('VMS') ) {
 			* Gutenberg Block
 		**/
 
-
 		function initGutenbergBlocks() {
 
-			//Register Meta
 			$this->registerMeta();
 			$this->registerBlocks();
 			$this->registerActions();
-
 		}
+
 
 		function registerMeta() {
 
@@ -101,6 +100,24 @@ if ( !class_exists('VMS') ) {
 			) );
 
 			register_meta( 'post', 'privacy_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'user_creation_email_exists_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'user_creation_generic_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'user_creation_successful_message', array(
 					'show_in_rest' => true,
 					'type' => 'string',
 					'single' => true,
@@ -218,7 +235,7 @@ if ( !class_exists('VMS') ) {
 		 			),
 		  		'nation_placeholder' => array(
 		 				'type' => 'string',
-		 				'default' => 'Nazionalità'
+		 				'default' => 'Nazione'
 		 			),
 		  		'age_placeholder' => array(
 		 				'type' => 'string',
@@ -281,7 +298,31 @@ if ( !class_exists('VMS') ) {
 		 				'type' => 'string',
 						'source' => 'meta',
 						'meta' => 'privacy_error'
-		 			)
+		 			),
+					'pages' => array(
+						'type' => 'array',
+						'default' => $this->get_page_list()
+					),
+					'target_page' => array(
+						'type' => 'string',
+						'source' => 'meta',
+						'meta' => 'target_page'
+					),
+					'user_creation_email_exists_error' => array(
+						'type' => 'text',
+						'source' => 'meta',
+						'meta' => 'user_creation_email_exists_error'
+					),
+					'user_creation_generic_error' => array(
+							'type' => 'text',
+							'source' => 'meta',
+							'meta' => 'user_creation_generic_error'
+					),
+					'user_creation_successful_message' => array(
+							'type' => 'text',
+							'source' => 'meta',
+							'meta' => 'user_creation_successful_message'
+					)
 		 		),
 				'editor_script' => 'vms_backend_script',
 				'editor_style' => 'vms_backend_style',
@@ -291,7 +332,6 @@ if ( !class_exists('VMS') ) {
 		 ) );
 		}
 
-
 		function registerActions(){
 			add_action( 'wp_ajax_vms_login_action', array( $this, 'vms_login_action' ) );
 			add_action( 'wp_ajax_nopriv_vms_login_action', array( $this, 'vms_login_action' ) );
@@ -299,8 +339,6 @@ if ( !class_exists('VMS') ) {
 			add_action( 'wp_ajax_vms_registration_action', array( $this, 'vms_registration_action' ) );
 			add_action( 'wp_ajax_nopriv_vms_registration_action', array( $this, 'vms_registration_action' ) );
 		}
-
-
 
 		/**
 		 *  Frontend Rendering
@@ -310,8 +348,9 @@ if ( !class_exists('VMS') ) {
 			$nonce = wp_create_nonce('vms-login');
 
 			$html = '<form class="vms_form vms_login_form" post_id=' . get_the_ID() .'>
-									<div class="vms_form_field">
-										<input type="email" name="email" placeholder="' . $attributes['email_placeholder'] . '">
+									<<div class="vms_form_field">'
+										. $attributes['email_placeholder'] .
+										'<input type="email" name="email" autocomplete="off" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">
@@ -341,8 +380,8 @@ if ( !class_exists('VMS') ) {
 		 	$html = '<form class="vms_form vms_registration_form" post_id=' . get_the_ID() .' autocomplete="off">
 									<div class="vms_form_modal">
 										<div class="vms_form_modal_content">
-											<span class="vms_form_close">&times;</span>
 											<p></p>
+											<button type="button" class="vms_form_button">OK</button>
 										</div>
 									</div>
 									<div class="vms_form_field">'
@@ -404,7 +443,68 @@ if ( !class_exists('VMS') ) {
 				$post_id = $_POST['post_id'];
 
 				if(isset($post_id)){
-					echo json_encode(array('post_meta' => get_post_meta($post_id)));
+
+					$meta = get_post_meta($post_id);
+
+					if(isset($_POST["security"])) {
+
+						//Email
+ 					 if( trim($_POST['email']) === '' )  {
+ 						 $errors['email_missing_error'] =  $meta['email_missing_error'];
+ 						 $hasError = true;
+ 					 } else if (!preg_match("/^[[:alnum:]][a-z0-9_.-]*@[a-z0-9.-]+\.[a-z]{2,4}$/i", trim($_POST['email']))) {
+ 						 $errors['email_invalid_error'] =  $meta['email_invalid_error'];
+ 						 $hasError = true;
+ 					 } else {
+ 						 $email = trim($_POST['email']);
+ 					 }
+
+					 //Password
+					 if( trim($_POST['password']) === '' )  {
+						 $errors['password_missing_error'] =  $meta['password_missing_error'];
+						 $hasError = true;
+					 } else {
+						 $password = trim($_POST['password']);
+					 }
+
+					 if( !$hasError ) {
+
+						 $user_id = get_user_by('email', $email);
+						 echo json_encode($user_id);
+						 die();
+						 
+						 $credentials  = array(
+						 	'user_login'    => $user_id,
+        			'user_password' => '$password',
+        			'remember'      => false
+						 );
+
+						 $login =  wp_signon( $credentials, true );
+
+						 if ( ! is_wp_error( $login ) ) {
+							 $res = array(
+								 'success' => true,
+								 'message' => $meta['user_creation_successful_message'],
+								 'target_page' => get_permalink($meta['target_page'][0])
+							 );
+						 }
+						 else {
+							 $res = array(
+								 'success' => false,
+								 'message' => $login->get_error_message(),
+							 );
+						 }
+
+						 echo json_encode($res);
+					 }
+					 else {
+						 $res = array(
+						 	'success' => false,
+						 	'errors' => $errors
+						 );
+
+						 echo json_encode($res);					 }
+					}
 				}
 				die();
 		}
@@ -494,13 +594,35 @@ if ( !class_exists('VMS') ) {
 						} else {
 							$privacy = trim($_POST['privacy']);
 						}
-				    //if(!$hasError){
-						if(true) {
 
-							$res = array(
-								'success' => true,
-								'message' => "Tutto rego raga!"
+				    if( !$hasError ) {
+							$user_data = array(
+								'user_login' => $firstname. '.' .$lastname,
+								'user_pass' => $password,
+								'user_email' => $email,
+								'first_name' => $firstname,
+								'last_name' => $lastname,
+								'role' => 'iscritto'
 							);
+
+							$user_id = wp_insert_user($user_data);
+
+							if ( ! is_wp_error( $user_id ) ) {
+								update_user_meta( $user_id, 'nation', $nation );
+								update_user_meta( $user_id, 'age', $age );
+
+								$res = array(
+									'success' => true,
+									'message' => $meta['user_creation_successful_message'],
+									'target_page' => get_permalink($meta['target_page'][0])
+								);
+							}
+							else {
+								$res = array(
+									'success' => false,
+									'message' => $user_id->get_error_message(),
+								);
+							}
 
 							echo json_encode($res);
 				    }
@@ -516,6 +638,75 @@ if ( !class_exists('VMS') ) {
 				  }
 				}
 		    die();
+		}
+
+
+
+		/**
+		* Custon Role - Partecipant
+		**/
+
+		function initRoles() {
+			$this->add_partecipant_role();
+
+			add_action( 'show_user_profile', array( $this, 'extra_user_profile_fields') );
+			add_action( 'edit_user_profile', array( $this, 'extra_user_profile_fields') );
+			add_action( 'personal_options_update', array( $this, 'save_extra_user_profile_fields') );
+			add_action( 'edit_user_profile_update', array( $this, 'save_extra_user_profile_fields') );
+		}
+
+		function add_partecipant_role() {
+
+			add_role(
+				'iscritto',
+				__( 'Iscritto' ),
+					array(
+							'read' => true
+					)
+			);
+		}
+
+		function extra_user_profile_fields( $user ) {
+
+			if (!in_array( 'iscritto', $user->roles, true ) ) {
+				return false;
+			};
+			?>
+			<h3><?php _e("Extra profile information", "blank"); ?></h3>
+
+			<table class="form-table">
+			<tr>
+					<th><label for="nation"><?php _e("Nazione"); ?></label></th>
+					<td>
+							<input type="nation" name="nation" id="nation" value="<?php echo esc_attr( get_user_meta(  $user->ID, 'nation', true ) ); ?>" class="regular-text" /><br />
+					</td>
+			</tr>
+			<tr>
+					<th><label for="age"><?php _e("Età"); ?></label></th>
+					<td>
+							<input type="number" name="age" id="age" value="<?php echo esc_attr( get_user_meta( $user->ID, 'age', true ) ); ?>" class="regular-text" /><br />
+					</td>
+			</tr>
+			</table>
+		<?php
+		}
+
+
+		function save_extra_user_profile_fields( $user_id ) {
+
+			if ( !current_user_can( 'edit_user', $user_id ) ) {
+				return false;
+			}
+
+			$user = get_userdata( $user_id );
+			if (!in_array( 'iscritto', $user->roles, true ) ) {
+				return;
+			};
+
+			update_user_meta( $user_id, 'age', $_POST['age'] );
+			update_user_meta( $user_id, 'nation', $_POST['nation'] );
+
+			return true;
 		}
 
 
