@@ -16,7 +16,6 @@ if ( !class_exists('VMS') ) {
 
 			$this->initGutenbergBlocks();
 			$this->initRoles();
-
 		}
 
 		/**
@@ -105,19 +104,13 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
-			register_meta( 'post', 'user_creation_email_exists_error', array(
-					'show_in_rest' => true,
-					'type' => 'string',
-					'single' => true,
-			) );
-
-			register_meta( 'post', 'user_creation_generic_error', array(
-					'show_in_rest' => true,
-					'type' => 'string',
-					'single' => true,
-			) );
-
 			register_meta( 'post', 'user_creation_successful_message', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'user_not_found_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
 					'single' => true,
@@ -136,7 +129,7 @@ if ( !class_exists('VMS') ) {
 
 			wp_register_script(
 				'vms_frontend_script',
-				plugins_url( 'src/script/vms-login.js', dirname( __FILE__ ) ),
+				plugins_url( 'src/script/vms-script.js', dirname( __FILE__ ) ),
 				array( 'jquery')
 			);
 
@@ -158,7 +151,6 @@ if ( !class_exists('VMS') ) {
 			);
 
 			//Login block
-
 			register_block_type( 'vms/vms-plugin-login-form', array(
 				'attributes' => array(
 					'email_placeholder' => array(
@@ -199,6 +191,11 @@ if ( !class_exists('VMS') ) {
 						'default' => 'Il campo password è obbligatorio',
 						'source' => 'meta',
 						'meta' => 'password_missing_error'
+					),
+					'user_not_found_error' => array(
+							'type' => 'text',
+							'source' => 'meta',
+							'meta' => 'user_not_found_error'
 					)
 				),
 				'editor_script' => 'vms_backend_script',
@@ -308,16 +305,6 @@ if ( !class_exists('VMS') ) {
 						'source' => 'meta',
 						'meta' => 'target_page'
 					),
-					'user_creation_email_exists_error' => array(
-						'type' => 'text',
-						'source' => 'meta',
-						'meta' => 'user_creation_email_exists_error'
-					),
-					'user_creation_generic_error' => array(
-							'type' => 'text',
-							'source' => 'meta',
-							'meta' => 'user_creation_generic_error'
-					),
 					'user_creation_successful_message' => array(
 							'type' => 'text',
 							'source' => 'meta',
@@ -345,16 +332,28 @@ if ( !class_exists('VMS') ) {
 		**/
 
 		function renderLoginBlock( $attributes, $content ) {
+
+			if ( is_user_logged_in() ) {
+				return "wakanda";
+			}
+
 			$nonce = wp_create_nonce('vms-login');
 
 			$html = '<form class="vms_form vms_login_form" post_id=' . get_the_ID() .'>
-									<<div class="vms_form_field">'
+									<div class="vms_form_modal">
+										<div class="vms_form_modal_content">
+											<p></p>
+											<button type="button" class="vms_form_button">OK</button>
+										</div>
+									</div>
+									<div class="vms_form_field">'
 										. $attributes['email_placeholder'] .
 										'<input type="email" name="email" autocomplete="off" />
 										<span class="vms_form_error"></span>
 									</div>
-									<div class="vms_form_field">
-										<input type="text" name="password" placeholder="' . $attributes['password_placeholder'] . '">
+									<div class="vms_form_field">'
+									 	. $attributes['password_placeholder'] .
+										'<input type="password" name="password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<input type="submit" value="' . $attributes['submit_button_label'] . '">
@@ -469,44 +468,48 @@ if ( !class_exists('VMS') ) {
 
 					 if( !$hasError ) {
 
-						 $user_id = get_user_by('email', $email);
-						 echo json_encode($user_id);
-						 die();
-						 
-						 $credentials  = array(
-						 	'user_login'    => $user_id,
-        			'user_password' => '$password',
-        			'remember'      => false
-						 );
+						 $user_data = get_user_by('email', $email);
 
-						 $login =  wp_signon( $credentials, true );
+						 if($user_data) {
 
-						 if ( ! is_wp_error( $login ) ) {
-							 $res = array(
-								 'success' => true,
-								 'message' => $meta['user_creation_successful_message'],
-								 'target_page' => get_permalink($meta['target_page'][0])
+							 $credentials  = array(
+							 	'user_login'    => $user_data->data->user_login,
+	        			'user_password' => $password,
+	        			'remember'      => false
 							 );
-						 }
+
+							 $login =  wp_signon( $credentials, true );
+
+							 if ( ! is_wp_error( $login ) ) {
+								 $res = array(
+									 'success' => true,
+									 'target_page' => get_permalink($meta['target_page'][0])
+								 );
+							 }
+							 else {
+								 $res = array(
+									 'success' => false,
+									 'message' => $login->get_error_message(),
+								 );
+							 }
+					 	 }
 						 else {
 							 $res = array(
 								 'success' => false,
-								 'message' => $login->get_error_message(),
+								 'message' => $meta['user_not_found_error']
 							 );
 						 }
-
-						 echo json_encode($res);
 					 }
 					 else {
 						 $res = array(
 						 	'success' => false,
 						 	'errors' => $errors
 						 );
-
-						 echo json_encode($res);					 }
-					}
+					 }
 				}
-				die();
+			}
+			echo json_encode($res);
+			die();
 		}
 
 
@@ -653,6 +656,21 @@ if ( !class_exists('VMS') ) {
 			add_action( 'edit_user_profile', array( $this, 'extra_user_profile_fields') );
 			add_action( 'personal_options_update', array( $this, 'save_extra_user_profile_fields') );
 			add_action( 'edit_user_profile_update', array( $this, 'save_extra_user_profile_fields') );
+
+			add_action( 'after_setup_theme', array( $this, 'remove_admin_bar') );
+			add_action( 'admin_init', array( $this, 'block_wp_admin') );
+		}
+
+		function remove_admin_bar() {
+			if (!current_user_can('administrator') && !is_admin()) {
+			  show_admin_bar(false);
+			}
+		}
+		function block_wp_admin() {
+			if ( is_admin() && ! current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+				wp_safe_redirect( home_url() );
+				exit;
+			}
 		}
 
 		function add_partecipant_role() {

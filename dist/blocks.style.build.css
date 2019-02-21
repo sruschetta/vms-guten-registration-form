@@ -6,7 +6,7 @@
 .vms_lock {
   overflow: hidden; }
 
-.vms_registration_form .vms_form_modal {
+.vms_form .vms_form_modal {
   display: none;
   position: fixed;
   z-index: 100;
@@ -18,16 +18,18 @@
   background-color: black;
   background-color: rgba(0, 0, 0, 0.4);
   padding-top: 100px; }
-  .vms_registration_form .vms_form_modal.visible {
+  .vms_form .vms_form_modal.visible {
     display: block; }
-  .vms_registration_form .vms_form_modal .vms_form_modal_content {
+  .vms_form .vms_form_modal .vms_form_modal_content {
     position: relative;
     background-color: #fefefe;
     color: black;
     margin: auto;
+    max-width: 740px;
     padding: 2rem;
     border-radius: 0.25rem;
     width: 80%;
+    font-size: 0.875rem;
     -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-animation-name: animatetop;
@@ -35,10 +37,16 @@
     -webkit-animation-duration: 0.4s;
             animation-duration: 0.4s;
     text-align: center; }
-    .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button {
+    .vms_form .vms_form_modal .vms_form_modal_content a {
       color: black;
-      border: 1px solid #bbb; }
-      .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button:hover, .vms_registration_form .vms_form_modal .vms_form_modal_content .vms_form_button:focus {
+      text-decoration: underline; }
+    .vms_form .vms_form_modal .vms_form_modal_content a:hover {
+      color: #bbb; }
+    .vms_form .vms_form_modal .vms_form_modal_content .vms_form_button {
+      color: black;
+      border: 1px solid #bbb;
+      font-size: 0.875rem; }
+      .vms_form .vms_form_modal .vms_form_modal_content .vms_form_button:hover, .vms_form .vms_form_modal .vms_form_modal_content .vms_form_button:focus {
         color: #000;
         text-decoration: none;
         cursor: pointer; }
@@ -59,7 +67,7 @@
     top: 0;
     opacity: 1; } }
 
-.vms_registration_form .vms_form_field {
+.vms_form .vms_form_field {
   display: block;
   vertical-align: top;
   width: 100%;
@@ -67,61 +75,11 @@
   font-size: 1rem;
   -webkit-box-sizing: border-box;
           box-sizing: border-box; }
-  .vms_registration_form .vms_form_field input, .vms_registration_form .vms_form_field select {
+  .vms_form .vms_form_field input, .vms_form .vms_form_field select {
     width: 100%;
     margin: 0.25rem 0; }
-  .vms_registration_form .vms_form_field .vms_form_error {
+  .vms_form .vms_form_field .vms_form_error {
     color: red;
     font-size: 0.875rem;
     min-height: 1rem;
     display: block; }
-/**
- * #.# Styles
- *
- * CSS for both Frontend+Backend.
- */
-.vms_form {
-  padding: 1rem 0; }
-  .vms_form .vms_form_field {
-    display: block;
-    vertical-align: top;
-    width: 100%;
-    padding: 0.5rem 0;
-    font-size: 1rem;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box; }
-    .vms_form .vms_form_field input, .vms_form .vms_form_field select {
-      width: 100%;
-      margin: 0.25rem 0; }
-    .vms_form .vms_form_field .vms_form_error {
-      color: red;
-      font-size: 0.875rem;
-      height: 1rem;
-      display: block;
-      visibility: hidden;
-      opacity: 0;
-      -webkit-transition: visibility 0s linear 0.1s,opacity 0.1s linear;
-      -o-transition: visibility 0s linear 0.1s,opacity 0.1s linear;
-      transition: visibility 0s linear 0.1s,opacity 0.1s linear; }
-      .vms_form .vms_form_field .vms_form_error.visible {
-        visibility: visible;
-        opacity: 1;
-        -webkit-transition-delay: 0s;
-             -o-transition-delay: 0s;
-                transition-delay: 0s; }
-    .vms_form .vms_form_field.textual {
-      position: relative; }
-      .vms_form .vms_form_field.textual input[type='checkbox'] {
-        width: auto;
-        -webkit-transform: scale(1.5);
-            -ms-transform: scale(1.5);
-                transform: scale(1.5);
-        position: absolute;
-        top: 0.875rem;
-        left: 0;
-        margin: 0; }
-      .vms_form .vms_form_field.textual span {
-        padding-left: 1.5rem;
-        display: block; }
-  .vms_form input[type="submit"] {
-    margin-top: 1rem; }

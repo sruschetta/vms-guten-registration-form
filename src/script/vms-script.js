@@ -28,15 +28,48 @@
         type: 'POST',
         dataType: 'json',
         url: ajax_login_object.ajaxurl,
-        success: function(data){
-          console.log(data);
-        },
         data: {
           'action': 'vms_login_action',
           'email': form.find('input[name="email"]').val(),
           'password': form.find('input[name="password"]').val(),
           'security': form.find('input[name="vms-login-sec"]').val(),
           'post_id': form.attr('post_id')
+        },
+        success: function(data){
+          console.log(data);
+
+          if(data.errors) {
+
+            var errors = data.errors;
+
+            if(errors.email_missing_error){
+              var err = form.find('input[name="email"]').siblings('.vms_form_error');
+              err.text(errors.email_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.email_invalid_error){
+              var err = form.find('input[name="email"]').siblings('.vms_form_error');
+              err.text(errors.email_invalid_error);
+              err.addClass('visible');
+            }
+            if(errors.password_missing_error){
+              var err = form.find('input[name="password"]').siblings('.vms_form_error');
+              err.text(errors.password_missing_error);
+              err.addClass('visible');
+            }
+          }
+          else {
+            if(data.target_page) {
+              window.open( data.target_page, '_self');
+            }
+            else {
+              var modal = form.find('.vms_form_modal');
+              modal.addClass('visible');
+
+              modal.find('.vms_form_modal_content p').html(data.message);
+              $('html').addClass('vms_lock');
+            }
+          }
         },
         error: function(error){
           console.log(error);

@@ -4,19 +4,19 @@
  */
 
 //  Import CSS.
-import './style.scss';
-import './editor.scss';
+import '../style/style.scss';
+import '../style/editor.scss';
 
 const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
-const { TextControl, TextareaControl } = wp.components;
+const { TextControl } = wp.components;
 const RichText = wp.editor.RichText;
 
 registerBlockType( 'vms/vms-plugin-registration-form', {
 
 	title: 'VMS - Registration Form',
-	icon: 'shield',
+	icon: 'welcome-write-blog',
 	category: 'widgets',
 	edit: class extends Component {
 
@@ -65,7 +65,7 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	      ];
 
 	      return (
-	        <div class="vms-registration-form">
+	        <div class="vms-form">
 
 	          <h3><b>VMS- Registration form</b></h3>
 	          <div>Placeholders</div>

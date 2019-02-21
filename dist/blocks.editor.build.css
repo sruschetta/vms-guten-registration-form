@@ -4,11 +4,11 @@
  * CSS for just Backend enqueued after style.scss
  * which makes it higher in priority.
  */
-.vms-registration-form {
+.vms-form {
   padding: 16px;
   background-color: #fafafa;
   border-radius: 5px; }
-  .vms-registration-form input, .vms-registration-form select {
+  .vms-form input, .vms-form select {
     width: 100%;
     margin: 0.5rem 0; }
 
@@ -19,16 +19,3 @@
   border: 1px solid #8d96a0;
   font-size: 13px;
   margin: 1rem 0; }
-/**
- * #.# Editor Styles
- *
- * CSS for just Backend enqueued after style.scss
- * which makes it higher in priority.
- */
-.vms-form {
-  padding: 16px;
-  background-color: #fafafa;
-  border-radius: 10px; }
-  .vms-form input {
-    width: 100%;
-    margin: 8px 0; }

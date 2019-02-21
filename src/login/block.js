@@ -4,18 +4,20 @@
  */
 
 //  Import CSS.
-import './style.scss';
-import './editor.scss';
+import '../style/style.scss';
+import '../style/editor.scss';
 
 
 const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
+const { TextControl } = wp.components;
+const RichText = wp.editor.RichText;
 
 registerBlockType( 'vms/vms-plugin-login-form', {
 
 	title: 'VMS - Login Form',
-	icon: 'shield',
+	icon: 'admin-users',
 	category: 'widgets',
 	edit: class extends Component {
 
@@ -24,10 +26,14 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	      this.props = props;
 	  }
 
-	  handleChange = name => event => {
-	    var value = event.target.value;
+		handleChange = name => value => {
 	    this.props.setAttributes({ [name]: value });
 	  }
+
+		handleSelectChange = name => event => {
+		 var value = event.target.value;
+		 this.props.setAttributes({ [name]: value });
+	 }
 
 	  render() {
 	      const { className } = this.props;
@@ -42,7 +48,7 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	      var errorAttr = [
 	        { placeholder: "Email missing error", attr: "email_missing_error" },
 	        { placeholder: "Email invalid format error", attr: "email_invalid_error" },
-	        { placeholder: "Password missing placeholder", attr: "password_missing_error" },
+	        { placeholder: "Password missing error", attr: "password_missing_error" },
 	      ];
 	      return (
 	        <div class="vms-form">
@@ -51,7 +57,7 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	          {
 	            fieldsAttr.map( (item, index) => {
 	              return (
-	                <input type="text"
+	                <TextControl type="text"
 	                       placeholder={ item.placeholder }
 	                       onChange={ this.handleChange(item.attr) }
 	                       value={ this.props.attributes[item.attr] } />
@@ -60,7 +66,7 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	          }
 						<hr/>
 						<div>Redirect page</div>
-						<select onChange={ this.handleChange('target_page') }>
+						<select onChange={ this.handleSelectChange('target_page') }>
 							{
 								pages.map( (item, index) => {
 
@@ -86,15 +92,21 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	          {
 	            errorAttr.map( (item, index) => {
 	              return (
-	                <input type="text"
-	                       placeholder={ item.placeholder }
-	                       onChange={ this.handleChange(item.attr) }
-	                       value={ this.props.attributes[item.attr] } />
+	                <TextControl type="text"
+	                       			 placeholder={ item.placeholder }
+	                       			 onChange={ this.handleChange(item.attr) }
+	                       			 value={ this.props.attributes[item.attr] } />
 	              )
 	            })
 	          }
-	        </div>
-	      );
+
+						<hr/>
+						<div>Login error messages</div>
+							<RichText placeholder={"User not found"}
+											 	onChange={ this.handleChange('user_not_found_error') }
+												value={ this.props.attributes['user_not_found_error'] }/>
+					</div>
+			);
 	  }
 	},
 	save: function(){
