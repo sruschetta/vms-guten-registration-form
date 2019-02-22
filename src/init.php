@@ -16,6 +16,7 @@ if ( !class_exists('VMS') ) {
 
 			$this->initGutenbergBlocks();
 			$this->initRoles();
+			$this->initDB();
 		}
 
 		/**
@@ -317,7 +318,83 @@ if ( !class_exists('VMS') ) {
 				'script' => 'vms_frontend_script',
 				'render_callback' => array( $this, 'renderRegistrationBlock' ),
 		 ) );
+
+
+		 //User dashboard block
+		 register_block_type( 'vms/vms-plugin-user-dashboard', array(
+			 'attributes' => array(
+				 'dashboard_title' => array(
+					 'type' => 'string',
+					 'default' => 'Il tuo profilo'
+				 ),
+				 'firstname_placeholder' => array(
+						 'type' => 'string' ,
+						 'default' => 'Nome',
+				 ),
+				 'lastname_placeholder' => array(
+						 'type' => 'string',
+						 'default' => 'Cognome'
+				 ),
+				 'email_placeholder' => array(
+ 						'type' => 'string',
+ 						'default' => 'Email'
+ 				 ),
+				 'nation_placeholder' => array(
+					 'type' => 'string',
+					 'default' => 'Nazione'
+				 ),
+				 'age_placeholder' => array(
+					 'type' => 'string',
+					 'default' => 'Età'
+				 ),
+				 'first_name_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'default' => 'Il campo nome è obbligatorio',
+					 'meta' => 'first_name_missing_error'
+				 ),
+				 'last_name_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'last_name_missing_error'
+				 ),
+				 'email_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'email_missing_error'
+				 ),
+				 'email_invalid_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'email_invalid_error'
+				 ),
+				 'nation_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'nation_missing_error'
+				 ),
+				 'age_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'age_missing_error'
+				 ),
+				 'password_change_button_label' => array(
+					 'type' => 'string',
+					 'dafault' => 'Cambio password',
+				 ),
+				 'update_button_label' => array(
+					 'type' => 'string',
+					 'dafault' => 'Modifica i tuoi dati',
+				 ),
+		 ),
+		 'editor_script' => 'vms_backend_script',
+		 'editor_style' => 'vms_backend_style',
+		 'style' => 'vms_frontend_style',
+		 'script' => 'vms_frontend_script',
+		 'render_callback' => array( $this, 'renderUserDashboardBlock' ),
+		));
 		}
+
 
 		function registerActions(){
 			add_action( 'wp_ajax_vms_login_action', array( $this, 'vms_login_action' ) );
@@ -334,7 +411,7 @@ if ( !class_exists('VMS') ) {
 		function renderLoginBlock( $attributes, $content ) {
 
 			if ( is_user_logged_in() ) {
-				return "wakanda";
+				return ;
 			}
 
 			$nonce = wp_create_nonce('vms-login');
@@ -430,6 +507,72 @@ if ( !class_exists('VMS') ) {
 			return $html;
 		}
 
+		function renderUserDashboardBlock( $attributes, $content ) {
+
+			if ( !is_user_logged_in() ) {
+				return ;
+			}
+
+			$user_data = wp_get_current_user();
+
+			$nation_name = $this->get_nation_with_id(get_user_meta(  $user_data->ID, 'nation', true ))->name;
+
+			$html = '<div class="vms_user_dashboard">
+								<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
+								<table>
+									<tr>
+										<td>'
+										.	$attributes['firstname_placeholder'] .
+										':</td>
+										<td>'
+										.	$user_data->first_name .
+										'</td>
+										<td>
+									</tr>
+									<tr>
+										<td>'
+										.	$attributes['lastname_placeholder'] .
+										':</td>
+										<td>'
+										.	$user_data->last_name .
+										'</td>
+										<td>
+									</tr>
+									<tr>
+										<td>'
+										.	$attributes['email_placeholder'] .
+										':</td>
+										<td>'
+										.	$user_data->user_email .
+										'</td>
+									</tr>
+									<tr>
+										<td>'
+										.	$attributes['nation_placeholder'] .
+										':</td>
+										<td>'
+										. $nation_name .
+										'</td>
+									</tr>
+									<tr>
+										<td>'
+										.	$attributes['age_placeholder'] .
+										':</td>
+										<td>'
+										. get_user_meta(  $user_data->ID, 'age', true ) .
+										'</td>
+									</tr>
+								</table>
+								<div class="vms_user_dashboard_buttons">
+									<button>' . $attributes['update_button_label'] . '</button>
+									<button>' . $attributes['password_change_button_label'] . '</button>
+								</div>
+							</div>
+			';
+
+			return $html;
+		}
+
 		/**
 		 *	Ajax actions response
 		**/
@@ -468,12 +611,12 @@ if ( !class_exists('VMS') ) {
 
 					 if( !$hasError ) {
 
-						 $user_data = get_user_by('email', $email);
+						 //$user_data = get_user_by('email', $email);
 
-						 if($user_data) {
+						 //if($user_data) {
 
 							 $credentials  = array(
-							 	'user_login'    => $user_data->data->user_login,
+							 	'user_login'    => $email,
 	        			'user_password' => $password,
 	        			'remember'      => false
 							 );
@@ -492,13 +635,13 @@ if ( !class_exists('VMS') ) {
 									 'message' => $login->get_error_message(),
 								 );
 							 }
-					 	 }
+					 	 /*}
 						 else {
 							 $res = array(
 								 'success' => false,
 								 'message' => $meta['user_not_found_error']
 							 );
-						 }
+						 }*/
 					 }
 					 else {
 						 $res = array(
@@ -600,7 +743,7 @@ if ( !class_exists('VMS') ) {
 
 				    if( !$hasError ) {
 							$user_data = array(
-								'user_login' => $firstname. '.' .$lastname,
+								'user_login' => $email,
 								'user_pass' => $password,
 								'user_email' => $email,
 								'first_name' => $firstname,
@@ -674,7 +817,6 @@ if ( !class_exists('VMS') ) {
 		}
 
 		function add_partecipant_role() {
-
 			add_role(
 				'iscritto',
 				__( 'Iscritto' ),
@@ -689,6 +831,10 @@ if ( !class_exists('VMS') ) {
 			if (!in_array( 'iscritto', $user->roles, true ) ) {
 				return false;
 			};
+
+			$nations = $this->get_nations_list();
+			$user_nation_id = trim( get_user_meta( $user->ID, 'nation', true ));
+
 			?>
 			<h3><?php _e("Extra profile information", "blank"); ?></h3>
 
@@ -696,7 +842,22 @@ if ( !class_exists('VMS') ) {
 			<tr>
 					<th><label for="nation"><?php _e("Nazione"); ?></label></th>
 					<td>
-							<input type="nation" name="nation" id="nation" value="<?php echo esc_attr( get_user_meta(  $user->ID, 'nation', true ) ); ?>" class="regular-text" /><br />
+						<select name="nation" type=nation id=nation>
+							<?php
+
+								foreach ($nations as $nation) {
+									?>
+									<option value=" <?php echo $nation->id ?> " <?php
+										if( $nation->id == $user_nation_id ){
+											?>
+											selected
+											<?php
+										}
+									?>><?php echo $nation->name ?></option>
+									<?php
+								}
+							?>
+							</select>
 					</td>
 			</tr>
 			<tr>
@@ -727,6 +888,104 @@ if ( !class_exists('VMS') ) {
 			return true;
 		}
 
+		/**
+		* DB Management
+		**/
+
+		function initDB() {
+			register_activation_hook( __FILE__, array( $this, 'generateDB' ) );
+			register_activation_hook( __FILE__, array( $this, 'generateDataset' ) );
+			//register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
+			//register_uninstall_hook(__FILE__, array( $this, 'dropDB' ));
+		}
+
+
+		function generateDB() {
+			global $wpdb;
+
+   		$table_name = $wpdb->prefix . "vms_nations";
+
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $table_name (
+  			id mediumint(9) NOT NULL AUTO_INCREMENT,
+  			name tinytext NOT NULL,
+  			PRIMARY KEY  (id)
+			) $charset_collate;";
+
+
+			$table_name = $wpdb->prefix . "vms_categories";
+
+			$sql .= "CREATE TABLE $table_name (
+  			id mediumint(9) NOT NULL AUTO_INCREMENT,
+  			name tinytext NOT NULL,
+  			PRIMARY KEY  (id)
+			) $charset_collate;";
+
+			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+			dbDelta( $sql );
+		}
+
+
+		function generateDataset() {
+			global $wpdb;
+
+			//Nations
+			require_once (plugin_dir_path(__FILE__). 'utils/nations.php');
+
+			$table_name = $wpdb->prefix . "vms_nations";
+
+			foreach ($nations_array as $nation) {
+				$wpdb->insert(
+					$table_name,
+					array(
+						'name' => $nation,
+					)
+				);
+			}
+
+			//Categories
+			require_once (plugin_dir_path(__FILE__). 'utils/categories.php');
+
+			$table_name = $wpdb->prefix . "vms_categories";
+
+			foreach ($categories_array as $category) {
+				$wpdb->insert(
+					$table_name,
+					array(
+						'name' => $category,
+					)
+				);
+			}
+		}
+
+		function clearDB() {
+			global $wpdb;
+
+	 		$table_name = $wpdb->prefix . 'vms_nations';
+	 		$sql = "DELETE FROM $table_name";
+
+			$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_categories';
+	 		$sql = "DELETE FROM $table_name";
+
+	 		$wpdb->query($sql);
+		}
+
+		function dropDB() {
+			global $wpdb;
+
+	 		$table_name = $wpdb->prefix . 'vms_nations';
+	 		$sql = "DROP TABLE IF EXISTS $table_name";
+
+			$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_categories';
+			$sql = "DROP TABLE IF EXISTS $table_name";
+
+	 		$wpdb->query($sql);
+		}
 
 		/**
 		 	* Utilities
@@ -750,9 +1009,16 @@ if ( !class_exists('VMS') ) {
 			return $nations;
 		}
 
+		function get_nation_with_id($id) {
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . "vms_nations";
+			$nations = $wpdb->get_row("SELECT name FROM " . $table_name . " WHERE id=" . $id );
+			return $nations;
+		}
+
 	}
 
 	//Plugin Execution
 	new VMS;
-
 }

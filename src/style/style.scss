@@ -93,5 +93,62 @@
        display: block;
      }
 
+     &.textual {
+       position: relative;
+
+       input[type='checkbox'] {
+         width: auto;
+         transform:scale(1.5);
+         position: absolute;
+         top: 0.875rem;
+         left: 0;
+         margin: 0;
+       }
+
+       span {
+         padding-left: 1.5rem;
+         display: block;
+       }
+     }
+
+     input[type="submit"] {
+       margin-top: 1rem;
+     }
+
    }
-}
+ }
+
+ .vms_user_dashboard {
+   padding: 2rem;
+   background-color: #333;
+   border-radius: 0.5rem;
+   border: 1px solid white;
+
+   .vms_user_dashboard_item {
+     padding: 1rem 0;
+
+     font-size: 0;
+
+     span:first-of-type{
+       display: inline-block;
+       font-size: 1rem;
+       width: 20%;
+     }
+     span:last-of-type{
+       display: inline-block;
+       font-size: 0.875rem;
+       width: 80%;
+     }
+   }
+
+   .vms_user_dashboard_buttons {
+     text-align: right;
+
+     button {
+       padding: 0.75rem;
+       font-size: 0.875rem;
+       margin: 0 0.5rem;
+     }
+   }
+
+ }
