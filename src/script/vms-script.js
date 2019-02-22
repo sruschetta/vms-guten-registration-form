@@ -2,11 +2,13 @@
 
   $(document).ready(function(){
 
+    //Forms
+
     $('.vms_form').find('input, select').focus(function(){
       $(this).siblings('span').removeClass('visible');
     });
 
-    $('.vms_form .vms_form_button').click(function(){
+    $('.vms_modal_button').click(function(){
 
       var target = $(this).parent().parent().attr('vms_target_page');
       if( target ) {
@@ -63,10 +65,10 @@
               window.open( data.target_page, '_self');
             }
             else {
-              var modal = form.find('.vms_form_modal');
+              var modal = form.find('.vms_modal');
               modal.addClass('visible');
 
-              modal.find('.vms_form_modal_content p').html(data.message);
+              modal.find('.vms_modal_content p').html(data.message);
               $('html').addClass('vms_lock');
             }
           }
@@ -100,8 +102,6 @@
           'post_id': form.attr('post_id'),
         },
         success: function(data){
-
-          console.log(data);
 
           if(data.errors) {
 
@@ -159,14 +159,14 @@
             }
           }
           else {
-            var modal = form.find('.vms_form_modal');
+            var modal = form.find('.vms_modal');
             modal.addClass('visible');
             if(data.target_page) {
               modal.attr('vms_target_page', data.target_page);
             }else {
               modal.removeAttr('vms_target_page');
             }
-            modal.find('.vms_form_modal_content p').html(data.message);
+            modal.find('.vms_modal_content p').html(data.message);
             $('html').addClass('vms_lock');
           }
         },
@@ -175,6 +175,19 @@
         }
       });
     });
+
+    //User dashboard
+
+    $('.vms_open_user_update').click(function(){
+      $(this).parent().parent().find(".vms_modal").addClass("visible");
+      $('html').addClass('vms_lock');
+    });
+
+    $('.vms_user_dashboard .vms_open_change_password').click(function(){
+      $(this).parent().parent().find(".vms_modal").addClass("visible");
+      $('html').addClass('vms_lock');
+    });
+
   });
 
 })( jQuery );

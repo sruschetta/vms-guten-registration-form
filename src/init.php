@@ -329,7 +329,7 @@ if ( !class_exists('VMS') ) {
 				 ),
 				 'firstname_placeholder' => array(
 						 'type' => 'string' ,
-						 'default' => 'Nome',
+						 'default' => 'Nome'
 				 ),
 				 'lastname_placeholder' => array(
 						 'type' => 'string',
@@ -346,6 +346,26 @@ if ( !class_exists('VMS') ) {
 				 'age_placeholder' => array(
 					 'type' => 'string',
 					 'default' => 'Età'
+				 ),
+				 'password_change_button_label' => array(
+					 'type' => 'string',
+					 'default' => 'Cambio password'
+				 ),
+				 'update_button_label' => array(
+					 'type' => 'string',
+					 'default' => 'Modifica i tuoi dati'
+				 ),
+				 'old_password_placeholder' => array(
+					 'type' => 'string',
+					 'default' => 'Inserisci la password corrente'
+				 ),
+				 'new_password_placeholder' => array(
+					 'type' => 'string',
+					 'default' => 'Inserisci la nuova password'
+				 ),
+				 'new_password2_placeholder' => array(
+					 'type' => 'string',
+					 'default' => 'Conferma la nuova password',
 				 ),
 				 'first_name_missing_error' => array(
 					 'type' => 'string',
@@ -377,15 +397,7 @@ if ( !class_exists('VMS') ) {
 					 'type' => 'string',
 					 'source' => 'meta',
 					 'meta' => 'age_missing_error'
-				 ),
-				 'password_change_button_label' => array(
-					 'type' => 'string',
-					 'dafault' => 'Cambio password',
-				 ),
-				 'update_button_label' => array(
-					 'type' => 'string',
-					 'dafault' => 'Modifica i tuoi dati',
-				 ),
+				 )
 		 ),
 		 'editor_script' => 'vms_backend_script',
 		 'editor_style' => 'vms_backend_style',
@@ -417,10 +429,10 @@ if ( !class_exists('VMS') ) {
 			$nonce = wp_create_nonce('vms-login');
 
 			$html = '<form class="vms_form vms_login_form" post_id=' . get_the_ID() .'>
-									<div class="vms_form_modal">
-										<div class="vms_form_modal_content">
+									<div class="vms_modal">
+										<div class="vms_modal_content">
 											<p></p>
-											<button type="button" class="vms_form_button">OK</button>
+											<button type="button" class="vms_modal_button">OK</button>
 										</div>
 									</div>
 									<div class="vms_form_field">'
@@ -454,10 +466,10 @@ if ( !class_exists('VMS') ) {
 	    $nations_html .= '</select>';
 
 		 	$html = '<form class="vms_form vms_registration_form" post_id=' . get_the_ID() .' autocomplete="off">
-									<div class="vms_form_modal">
-										<div class="vms_form_modal_content">
+									<div class="vms_modal">
+										<div class="vms_modal_content">
 											<p></p>
-											<button type="button" class="vms_form_button">OK</button>
+											<button type="button" class="vms_modal_button">OK</button>
 										</div>
 									</div>
 									<div class="vms_form_field">'
@@ -518,6 +530,28 @@ if ( !class_exists('VMS') ) {
 			$nation_name = $this->get_nation_with_id(get_user_meta(  $user_data->ID, 'nation', true ))->name;
 
 			$html = '<div class="vms_user_dashboard">
+								<div class="vms_modal">
+									<div class="vms_modal_content">
+										<form class="vms_form vms_update_user_form">
+											<div class="vms_form_field">'
+												. $attributes['old_password_placeholder'] .
+												'<input type="password" name="old_password" autocomplete="new-password" />
+												<span class="vms_form_error"></span>
+											</div>
+											<div class="vms_form_field">'
+												. $attributes['new_password_placeholder'] .
+												'<input type="password" name="new_password" autocomplete="new-password" />
+												<span class="vms_form_error"></span>
+											</div>
+											<div class="vms_form_field">'
+												. $attributes['new_password2_placeholder'] .
+												'<input type="password" name="new_password2" autocomplete="new-password" />
+												<span class="vms_form_error"></span>
+											</div>
+											<button type="button" class="vms_modal_button">OK</button>
+										</form>
+									</div>
+								</div>
 								<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
 								<table>
 									<tr>
@@ -564,8 +598,8 @@ if ( !class_exists('VMS') ) {
 									</tr>
 								</table>
 								<div class="vms_user_dashboard_buttons">
-									<button>' . $attributes['update_button_label'] . '</button>
-									<button>' . $attributes['password_change_button_label'] . '</button>
+									<button class="vms_open_user_update">' . $attributes['update_button_label'] . '</button>
+									<button class="vms_open_change_password">' . $attributes['password_change_button_label'] . '</button>
 								</div>
 							</div>
 			';

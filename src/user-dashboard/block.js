@@ -38,12 +38,21 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 		 	render() {
 				const { className } = this.props;
 
+				console.log(this.props.attributes);
+
+
 				var fieldsAttr = [
 				 { placeholder: "First name placeholder", attr: "firstname_placeholder" },
 				 { placeholder: "Last name placeholder", attr: "lastname_placeholder" },
 				 { placeholder: "Email placeholder", attr: "email_placeholder" },
 				 { placeholder: "Nation placeholder", attr: "nation_placeholder" },
 				 { placeholder: "Age placeholder", attr: "age_placeholder" },
+				];
+
+				var passwordAttr = [
+					{ placeholder: "Old password placeholder", attr: "old_password_placeholder" },
+					{ placeholder: "New password placeholder", attr: "new_password_placeholder" },
+					{ placeholder: "Confirm password placeholder", attr: "new_password2_placeholder" },
 				];
 
 				return (
@@ -75,6 +84,18 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
  												 placeholder={ 'Password change button label' }
  												 onChange={ this.handleChange('password_change_button_label') }
  												 value={ this.props.attributes['password_change_button_label'] } />
+						<hr/>
+						<div>Change Password Placeholders</div>
+						{
+							passwordAttr.map( (item, index) => {
+								return (
+									<TextControl type="text"
+												 placeholder={ item.placeholder }
+												 onChange={ this.handleChange(item.attr) }
+												 value={ this.props.attributes[item.attr] } />
+								)
+							})
+						}
 					</div>
 			);
 		}
