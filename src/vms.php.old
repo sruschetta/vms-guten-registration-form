@@ -1,5 +1,5 @@
 <?php
-
+/*
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,10 +14,11 @@ if ( !class_exists('VMS') ) {
 				return;
 			}
 
-			$this->initGutenbergBlocks();
-			$this->initRoles();
 			$this->initDB();
-		}
+			//$this->initRoles();
+			//$this->initGutenbergBlocks();
+    }
+
 
 		/**
 			* Gutenberg Block
@@ -532,6 +533,7 @@ if ( !class_exists('VMS') ) {
 			$html = '<div class="vms_user_dashboard">
 								<div class="vms_modal">
 									<div class="vms_modal_content">
+										<span>' . get_locale() . '</span>
 										<form class="vms_form vms_update_user_form">
 											<div class="vms_form_field">'
 												. $attributes['old_password_placeholder'] .
@@ -878,16 +880,16 @@ if ( !class_exists('VMS') ) {
 					<td>
 						<select name="nation" type=nation id=nation>
 							<?php
-
+							var_dump($nations);
 								foreach ($nations as $nation) {
 									?>
 									<option value=" <?php echo $nation->id ?> " <?php
-										if( $nation->id == $user_nation_id ){
+										if( $nation['id'] == $user_nation_id ){
 											?>
 											selected
 											<?php
 										}
-									?>><?php echo $nation->name ?></option>
+									?>><?php echo $nation['it'] ?></option>
 									<?php
 								}
 							?>
@@ -927,6 +929,7 @@ if ( !class_exists('VMS') ) {
 		**/
 
 		function initDB() {
+
 			register_activation_hook( __FILE__, array( $this, 'generateDB' ) );
 			register_activation_hook( __FILE__, array( $this, 'generateDataset' ) );
 			//register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
@@ -973,7 +976,7 @@ if ( !class_exists('VMS') ) {
 				$wpdb->insert(
 					$table_name,
 					array(
-						'name' => $nation,
+						'name' => "asd",
 					)
 				);
 			}
@@ -994,6 +997,9 @@ if ( !class_exists('VMS') ) {
 		}
 
 		function clearDB() {
+
+			die("asdasdasd");
+
 			global $wpdb;
 
 	 		$table_name = $wpdb->prefix . 'vms_nations';
@@ -1020,6 +1026,7 @@ if ( !class_exists('VMS') ) {
 
 	 		$wpdb->query($sql);
 		}
+
 
 		/**
 		 	* Utilities
@@ -1054,5 +1061,5 @@ if ( !class_exists('VMS') ) {
 	}
 
 	//Plugin Execution
-	new VMS;
+	$vms = new VMS;
 }

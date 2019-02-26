@@ -38,7 +38,6 @@
           'post_id': form.attr('post_id')
         },
         success: function(data){
-          console.log(data);
 
           if(data.errors) {
 
