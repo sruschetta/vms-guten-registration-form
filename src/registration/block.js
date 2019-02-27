@@ -44,10 +44,14 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        { placeholder: "First name placeholder", attr: "firstname_placeholder" },
 	        { placeholder: "Last name placeholder", attr: "lastname_placeholder" },
 	        { placeholder: "Email placeholder", attr: "email_placeholder" },
+					{ placeholder: "Email Confirm placeholder", attr: "email2_placeholder" },
 	        { placeholder: "Password placeholder", attr: "password_placeholder" },
 	        { placeholder: "Confirm password placeholder", attr: "password2_placeholder" },
 	        { placeholder: "Nation placeholder", attr: "nation_placeholder" },
-	        { placeholder: "Age placeholder", attr: "age_placeholder" },
+	        { placeholder: "Birthdate placeholder", attr: "birthdate_placeholder" },
+					{ placeholder: "Day placeholder", attr: "day_placeholder" },
+					{ placeholder: "Month placeholder", attr: "month_placeholder" },
+					{ placeholder: "Year placeholder", attr: "year_placeholder" },
 	        { placeholder: "Submit button label", attr: "submit_button_label" }
 	      ];
 
@@ -56,11 +60,13 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        { placeholder: "Last name missing error", attr: "last_name_missing_error" },
 	        { placeholder: "Email missing error", attr: "email_missing_error" },
 	        { placeholder: "Email invalid format error", attr: "email_invalid_error" },
+					{ placeholder: "Email match error", attr: "email_match_error" },
 	        { placeholder: "Password missing placeholder", attr: "password_missing_error" },
 	        { placeholder: "Password format error", attr: "password_format_error" },
 	        { placeholder: "Password match error", attr: "password_match_error" },
 	        { placeholder: "Nation missing error", attr: "nation_missing_error" },
-	        { placeholder: "Age missing error", attr: "age_missing_error" },
+	        { placeholder: "Birthdate missing error", attr: "birthdate_missing_error" },
+					{ placeholder: "Invalid date error", attr: "invalid_date_error" },
 					{ placeholder: "Privacy error", attr: "privacy_error" }
 	      ];
 
@@ -68,7 +74,7 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        <div class="vms-form">
 
 	          <h3><b>VMS- Registration form</b></h3>
-	          <div>Placeholders</div>
+	          <div>Placeholders sdfsd fsd f</div>
 	          {
 	            fieldsAttr.map( (item, index) => {
 	              return (

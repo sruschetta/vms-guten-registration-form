@@ -50,6 +50,12 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
+			register_meta( 'post', 'email_match_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
 			register_meta( 'post', 'password_missing_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
@@ -98,7 +104,13 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
-			register_meta( 'post', 'age_missing_error', array(
+			register_meta( 'post', 'birthdate_missing_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'invalid_date_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
 					'single' => true,
@@ -228,6 +240,10 @@ if ( !class_exists('VMS') ) {
 			 		   	'type' => 'string',
 			 				'default' => 'Email'
 		  		),
+					'email2_placeholder' => array(
+							'type' => 'string',
+							'default' => 'Conferma email'
+					),
 		  		'password_placeholder' => array(
 		 					'type' => 'string',
 		 					'default' => 'Password'
@@ -240,10 +256,22 @@ if ( !class_exists('VMS') ) {
 		 				'type' => 'string',
 		 				'default' => 'Nazione'
 		 			),
-		  		'age_placeholder' => array(
+		  		'birthdate_placeholder' => array(
 		 				'type' => 'string',
-		 				'default' => 'Età'
+		 				'default' => 'Data di nascita'
 		 			),
+					'day_placeholder' => array(
+						'type' => 'string',
+						'default' => 'Giorno'
+					),
+					'month_placeholder' => array(
+						'type' => 'string',
+						'default' => 'Mese'
+					),
+					'year_placeholder' => array(
+						'type' => 'string',
+						'default' => 'Anno'
+					),
 		  		'submit_button_label' => array(
 		 				'type' => 'string',
 		 				'default' => 'Registrati'
@@ -272,6 +300,12 @@ if ( !class_exists('VMS') ) {
 						'source' => 'meta',
 						'meta' => 'email_invalid_error'
 		 			),
+					'email_match_error' => array(
+		 				'type' => 'string',
+						'source' => 'meta',
+						'meta' => 'email_match_error',
+						'default' => 'Le email inserite devono coincidere.'
+		 			),
 		 		 	'password_missing_error' => array(
 		 				'type' => 'string',
 						'source' => 'meta',
@@ -292,10 +326,15 @@ if ( !class_exists('VMS') ) {
 						'source' => 'meta',
 						'meta' => 'nation_missing_error'
 		 			),
-		 		 	'age_missing_error' => array(
+		 		 	'birthdate_missing_error' => array(
 		 				'type' => 'string',
 						'source' => 'meta',
-						'meta' => 'age_missing_error'
+						'meta' => 'birthdate_missing_error'
+		 			),
+					'invalid_date_error' => array(
+		 				'type' => 'string',
+						'source' => 'meta',
+						'meta' => 'invalid_date_error'
 		 			),
 					'privacy_error' => array(
 		 				'type' => 'string',
@@ -348,9 +387,9 @@ if ( !class_exists('VMS') ) {
 					 'type' => 'string',
 					 'default' => 'Nazione'
 				 ),
-				 'age_placeholder' => array(
+				 'birthdate_placeholder' => array(
 					 'type' => 'string',
-					 'default' => 'Età'
+					 'default' => 'Data di nascita'
 				 ),
 				 'password_change_button_label' => array(
 					 'type' => 'string',
@@ -371,6 +410,14 @@ if ( !class_exists('VMS') ) {
 				 'new_password2_placeholder' => array(
 					 'type' => 'string',
 					 'default' => 'Conferma la nuova password',
+				 ),
+				 "save_password_button_label" => array(
+					 'type' => 'string',
+					 'default' => 'Salva',
+				 ),
+				 "save_password_cancel_button_label" => array(
+					'type' => 'string',
+					'default' => 'Annulla',
 				 ),
 				 'first_name_missing_error' => array(
 					 'type' => 'string',
@@ -398,10 +445,15 @@ if ( !class_exists('VMS') ) {
 					 'source' => 'meta',
 					 'meta' => 'nation_missing_error'
 				 ),
-				 'age_missing_error' => array(
+				 'birthdate_missing_error' => array(
 					 'type' => 'string',
 					 'source' => 'meta',
 					 'meta' => 'age_missing_error'
+				 ),
+				 'invalid_date_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'invalid_date_error'
 				 )
 		 ),
 		 'editor_script' => 'vms_backend_script',
@@ -460,6 +512,7 @@ if ( !class_exists('VMS') ) {
 
 		 	$nonce = wp_create_nonce('vms-registration');
 
+			//Nations
 			$nations = $this->get_nations_list();
 
 			$nations_html = '<select name="nation" >
@@ -470,6 +523,36 @@ if ( !class_exists('VMS') ) {
 	    }
 	    $nations_html .= '</select>';
 
+			//Days
+			$days_html = '<select name="day">
+												<option disabled selected value>' . $attributes['day_placeholder'] . '</option>';
+
+			for ($i = 1; $i <= 31; $i++) {
+				$days_html .= '<option value="' . $i . '">' . sprintf("%02d", $i) . '</option>';
+			}
+			$days_html .= '</select>';
+
+			//Months
+
+			$months_html = '<select name="month" >
+												<option disabled selected value>' . $attributes['month_placeholder'] . '</option>';
+
+			for ($i = 1; $i <= 12; $i++) {
+				$months_html .= '<option value="' . $i . '">' . sprintf("%02d", $i) . '</option>';
+			}
+			$months_html .= '</select>';
+
+			//Years
+
+			$years_html = '<select name="year" >
+												<option disabled selected value>' . $attributes['year_placeholder'] . '</option>';
+
+			for ($i = 2019; $i >= 1920; $i--) {
+				$years_html .= '<option value="' . $i . '">' . $i . '</option>';
+			}
+			$years_html .= '</select>';
+
+
 		 	$html = '<form class="vms_form vms_registration_form" post_id=' . get_the_ID() .' autocomplete="off">
 									<div class="vms_modal">
 										<div class="vms_modal_content">
@@ -479,17 +562,22 @@ if ( !class_exists('VMS') ) {
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['firstname_placeholder'] .
-										'<input type="text" name="firstname" autocomplete="off" />
+										'<input type="text" name="firstname" autocomplete="new-password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['lastname_placeholder'] .
-										'<input type="text" name="lastname" autocomplete="off" />
+										'<input type="text" name="lastname" autocomplete="new-password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['email_placeholder'] .
-										'<input type="email" name="email" autocomplete="off" />
+										'<input type="email" name="email" autocomplete="new-password" />
+										<span class="vms_form_error"></span>
+									</div>
+									<div class="vms_form_field">'
+										. $attributes['email2_placeholder'] .
+										'<input type="email" name="email2" autocomplete="new-password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
@@ -499,7 +587,7 @@ if ( !class_exists('VMS') ) {
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['password2_placeholder'] .
-										'<input type="password" name="password2" autocomplete="off" />
+										'<input type="password" name="password2" autocomplete="new-password" />
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
@@ -507,11 +595,20 @@ if ( !class_exists('VMS') ) {
 										'<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field">'
-										. $attributes['age_placeholder'] .
-										'<input type="number" name="age" autocomplete="off"/>
+										. $attributes['birthdate_placeholder'] .
+										'<div class="vms_date">' .
+										'<span>'
+											. $days_html .
+										'</span>
+										<span>'
+											. $months_html .
+										'</span>
+										<span>'
+										 	.	$years_html .
+										'</div>
 										<span class="vms_form_error"></span>
 									</div>
-									<div class="vms_form_field textual">
+									<div class="vms_form_field textual fullwidth">
 										<input type="checkbox" name="privacy_1"/>
 										<span>'
 										. $attributes['privacy_text'].
@@ -534,6 +631,20 @@ if ( !class_exists('VMS') ) {
 
 			$nation_name = $this->get_nation_with_id(get_user_meta(  $user_data->ID, 'nation', true ));
 
+			if(get_locale() == "it_IT") {
+				$birthdate = get_user_meta(  $user_data->ID, 'day', true )
+										. "/" .
+										get_user_meta(  $user_data->ID, 'month', true )
+										. "/" .
+										get_user_meta(  $user_data->ID, 'year', true );
+			}else {
+				$birthdate = get_user_meta(  $user_data->ID, 'month', true )
+										. "/" .
+										get_user_meta(  $user_data->ID, 'day', true )
+										. "/" .
+										get_user_meta(  $user_data->ID, 'year', true );
+			}
+
 			$html = '<div class="vms_user_dashboard">
 								<div class="vms_modal">
 									<div class="vms_modal_content">
@@ -553,7 +664,12 @@ if ( !class_exists('VMS') ) {
 												'<input type="password" name="new_password2" autocomplete="new-password" />
 												<span class="vms_form_error"></span>
 											</div>
-											<button type="button" class="vms_modal_button">OK</button>
+											<button type="button" class="vms_modal_button">'
+											 . $attributes['save_password_button_label'] . 
+											'</button>
+											<button type="button" class="vms_modal_button">'
+											 . $attributes['save_password_cancel_button_label'] .
+											'</button>
 										</form>
 									</div>
 								</div>
@@ -595,10 +711,10 @@ if ( !class_exists('VMS') ) {
 									</tr>
 									<tr>
 										<td>'
-										.	$attributes['age_placeholder'] .
+										.	$attributes['birthdate_placeholder'] .
 										':</td>
 										<td>'
-										. get_user_meta(  $user_data->ID, 'age', true ) .
+										. $birthdate .
 										'</td>
 									</tr>
 								</table>
@@ -736,6 +852,15 @@ if ( !class_exists('VMS') ) {
 				      $email = trim($_POST['email']);
 				    }
 
+						//Repeat email
+
+						if( $email ) {
+						 if( ( trim($_POST['email2']) === '' ) || ( $_POST['email2'] !== $email ) )  {
+							 $errors['email_match_error'] = $meta['email_match_error'];
+							 $hasError = true;
+						 }
+					 }
+
 				    //Password
 				    if( trim($_POST['password']) === '' )  {
 				      $errors['password_missing_error'] =  $meta['password_missing_error'];
@@ -749,7 +874,7 @@ if ( !class_exists('VMS') ) {
 				    }
 
 				    //Repeat password
-				    if( !$passwordError && $password ) {
+				    if( $password ) {
 				      if( ( trim($_POST['password2']) === '' ) || ( $_POST['password2'] !== $password ) )  {
 				        $errors['password_match_error'] = $meta['password_match_error'];
 				        $hasError = true;
@@ -764,13 +889,20 @@ if ( !class_exists('VMS') ) {
 				      $nation = trim($_POST['nation']);
 				    }
 
-				    //Age
-				    if( trim($_POST['age']) === '' ) {
-				      $errors['age_missing_error'] =  $meta['age_missing_error'];
+				    //Birthdate
+				    if( trim($_POST['day']) === '' ||  trim($_POST['month']) === '' || trim($_POST['year']) === '' ) {
+				      $errors['birthdate_missing_error'] =  $meta['birthdate_missing_error'];
 				      $hasError = true;
 				    } else {
-				      $age = trim($_POST['age']);
-				    }
+				      $day = trim($_POST['day']);
+							$month = trim($_POST['month']);
+							$year = trim($_POST['year']);
+
+							if(!checkdate($month, $day, $year)){
+								$errors['invalid_date_error'] =  $meta['invalid_date_error'];
+							 	$hasError = true;
+							}
+						}
 
 						//Privacy
 						if( trim($_POST['privacy']) == 'false' ) {
@@ -794,7 +926,9 @@ if ( !class_exists('VMS') ) {
 
 							if ( ! is_wp_error( $user_id ) ) {
 								update_user_meta( $user_id, 'nation', $nation );
-								update_user_meta( $user_id, 'age', $age );
+								update_user_meta( $user_id, 'day', $day );
+								update_user_meta( $user_id, 'month', $month );
+								update_user_meta( $user_id, 'year', $year );
 
 								$res = array(
 									'success' => true,
@@ -873,11 +1007,9 @@ if ( !class_exists('VMS') ) {
 
 			$nations = $this->get_nations_list();
 			$user_nation_id = trim( get_user_meta( $user->ID, 'nation', true ));
-
-			//$nation_locale_id = (get_locale() == "it_IT")? "it" : "en";
-			var_dump($nations);
-			var_dump($user_nation_id);
-
+			$user_day = trim( get_user_meta( $user->ID, 'day', true ));
+			$user_month = trim( get_user_meta( $user->ID, 'month', true ));
+			$user_year = trim( get_user_meta( $user->ID, 'year', true ));
 			?>
 			<h3><?php _e("Extra profile information", "blank"); ?></h3>
 
@@ -886,6 +1018,7 @@ if ( !class_exists('VMS') ) {
 					<th><label for="nation"><?php _e("Nazione"); ?></label></th>
 					<td>
 						<select name="nation" type=nation id=nation>
+							<option disabled selected value></option>';
 							<?php
 
 								foreach ($nations as $nation) {
@@ -904,9 +1037,56 @@ if ( !class_exists('VMS') ) {
 					</td>
 			</tr>
 			<tr>
-					<th><label for="age"><?php _e("Età"); ?></label></th>
+					<th><label><?php _e("Data di nascita"); ?></label></th>
 					<td>
-							<input type="number" name="age" id="age" value="<?php echo esc_attr( get_user_meta( $user->ID, 'age', true ) ); ?>" class="regular-text" /><br />
+						<select name="day" type=day id=day style="width:100px">
+							<option disabled selected value></option>';
+							<?php
+								for ($i=1; $i <= 31 ; $i++) {
+									?>
+									<option value=" <?php echo $i ?> " <?php
+										if( $i == $user_day ){
+											?>
+											selected
+											<?php
+										}
+									?>><?php echo sprintf("%02d", $i)  ?></option>
+									<?php
+								}
+							?>
+							</select>
+							<select name="month" type=month id=month style="width:100px">
+								<option disabled selected value></option>';
+								<?php
+									for ($i=1; $i <= 12 ; $i++) {
+										?>
+										<option value=" <?php echo $i ?> " <?php
+											if( $i == $user_month ){
+												?>
+												selected
+												<?php
+											}
+										?>><?php echo sprintf("%02d", $i)  ?></option>
+										<?php
+									}
+								?>
+								</select>
+								<select name="year" type=year id=year style="width:100px">
+									<option disabled selected value></option>';
+									<?php
+										for ($i=2019; $i > 1920 ; $i--) {
+											?>
+											<option value=" <?php echo $i ?> " <?php
+												if( $i == $user_year ){
+													?>
+													selected
+													<?php
+												}
+											?>><?php echo $i  ?></option>
+											<?php
+										}
+									?>
+									</select>
 					</td>
 			</tr>
 			</table>
@@ -922,11 +1102,17 @@ if ( !class_exists('VMS') ) {
 
 			$user = get_userdata( $user_id );
 			if (!in_array( 'iscritto', $user->roles, true ) ) {
-				return;
+				return false;
 			};
 
-			update_user_meta( $user_id, 'age', $_POST['age'] );
-			update_user_meta( $user_id, 'nation', $_POST['nation'] );
+			if(!checkdate($_POST['month'], $_POST['day'], $_POST['year'])){
+				return false;
+			}
+
+			update_user_meta( $user_id, 'day', trim($_POST['day']) );
+			update_user_meta( $user_id, 'month', trim($_POST['month']) );
+			update_user_meta( $user_id, 'year', trim($_POST['year']) );
+			update_user_meta( $user_id, 'nation', trim($_POST['nation']) );
 
 			return true;
 		}
@@ -939,7 +1125,7 @@ if ( !class_exists('VMS') ) {
 
 			register_activation_hook( __FILE__, array( $this, 'generateDB' ) );
 			register_activation_hook( __FILE__, array( $this, 'generateDataset' ) );
-			register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
+			//register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
 			//register_uninstall_hook(__FILE__, array( $this, 'dropDB' ));
 		}
 

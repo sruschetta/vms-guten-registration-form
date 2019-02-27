@@ -5,7 +5,8 @@
     //Forms
 
     $('.vms_form').find('input, select').focus(function(){
-      $(this).siblings('span').removeClass('visible');
+      $(this).siblings('.vms_form_error').removeClass('visible');
+      $(this).parent().parent().siblings('.vms_form_error').removeClass('visible');
     });
 
     $('.vms_modal_button').click(function(){
@@ -15,7 +16,7 @@
         window.open( target, '_self');
       }
       else {
-        $(this).parent().parent().removeClass('visible');
+        $(".vms_modal").removeClass('visible');
         $('html').removeClass('vms_lock');
       }
     });
@@ -92,10 +93,13 @@
           'firstname': form.find('input[name="firstname"]').val(),
           'lastname': form.find('input[name="lastname"]').val(),
           'email': form.find('input[name="email"]').val(),
+          'email2': form.find('input[name="email2"]').val(),
           'password': form.find('input[name="password"]').val(),
           'password2': form.find('input[name="password2"]').val(),
           'nation': form.find('select[name="nation"]').val(),
-          'age': form.find('input[name="age"]').val(),
+          'day': form.find('select[name="day"]').val(),
+          'month': form.find('select[name="month"]').val(),
+          'year': form.find('select[name="year"]').val(),
           'privacy': form.find('input[name="privacy_1"]').is(':checked'),
           'security': form.find('input[name="vms-registration-sec"]').val(),
           'post_id': form.attr('post_id'),
@@ -126,6 +130,11 @@
               err.text(errors.email_invalid_error);
               err.addClass('visible');
             }
+            if(errors.email_match_error){
+              var err = form.find('input[name="email2"]').siblings('.vms_form_error');
+              err.text(errors.email_match_error);
+              err.addClass('visible');
+            }
             if(errors.password_missing_error){
               var err = form.find('input[name="password"]').siblings('.vms_form_error');
               err.text(errors.password_missing_error);
@@ -146,9 +155,14 @@
               err.text(errors.nation_missing_error);
               err.addClass('visible');
             }
-            if(errors.age_missing_error){
-              var err = form.find('input[name="age"]').siblings('.vms_form_error');
-              err.text(errors.age_missing_error);
+            if(errors.birthdate_missing_error){
+              var err = form.find('select[name="year"]').parent().parent().siblings('.vms_form_error');
+              err.text(errors.birthdate_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.invalid_date_error){
+              var err = form.find('select[name="year"]').parent().parent().siblings('.vms_form_error');
+              err.text(errors.invalid_date_error);
               err.addClass('visible');
             }
             if(errors.privacy_error){
@@ -177,7 +191,7 @@
 
     //User dashboard
 
-    $('.vms_open_user_update').click(function(){
+    $('.vms_user_dashboard .vms_open_user_update').click(function(){
       $(this).parent().parent().find(".vms_modal").addClass("visible");
       $('html').addClass('vms_lock');
     });

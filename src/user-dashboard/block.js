@@ -46,13 +46,15 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 				 { placeholder: "Last name placeholder", attr: "lastname_placeholder" },
 				 { placeholder: "Email placeholder", attr: "email_placeholder" },
 				 { placeholder: "Nation placeholder", attr: "nation_placeholder" },
-				 { placeholder: "Age placeholder", attr: "age_placeholder" },
+				 { placeholder: "Birthdate placeholder", attr: "birthdate_placeholder" },
 				];
 
 				var passwordAttr = [
 					{ placeholder: "Old password placeholder", attr: "old_password_placeholder" },
 					{ placeholder: "New password placeholder", attr: "new_password_placeholder" },
 					{ placeholder: "Confirm password placeholder", attr: "new_password2_placeholder" },
+					{ placeholder: "Save password button label", attr: "save_password_button_label" },
+					{ placeholder: "Save password cancel button label", attr: "save_password_cancel_button_label" },
 				];
 
 				return (
