@@ -9,19 +9,6 @@
       $(this).parent().parent().siblings('.vms_form_error').removeClass('visible');
     });
 
-    $('.vms_modal_button').click(function(){
-
-      var target = $(this).parent().parent().attr('vms_target_page');
-      if( target ) {
-        window.open( target, '_self');
-      }
-      else {
-        $(".vms_modal").removeClass('visible');
-        $('html').removeClass('vms_lock');
-      }
-    });
-
-
     $('.vms_login_form').submit(function(event){
       event.preventDefault();
 
@@ -65,11 +52,19 @@
               window.open( data.target_page, '_self');
             }
             else {
+
               var modal = form.find('.vms_modal');
+              modal.find('.vms_modal_content p').html(data.message);
+
+              $('html').addClass('vms_lock');
               modal.addClass('visible');
 
-              modal.find('.vms_modal_content p').html(data.message);
-              $('html').addClass('vms_lock');
+              var button = modal.find('.vms_modal_button');
+
+              button.click( function(){
+                  modal.removeClass('visible');
+                  $('html').removeClass('vms_lock');
+              });
             }
           }
         },
@@ -173,14 +168,29 @@
           }
           else {
             var modal = form.find('.vms_modal');
-            modal.addClass('visible');
-            if(data.target_page) {
-              modal.attr('vms_target_page', data.target_page);
-            }else {
-              modal.removeAttr('vms_target_page');
-            }
             modal.find('.vms_modal_content p').html(data.message);
+
             $('html').addClass('vms_lock');
+            modal.addClass('visible');
+
+            var button = modal.find('.vms_modal_button');
+
+            if(data.target_page) {
+              button.attr('vms_target_page', data.target_page);
+            } else {
+              button.removeAttr('vms_target_page');
+            }
+
+            button.click(function(){
+              var target = $(this).attr('vms_target_page');
+              if( target ) {
+                window.open( target, '_self');
+              }
+              else {
+                modal.removeClass('visible');
+                $('html').removeClass('vms_lock');
+              }
+            });
           }
         },
         error: function(error){
@@ -189,17 +199,113 @@
       });
     });
 
+    $('.vms_update_user_form').submit(function(event){
+      event.preventDefault();
+
+      var form = $(this);
+
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: ajax_login_object.ajaxurl,
+        data: {
+          'action': 'vms_update_user_action',
+          'firstname': form.find('input[name="firstname"]').val(),
+          'lastname': form.find('input[name="lastname"]').val(),
+          'nation': form.find('select[name="nation"]').val(),
+          'day': form.find('select[name="day"]').val(),
+          'month': form.find('select[name="month"]').val(),
+          'year': form.find('select[name="year"]').val(),
+          'security': form.find('input[name="vms-update-user-sec"]').val(),
+          'post_id': form.attr('post_id')
+        },
+        success: function(data){
+
+          if(data.errors) {
+
+            var errors = data.errors;
+
+            if(errors.first_name_missing_error){
+              var err = form.find('input[name="firstname"]').siblings('.vms_form_error');
+              err.text(errors.first_name_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.last_name_missing_error){
+              var err = form.find('input[name="lastname"]').siblings('.vms_form_error');
+              err.text(errors.last_name_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.nation_missing_error){
+              var err = form.find('select[name="nation"]').siblings('.vms_form_error');
+              err.text(errors.nation_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.birthdate_missing_error){
+              var err = form.find('select[name="year"]').parent().parent().siblings('.vms_form_error');
+              err.text(errors.birthdate_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.invalid_date_error){
+              var err = form.find('select[name="year"]').parent().parent().siblings('.vms_form_error');
+              err.text(errors.invalid_date_error);
+              err.addClass('visible');
+            }
+          }
+          else {
+            location.reload(true);
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+
+
+
+
+
+
+
+
+
     //User dashboard
 
     $('.vms_user_dashboard .vms_open_user_update').click(function(){
-      $(this).parent().parent().find(".vms_modal").addClass("visible");
+
       $('html').addClass('vms_lock');
+      var modal = $(this).parent().parent().find(".vms_modal");
+      modal.find(".vms_form").css("display", "none");
+      modal.find(".vms_update_user_form").css("display", "block");
+
+      modal.addClass("visible");
+
+      var button = modal.find('.vms_modal_button');
+      button.click(function(){
+        modal.removeClass('visible');
+        $('html').removeClass('vms_lock');
+      });
+
     });
 
     $('.vms_user_dashboard .vms_open_change_password').click(function(){
-      $(this).parent().parent().find(".vms_modal").addClass("visible");
+
       $('html').addClass('vms_lock');
+      var modal = $(this).parent().parent().find(".vms_modal");
+      modal.find(".vms_form").css("display", "none");
+      modal.find(".vms_update_password_form").css("display", "block");
+
+      modal.addClass("visible");
+
+      var button = modal.find('.vms_modal_button');
+      button.click(function(){
+        modal.removeClass('visible');
+        $('html').removeClass('vms_lock');
+      });
     });
+
+
+
 
   });
 

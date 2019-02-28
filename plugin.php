@@ -471,6 +471,10 @@ if ( !class_exists('VMS') ) {
 
 			add_action( 'wp_ajax_vms_registration_action', array( $this, 'vms_registration_action' ) );
 			add_action( 'wp_ajax_nopriv_vms_registration_action', array( $this, 'vms_registration_action' ) );
+
+			add_action( 'wp_ajax_vms_update_user_action', array( $this, 'vms_update_user_action' ) );
+			add_action( 'wp_ajax_vms_update_password_action', array( $this, 'vms_update_password_action' ) );
+
 		}
 
 		/**
@@ -605,7 +609,7 @@ if ( !class_exists('VMS') ) {
 										'</span>
 										<span>'
 										 	.	$years_html .
-										'</div>
+										'</span>
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field textual fullwidth">
@@ -629,26 +633,135 @@ if ( !class_exists('VMS') ) {
 
 			$user_data = wp_get_current_user();
 
-			$nation_name = $this->get_nation_with_id(get_user_meta(  $user_data->ID, 'nation', true ));
+			$user_day = get_user_meta(  $user_data->ID, 'day', true );
+			$user_month = get_user_meta(  $user_data->ID, 'month', true );
+			$user_year = get_user_meta(  $user_data->ID, 'year', true );
+			$user_nation = get_user_meta(  $user_data->ID, 'nation', true );
+
+			$nonce = wp_create_nonce('vms-update-user');
+
+			//Nations
+			$nations = $this->get_nations_list();
+
+			$nations_html = '<select name="nation">';
+
+			foreach ($nations as $nation) {
+				if($nation->id == $user_nation) {
+					$nations_html .= '<option value="' . $nation->id . '" selected>' . $nation->name . '</option>';
+				} else {
+					$nations_html .= '<option value="' . $nation->id . '">' . $nation->name . '</option>';
+				}
+			}
+			$nations_html .= '</select>';
+
+			//Days
+			$days_html = '<select name="day">';
+
+			for ($i = 1; $i <= 31; $i++) {
+				if($i == $user_day) {
+					$days_html .= '<option value="' . $i . '" selected>' . sprintf("%02d", $i) . '</option>';
+				}
+				else {
+					$days_html .= '<option value="' . $i . '">' . sprintf("%02d", $i) . '</option>';
+				}
+			}
+			$days_html .= '</select>';
+
+			//Months
+
+			$months_html = '<select name="month" >';
+
+			for ($i = 1; $i <= 12; $i++) {
+				if($i == $user_month) {
+					$months_html .= '<option value="' . $i . '" selected>' . sprintf("%02d", $i) . '</option>';
+				}
+				else {
+					$months_html .= '<option value="' . $i . '">' . sprintf("%02d", $i) . '</option>';
+				}
+			}
+			$months_html .= '</select>';
+
+			//Years
+
+			$years_html = '<select name="year" >';
+
+			for ($i = 2019; $i >= 1920; $i--) {
+				if($i == $user_year) {
+					$years_html .= '<option value="' . $i . '" selected>' . sprintf("%02d", $i) . '</option>';
+				}
+				else {
+					$years_html .= '<option value="' . $i . '">' . sprintf("%02d", $i) . '</option>';
+				}
+			}
+			$years_html .= '</select>';
+
+
+			$nation_name = $this->get_nation_with_id($user_nation);
 
 			if(get_locale() == "it_IT") {
-				$birthdate = get_user_meta(  $user_data->ID, 'day', true )
+				$birthdate = $user_day
 										. "/" .
-										get_user_meta(  $user_data->ID, 'month', true )
+										$user_month
 										. "/" .
-										get_user_meta(  $user_data->ID, 'year', true );
+										$user_year;
+				$date_block = '<span>'
+												. $days_html .
+											'</span>
+											<span>'
+												. $months_html .
+											'</span>
+											<span>'
+												.	$years_html .
+											'</span>';
 			}else {
-				$birthdate = get_user_meta(  $user_data->ID, 'month', true )
+				$birthdate = $user_month
 										. "/" .
-										get_user_meta(  $user_data->ID, 'day', true )
+										$user_day
 										. "/" .
-										get_user_meta(  $user_data->ID, 'year', true );
+										$user_year;
+				$date_block = '<span>'
+												. $months_html .
+											'</span>
+											<span>'
+												. $day_html .
+											'</span>
+											<span>'
+												.	$years_html .
+											'</span>';
 			}
 
 			$html = '<div class="vms_user_dashboard">
 								<div class="vms_modal">
 									<div class="vms_modal_content">
-										<form class="vms_form vms_update_user_form">
+										<form class="vms_form vms_update_user_form" post_id=' . get_the_ID() .' autocomplete="off">
+											<div class="vms_form_field">'
+												. $attributes['firstname_placeholder'] .
+												'<input type="text" name="firstname" autocomplete="new-password" value="' . $user_data->first_name .'" />
+												<span class="vms_form_error"></span>
+											</div>
+											<div class="vms_form_field">'
+												. $attributes['lastname_placeholder'] .
+												'<input type="text" name="lastname" autocomplete="new-password" value="' . $user_data->last_name .'" />
+												<span class="vms_form_error"></span>
+											</div>
+											<div class="vms_form_field">'
+												. $attributes['nation_placeholder'] .$nations_html.
+												'<span class="vms_form_error"></span>
+											</div>
+											<div class="vms_form_field">'
+												. $attributes['birthdate_placeholder'] .
+												'<div class="vms_date">'
+												. $date_block .
+												'</div>
+												<span class="vms_form_error"></span>
+											</div>
+											<input type="hidden" name="vms-update-user-sec" value="' . $nonce . '">
+											<input type="submit" value="' . $attributes['save_password_button_label'] . '"/>
+											<button type="button" class="vms_modal_button">'
+											 . $attributes['save_password_cancel_button_label'] .
+											'</button>
+										</form>
+										<form class="vms_form vms_update_password_form" post_id=' . get_the_ID() .' autocomplete="off">
 											<div class="vms_form_field">'
 												. $attributes['old_password_placeholder'] .
 												'<input type="password" name="old_password" autocomplete="new-password" />
@@ -665,7 +778,7 @@ if ( !class_exists('VMS') ) {
 												<span class="vms_form_error"></span>
 											</div>
 											<button type="button" class="vms_modal_button">'
-											 . $attributes['save_password_button_label'] . 
+											 . $attributes['save_password_button_label'] .
 											'</button>
 											<button type="button" class="vms_modal_button">'
 											 . $attributes['save_password_cancel_button_label'] .
@@ -960,6 +1073,115 @@ if ( !class_exists('VMS') ) {
 		}
 
 
+		//User Update Action
+
+		function vms_update_user_action() {
+
+			check_ajax_referer( 'vms-update-user', 'security' );
+
+			$post_id = $_POST['post_id'];
+
+			if(isset($post_id)){
+
+				$meta = get_post_meta($post_id);
+
+				if(isset($_POST["security"])) {
+
+					//First Name
+					if( trim($_POST['firstname']) === '' ) {
+						$errors['first_name_missing_error'] = $meta['first_name_missing_error'];
+						$hasError = true;
+					} else {
+						$firstname = trim($_POST['firstname']);
+					}
+
+					//Last Name
+					if( trim($_POST['lastname']) === '' ) {
+						$errors['last_name_missing_error'] =  $meta['last_name_missing_error'];
+						$hasError = true;
+					} else {
+						$lastname = trim($_POST['lastname']);
+					}
+
+					//Nation
+					if( trim($_POST['nation']) === '' ) {
+						$errors['nation_missing_error'] =  $meta['nation_missing_error'];
+						$hasError = true;
+					} else {
+						$nation = trim($_POST['nation']);
+					}
+
+					//Birthdate
+					if( trim($_POST['day']) === '' ||  trim($_POST['month']) === '' || trim($_POST['year']) === '' ) {
+						$errors['birthdate_missing_error'] =  $meta['birthdate_missing_error'];
+						$hasError = true;
+					} else {
+						$day = trim($_POST['day']);
+						$month = trim($_POST['month']);
+						$year = trim($_POST['year']);
+
+						if(!checkdate($month, $day, $year)){
+							$errors['invalid_date_error'] =  $meta['invalid_date_error'];
+							$hasError = true;
+						}
+					}
+
+					if( !$hasError ) {
+
+						$user_data = wp_get_current_user();
+						$user_id = $user_data->ID;
+
+						$user_new_data = array(
+							'ID' => $user_id,
+							'first_name' => $firstname,
+							'last_name' => $lastname
+						);
+
+						$user_id = wp_update_user( $user_new_data );
+
+						if($user_id) {
+							update_user_meta( $user_id, 'nation', $nation );
+							update_user_meta( $user_id, 'day', $day );
+							update_user_meta( $user_id, 'month', $month );
+							update_user_meta( $user_id, 'year', $year );
+							$res = array(
+								'success' => true,
+							);
+						}
+						else {
+							$res = array(
+								'success' => false,
+							);
+						}
+						echo json_encode($res);
+					}
+					else {
+
+						$res = array(
+							'success' => false,
+							'errors' => $errors
+						);
+
+						echo json_encode($res);
+					}
+				}
+			}
+			
+			die();
+		}
+
+
+		//Password Update Action
+
+		function vms_update_password_action() {
+
+			check_ajax_referer( 'vms-update-password', 'security' );
+			echo json_encode("password update");
+
+			die();
+		}
+
+
 
 		/**
 		* Custon Role - Partecipant
@@ -1192,8 +1414,6 @@ if ( !class_exists('VMS') ) {
 		}
 
 		function clearDB() {
-
-			die("asdasdasd");
 
 			global $wpdb;
 

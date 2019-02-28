@@ -74,7 +74,7 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 	        <div class="vms-form">
 
 	          <h3><b>VMS- Registration form</b></h3>
-	          <div>Placeholders sdfsd fsd f</div>
+	          <div>Placeholders</div>
 	          {
 	            fieldsAttr.map( (item, index) => {
 	              return (
