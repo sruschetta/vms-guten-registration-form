@@ -478,6 +478,24 @@ if ( !class_exists('VMS') ) {
 		 'script' => 'vms_frontend_script',
 		 'render_callback' => array( $this, 'renderUserDashboardBlock' ),
 		));
+
+
+		//Models dashboard
+		register_block_type( 'vms/vms-plugin-models-dashboard', array(
+			'attributes' => array(
+				'dashboard_title' => array(
+					'type' => 'string',
+					'default' => 'I tuoi modelli'
+				)
+		),
+		'editor_script' => 'vms_backend_script',
+		'editor_style' => 'vms_backend_style',
+		'style' => 'vms_frontend_style',
+		'script' => 'vms_frontend_script',
+		'render_callback' => array( $this, 'renderModelsDashboardBlock' ),
+	 ));
+
+
 		}
 
 
@@ -858,6 +876,24 @@ if ( !class_exists('VMS') ) {
 
 			return $html;
 		}
+
+
+		function renderModelsDashboardBlock( $attributes, $content ) {
+
+			if ( !is_user_logged_in() ) {
+				return ;
+			}
+
+			$html = '<div class="vms_models_dashboard">
+							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
+							 </div>';
+
+			return $html;
+		}
+
+
+
+
 
 		/**
 		 *	Ajax actions response
