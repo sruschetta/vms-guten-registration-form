@@ -53,8 +53,23 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 					{ placeholder: "Old password placeholder", attr: "old_password_placeholder" },
 					{ placeholder: "New password placeholder", attr: "new_password_placeholder" },
 					{ placeholder: "Confirm password placeholder", attr: "new_password2_placeholder" },
-					{ placeholder: "Save password button label", attr: "save_password_button_label" },
-					{ placeholder: "Save password cancel button label", attr: "save_password_cancel_button_label" },
+				];
+
+				var buttonAttr = [
+					{ placeholder: "Save button label", attr: "save_button_label" },
+					{ placeholder: "Cancel button label", attr: "cancel_button_label" },
+				];
+
+				var errorAttr = [
+					{ placeholder: "First name missing error", attr: "first_name_missing_error" },
+					{ placeholder: "Last name missing error", attr: "last_name_missing_error" },
+					{ placeholder: "Birthdate missing error", attr: "birthdate_missing_error" },
+					{ placeholder: "Invalid date error", attr: "invalid_date_error" },
+					{ placeholder: "Nation missing error", attr: "nation_missing_error" },
+					{ placeholder: "Password missing error", attr: "password_missing_error" },
+					{ placeholder: "Old password invalid error", attr: "password_invalid_error" },
+					{ placeholder: "New password format error", attr: "password_format_error" },
+					{ placeholder: "New passwords match error", attr: "password_match_error" }
 				];
 
 				return (
@@ -77,16 +92,6 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 							})
 						}
 						<hr/>
-						<div>Button labels</div>
-						<TextControl type="text"
-												 placeholder={ 'Update button label' }
-												 onChange={ this.handleChange('update_button_label') }
-												 value={ this.props.attributes['update_button_label'] } />
-						<TextControl type="text"
- 												 placeholder={ 'Password change button label' }
- 												 onChange={ this.handleChange('password_change_button_label') }
- 												 value={ this.props.attributes['password_change_button_label'] } />
-						<hr/>
 						<div>Change Password Placeholders</div>
 						{
 							passwordAttr.map( (item, index) => {
@@ -98,8 +103,32 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 								)
 							})
 						}
-					</div>
-			);
+						<hr/>
+						<div>Button labels</div>
+						{
+							buttonAttr.map( (item, index) => {
+								return (
+									<TextControl type="text"
+												 placeholder={ item.placeholder }
+												 onChange={ this.handleChange(item.attr) }
+												 value={ this.props.attributes[item.attr] } />
+								)
+							})
+						}
+						<hr/>
+						<div>Errors</div>
+						{
+							errorAttr.map( (item, index) => {
+								return (
+									<TextControl type="text"
+												 placeholder={ item.placeholder }
+												 onChange={ this.handleChange(item.attr) }
+												 value={ this.props.attributes[item.attr] } />
+								)
+							})
+						}
+				</div>
+			)
 		}
 	},
 	save: function(){

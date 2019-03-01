@@ -90,7 +90,8 @@
             animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
             animation-duration: 0.4s;
-    text-align: center; }
+    text-align: center;
+    margin-bottom: 100px; }
     .vms_modal .vms_modal_content a {
       color: black;
       text-decoration: underline; }
@@ -101,7 +102,7 @@
       border: 1px solid #bbb;
       font-size: 0.875rem;
       margin: 0 5px;
-      padding: 0.75em 2em; }
+      pa: 0.75em 2em; }
       .vms_modal .vms_modal_content .vms_modal_button:hover, .vms_modal .vms_modal_content .vms_modal_button:focus {
         color: #000;
         text-decoration: none;

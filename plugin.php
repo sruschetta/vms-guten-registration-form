@@ -1,7 +1,13 @@
 <?php
 /**
- * Plugin Name: vms-gluten-registration-form
- **/
+ * @wordpress-plugin
+ * Plugin Name: 			VMS Contest Manager
+ * Description:       This is the Verbania Model Show Contest Manager official plugin.
+ * Version:           1.0.0
+ * Author:            Stefano Ruschetta
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+**/
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -411,11 +417,11 @@ if ( !class_exists('VMS') ) {
 					 'type' => 'string',
 					 'default' => 'Conferma la nuova password',
 				 ),
-				 "save_password_button_label" => array(
+				 "save_button_label" => array(
 					 'type' => 'string',
 					 'default' => 'Salva',
 				 ),
-				 "save_password_cancel_button_label" => array(
+				 "cancel_button_label" => array(
 					'type' => 'string',
 					'default' => 'Annulla',
 				 ),
@@ -430,16 +436,6 @@ if ( !class_exists('VMS') ) {
 					 'source' => 'meta',
 					 'meta' => 'last_name_missing_error'
 				 ),
-				 'email_missing_error' => array(
-					 'type' => 'string',
-					 'source' => 'meta',
-					 'meta' => 'email_missing_error'
-				 ),
-				 'email_invalid_error' => array(
-					 'type' => 'string',
-					 'source' => 'meta',
-					 'meta' => 'email_invalid_error'
-				 ),
 				 'nation_missing_error' => array(
 					 'type' => 'string',
 					 'source' => 'meta',
@@ -448,12 +444,32 @@ if ( !class_exists('VMS') ) {
 				 'birthdate_missing_error' => array(
 					 'type' => 'string',
 					 'source' => 'meta',
-					 'meta' => 'age_missing_error'
+					 'meta' => 'birthdate_missing_error'
 				 ),
 				 'invalid_date_error' => array(
 					 'type' => 'string',
 					 'source' => 'meta',
 					 'meta' => 'invalid_date_error'
+				 ),
+				 'password_missing_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'password_missing_error'
+				 ),
+				 'password_invalid_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'password_invalid_error'
+				 ),
+				 'password_format_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'password_format_error'
+				 ),
+				 'password_match_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'password_match_error'
 				 )
 		 ),
 		 'editor_script' => 'vms_backend_script',
@@ -638,12 +654,13 @@ if ( !class_exists('VMS') ) {
 			$user_year = get_user_meta(  $user_data->ID, 'year', true );
 			$user_nation = get_user_meta(  $user_data->ID, 'nation', true );
 
-			$nonce = wp_create_nonce('vms-update-user');
+			$update_user_nonce = wp_create_nonce('vms-update-user');
+			$update_password_nonce = wp_create_nonce('vms-update-password');
 
 			//Nations
 			$nations = $this->get_nations_list();
 
-			$nations_html = '<select name="nation">';
+			$nations_html = '<select name="nation" data-value="'. $user_nation .'">';
 
 			foreach ($nations as $nation) {
 				if($nation->id == $user_nation) {
@@ -655,7 +672,7 @@ if ( !class_exists('VMS') ) {
 			$nations_html .= '</select>';
 
 			//Days
-			$days_html = '<select name="day">';
+			$days_html = '<select name="day" data-value="'. $user_day .'">';
 
 			for ($i = 1; $i <= 31; $i++) {
 				if($i == $user_day) {
@@ -669,7 +686,7 @@ if ( !class_exists('VMS') ) {
 
 			//Months
 
-			$months_html = '<select name="month" >';
+			$months_html = '<select name="month" data-value="'. $user_month .'">';
 
 			for ($i = 1; $i <= 12; $i++) {
 				if($i == $user_month) {
@@ -683,7 +700,7 @@ if ( !class_exists('VMS') ) {
 
 			//Years
 
-			$years_html = '<select name="year" >';
+			$years_html = '<select name="year" data-value="'. $user_year .'">';
 
 			for ($i = 2019; $i >= 1920; $i--) {
 				if($i == $user_year) {
@@ -736,12 +753,14 @@ if ( !class_exists('VMS') ) {
 										<form class="vms_form vms_update_user_form" post_id=' . get_the_ID() .' autocomplete="off">
 											<div class="vms_form_field">'
 												. $attributes['firstname_placeholder'] .
-												'<input type="text" name="firstname" autocomplete="new-password" value="' . $user_data->first_name .'" />
+												'<input type="text" name="firstname" autocomplete="new-password"
+													data-value="' . $user_data->first_name .'" value="' . $user_data->first_name .'"/>
 												<span class="vms_form_error"></span>
 											</div>
 											<div class="vms_form_field">'
 												. $attributes['lastname_placeholder'] .
-												'<input type="text" name="lastname" autocomplete="new-password" value="' . $user_data->last_name .'" />
+												'<input type="text" name="lastname" autocomplete="new-password"
+												data-value="' . $user_data->last_name .'" value="' . $user_data->last_name .'" />
 												<span class="vms_form_error"></span>
 											</div>
 											<div class="vms_form_field">'
@@ -755,10 +774,10 @@ if ( !class_exists('VMS') ) {
 												'</div>
 												<span class="vms_form_error"></span>
 											</div>
-											<input type="hidden" name="vms-update-user-sec" value="' . $nonce . '">
-											<input type="submit" value="' . $attributes['save_password_button_label'] . '"/>
+											<input type="hidden" name="vms-update-user-sec" value="' . $update_user_nonce . '">
+											<input type="submit" value="' . $attributes['save_button_label'] . '"/>
 											<button type="button" class="vms_modal_button">'
-											 . $attributes['save_password_cancel_button_label'] .
+											 . $attributes['cancel_button_label'] .
 											'</button>
 										</form>
 										<form class="vms_form vms_update_password_form" post_id=' . get_the_ID() .' autocomplete="off">
@@ -777,11 +796,10 @@ if ( !class_exists('VMS') ) {
 												'<input type="password" name="new_password2" autocomplete="new-password" />
 												<span class="vms_form_error"></span>
 											</div>
+											<input type="hidden" name="vms-update-password-sec" value="' . $update_password_nonce . '">
+											<input type="submit" value="' . $attributes['save_button_label'] . '"/>
 											<button type="button" class="vms_modal_button">'
-											 . $attributes['save_password_button_label'] .
-											'</button>
-											<button type="button" class="vms_modal_button">'
-											 . $attributes['save_password_cancel_button_label'] .
+											 . $attributes['cancel_button_label'] .
 											'</button>
 										</form>
 									</div>
@@ -914,7 +932,7 @@ if ( !class_exists('VMS') ) {
 					 else {
 						 $res = array(
 						 	'success' => false,
-						 	'errors' => $errors
+						 	'errors' => $errors,
 						 );
 					 }
 				}
@@ -1166,7 +1184,7 @@ if ( !class_exists('VMS') ) {
 					}
 				}
 			}
-			
+
 			die();
 		}
 
@@ -1176,7 +1194,83 @@ if ( !class_exists('VMS') ) {
 		function vms_update_password_action() {
 
 			check_ajax_referer( 'vms-update-password', 'security' );
-			echo json_encode("password update");
+
+			$post_id = $_POST['post_id'];
+
+			if(isset($post_id)){
+
+				$meta = get_post_meta($post_id);
+
+				if(isset($_POST["security"])) {
+
+					//Old password
+					if( trim($_POST['old_password']) === '' ) {
+						$errors['old_password_missing_error'] = $meta['password_missing_error'];
+						$hasError = true;
+					}
+
+					if(!$hasError) {
+						$current_user = wp_get_current_user();
+						$auth =  wp_authenticate( $current_user->user_login, $_POST['old_password'] );
+
+						if( is_wp_error($auth) ) {
+							$errors['old_password_invalid_error'] = $meta['password_invalid_error'];
+							$hasError = true;
+
+							$res = array(
+								'success' => false,
+								'errors' => $errors
+							);
+
+							echo json_encode($res);
+							die();
+						}
+					}
+
+					//New password
+					if( trim($_POST['new_password']) === '' )  {
+						$errors['new_password_missing_error'] =  $meta['password_missing_error'];
+						$hasError = true;
+					} else if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", trim($_POST['new_password']))) {
+						$errors['new_password_format_error'] =  $meta['password_format_error'];
+						$hasError = true;
+					}
+					else {
+						$password = trim($_POST['new_password']);
+					}
+
+					//Repeat password
+					if( $password ) {
+						if( ( trim($_POST['new_password2']) === '' ) || ( $_POST['new_password2'] !== $password ) )  {
+							$errors['new_password_match_error'] = $meta['password_match_error'];
+							$hasError = true;
+						}
+					}
+
+					if( !$hasError ) {
+						$current_user = wp_get_current_user();
+						wp_set_password($password, $current_user->ID);
+						wp_set_auth_cookie($current_user->ID);
+						wp_set_current_user($current_user->ID);
+						do_action('wp_login', $current_user->user_login, $current_user);
+
+						$res = array(
+							'success' => true,
+						);
+
+						echo json_encode($res);
+					}
+					else {
+
+						$res = array(
+							'success' => false,
+							'errors' => $errors
+						);
+
+						echo json_encode($res);
+					}
+				}
+			}
 
 			die();
 		}

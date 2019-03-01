@@ -262,7 +262,66 @@
     });
 
 
+    //Update password form
+    $('.vms_update_password_form').submit(function(event){
 
+      event.preventDefault();
+
+      var form = $(this);
+
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: ajax_login_object.ajaxurl,
+        data: {
+          'action': 'vms_update_password_action',
+          'old_password': form.find('input[name="old_password"]').val(),
+          'new_password': form.find('input[name="new_password"]').val(),
+          'new_password2': form.find('input[name="new_password2"]').val(),
+          'security': form.find('input[name="vms-update-password-sec"]').val(),
+          'post_id': form.attr('post_id')
+        },
+        success: function(data){
+
+          if(data.errors) {
+
+            var errors = data.errors;
+
+            if(errors.old_password_missing_error){
+              var err = form.find('input[name="old_password"]').siblings('.vms_form_error');
+              err.text(errors.old_password_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.old_password_invalid_error){
+              var err = form.find('input[name="old_password"]').siblings('.vms_form_error');
+              err.text(errors.old_password_invalid_error);
+              err.addClass('visible');
+            }
+            if(errors.new_password_missing_error){
+              var err = form.find('input[name="new_password"]').siblings('.vms_form_error');
+              err.text(errors.new_password_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.new_password_format_error){
+              var err = form.find('input[name="new_password"]').siblings('.vms_form_error');
+              err.text(errors.new_password_format_error);
+              err.addClass('visible');
+            }
+            if(errors.new_password_match_error){
+              var err = form.find('input[name="new_password2"]').siblings('.vms_form_error');
+              err.text(errors.new_password_match_error);
+              err.addClass('visible');
+            }
+          }
+          else {
+            location.reload(true);
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
 
 
 
@@ -278,6 +337,21 @@
       modal.find(".vms_form").css("display", "none");
       modal.find(".vms_update_user_form").css("display", "block");
 
+      //reset values
+      modal.find("input[type='text']").each(function(){
+        var data = $(this).attr("data-value");
+        if(data){
+          $(this).val(data);
+        }
+      });
+
+      modal.find("select").each(function(){
+        var data = $(this).attr("data-value");
+        if(data){
+          $(this).val(data).prop('selected', true);
+        }
+      });
+
       modal.addClass("visible");
 
       var button = modal.find('.vms_modal_button');
@@ -288,12 +362,14 @@
 
     });
 
+
     $('.vms_user_dashboard .vms_open_change_password').click(function(){
 
       $('html').addClass('vms_lock');
       var modal = $(this).parent().parent().find(".vms_modal");
       modal.find(".vms_form").css("display", "none");
       modal.find(".vms_update_password_form").css("display", "block");
+      modal.find("input[type='password']").val("");
 
       modal.addClass("visible");
 
