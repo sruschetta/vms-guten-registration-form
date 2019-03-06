@@ -154,6 +154,7 @@
    background-color: #333;
    border-radius: 0.5rem;
    border: 1px solid white;
+   margin: 1rem 0;
 
    h1 {
      padding: 0;
@@ -168,5 +169,27 @@
        margin: 0 0.5rem;
      }
    }
+ }
 
+ .vms_models_dashboard {
+   padding: 2rem;
+   background-color: #333;
+   border-radius: 0.5rem;
+   border: 1px solid white;
+   margin: 1rem 0;
+
+   h1 {
+     padding: 0;
+   }
+
+   .vms_models_dashboard_buttons {
+     margin-top: 2rem;
+     text-align: center;
+
+     button {
+       padding: 0.75rem;
+       font-size: 0.875rem;
+       margin: 0 0.5rem;
+     }
+   }
  }

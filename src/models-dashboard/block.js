@@ -45,7 +45,9 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 					{ placeholder: "Model title label", attr: "model_title_label"},
 					{ placeholder: "Model category label", attr: "model_category_label"},
 	      ];
-
+				var buttonsAttr = [
+				 { placeholder: "Add button label", attr: "add_button_label" }
+			 ];
 	      return (
 	        <div class="vms-form">
 	          <h3><b>VMS - Models dashboard</b></h3>
@@ -60,12 +62,22 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 	              )
 	            })
 	          }
-						<hr/>
-					 	<div>Buttons</div>
 						<RichText type="text"
 									 		placeholder={ "No models text" }
 									 		onChange={ this.handleChange("no_models_text") }
 									 		value={ this.props.attributes["no_models_text"] } />
+						<hr/>
+					 	<div>Buttons</div>
+	          {
+	            buttonsAttr.map( (item, index) => {
+	              return (
+	                <TextControl type="text"
+	                       placeholder={ item.placeholder }
+	                       onChange={ this.handleChange(item.attr) }
+	                       value={ this.props.attributes[item.attr] } />
+	              )
+	            })
+	          }
 				</div>
 			)
 	  }

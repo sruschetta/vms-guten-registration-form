@@ -1,5 +1,39 @@
 <?php
 
-  $categories_array = array( 'Storico standard pittura', 'Storico standard open', 'Storico master pittura'); 
-
+  $categories_array = array(
+     array( 'gruppo' => 'figurini', "sigla" => 'HSP', 'it' =>	'STORICO STANDARD PITTURA', 'en' =>	'HISTORY STANDARD PAINTING'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HSO', 'it' =>	'STORICO STANDARD OPEN', 'en' =>	'HISTORY STANDARD OPEN'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMP', 'it' =>	'STORICO MASTER PITTURA', 'en' =>	'HISTORY MASTER PAINTING'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMO', 'it' =>	'STORICO MASTER OPEN', 'en' =>	'HISTORY MASTER OPEN'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSP', 'it' =>	'FANTASY STANDARD PITTURA', 'en' =>	'FANTASY STANDARD PAINTING'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSO', 'it' =>	'FANTASY STANDARD OPEN', 'en' =>	'FANTASY STANDARD OPEN'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMP', 'it' =>	'FANTASY MASTER PITTURA', 'en' =>	'FANTASY MASTER PAINTING'),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMO', 'it' =>	'FANTASY MASTER OPEN', 'en' =>	'FANTASY MASTER OPEN'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AS1', 'it' =>	'Aerei ed Elicotteri STANDARD 1/72', 'en' =>	'PLANES AND CHOPPERS STANDARD 1/72'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AS2', 'it' =>	'Aerei ed Elicotteri STANDARD 1/48 – 1/32 – 1/35', 'en' =>	'PLANES AND CHOPPERS STANDARD 1/48 – 1/32 – 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'ASD1', 'it' =>	'Diorami areonautici STANDARD 1/72', 'en' =>	'AEROSPACE DIORAMAS STANDARD 1/72'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'ASD2', 'it' =>	'Diorami areonautici STANDARD 1/48-1/32-1/35', 'en' =>	'AEROSPACE DIORAMAS STANDARD 1/48-1/32-1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AM1', 'it' =>	'Aerei ed Elicotteri MASTER 1/72', 'en' =>	'PLANES AND CHOPPERS MASTER 1/72'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AM2', 'it' =>	'Aerei ed Elicotteri MASTER 1/48-1/32-1/35', 'en' =>	'PLANES AND CHOPPERS MASTER 1/48-1/32-1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AMD1', 'it' =>	'Diorami areonautici MASTER 1/', 'en' =>	'AEROSPACE DIORAMAS MASTER 1/72'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'AMD2', 'it' =>	'Diorami areonautici MASTER 1/48-1/32-1/35', 'en' =>	'AEROSPACE DIORAMAS MASTER 1/48-1/32-1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVS1', 'it' =>	'Veicoli militari STANDARD 1/72-1/48', 'en' =>	'MILITARY VEHICLES STANDARD 1/72-1/48'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVS2', 'it' =>	'Veicoli militari STANDARD 1/35', 'en' =>	'MILITARY VEHICLES STANDARD 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVSD1', 'it' =>	'Diorami militari STANDARD 1/72-1/48', 'en' =>	'MILITARY DIORAMAS STANDARD 1/72-1/48'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVSD2', 'it' =>	'Diorami militari STANDARD 1/35', 'en' =>	'MILITARY DIORAMAS STANDARD 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVM1', 'it' =>	'Veicoli militari MASTER 1/72-1/48', 'en' =>	'MILITARY VEHICLES DIORAMAS MASTER 1/72-1/48'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVM2', 'it' =>	'Veicoli militari MASTER 1/35', 'en' =>	'MILITARY VEHICLES MASTER 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVMD1', 'it' =>	'Diorami militari MASTER 1/72-1/48', 'en' =>	'MILITARY VECHICLES DIORAMAS MASTER 1/72-1/48'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVMD2', 'it' =>	'Diorami militari MASTER 1/', 'en' =>	'MILITARY VECHICLES DIORAMAS MASTER 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'N1', 'it' =>	'Navi da scatola tutte le scale', 'en' =>	'BOX SHIPS ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'N2', 'it' =>	'Navi autocostruite tutte le scale', 'en' =>	'SELFBUILT SHIPS ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'ND', 'it' =>	'Diorami navali tutte le scale', 'en' =>	'NAVAL DIORAMAS ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'V1', 'it' =>	'Auto tutte le scale', 'en' =>	'CARS ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'V2', 'it' =>	'Moto tutte le scale', 'en' =>	'MOTORBIKES ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'V3', 'it' =>	'Camion e trattori tutte le scale', 'en' =>	'TRUCK AND TRACTORS ALL SCALES'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'SFS', 'it' =>	'SCI-FI STANDARD', 'en' =>	'SCI-FI STANDARD'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'SFM', 'it' =>	'SCI-FI MASTER', 'en' =>	'SCI-FI MASTER'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'DSF', 'it' =>	'DIORAMI SCI-FI', 'en' =>	'DIORAMAS SCI-FI'),
+     array( 'gruppo' => 'JUNIORES', "sigla" => 'J', 'it' =>	'JUNIORES', 'en' =>	'JUNIORES')
+   );
 ?>

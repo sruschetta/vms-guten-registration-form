@@ -43,7 +43,6 @@ if ( !class_exists('VMS') ) {
 
 
 		function registerMeta() {
-
 			register_meta( 'post', 'email_missing_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
@@ -486,6 +485,26 @@ if ( !class_exists('VMS') ) {
 				'dashboard_title' => array(
 					'type' => 'string',
 					'default' => 'I tuoi modelli'
+				),
+				'model_id_label' => array(
+					'type' => 'string',
+					'default' => 'ID modello'
+				),
+				'model_title_label' => array(
+					'type' => 'string',
+					'default' => 'Titolo'
+				),
+				'model_category_label' => array(
+					'type' => 'string',
+					'default' => 'Categoria'
+				),
+				'add_button_label' => array(
+					'type' => 'string',
+					'default' => 'Aggiungi un modello'
+				),
+				'no_models_text' => array(
+					'type' => 'string',
+					'default' => 'Non hai ancora iscritto modelli. Premi "Aggiungi" per farlo.'
 				)
 		),
 		'editor_script' => 'vms_backend_script',
@@ -545,6 +564,7 @@ if ( !class_exists('VMS') ) {
 								</form>';
 			return $html;
 		}
+
 
 		function renderRegistrationBlock( $attributes, $content ) {
 
@@ -634,16 +654,17 @@ if ( !class_exists('VMS') ) {
 									</div>
 									<div class="vms_form_field">'
 										. $attributes['birthdate_placeholder'] .
-										'<div class="vms_date">' .
-										'<span>'
-											. $days_html .
-										'</span>
-										<span>'
-											. $months_html .
-										'</span>
-										<span>'
-										 	.	$years_html .
-										'</span>
+										'<div class="vms_date">
+											<span>'
+												. $days_html .
+											'</span>
+											<span>'
+												. $months_html .
+											'</span>
+											<span>'
+											 	.	$years_html .
+											'</span>
+										</div>
 										<span class="vms_form_error"></span>
 									</div>
 									<div class="vms_form_field textual fullwidth">
@@ -886,11 +907,16 @@ if ( !class_exists('VMS') ) {
 
 			$html = '<div class="vms_models_dashboard">
 							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
+									<div>
+									'. $attributes['no_models_text'].'
+									</div>
+									<div class="vms_models_dashboard_buttons">
+										<button class="vms_add_model">' . $attributes['add_button_label'] . '</button>
+									</div>
 							 </div>';
 
 			return $html;
 		}
-
 
 
 
@@ -1102,6 +1128,9 @@ if ( !class_exists('VMS') ) {
 									'message' => $meta['user_creation_successful_message'],
 									'target_page' => get_permalink($meta['target_page'][0])
 								);
+
+								wp_send_new_user_notifications( $user_id, 'both');
+
 							}
 							else {
 								$res = array(
@@ -1477,7 +1506,7 @@ if ( !class_exists('VMS') ) {
 
 			register_activation_hook( __FILE__, array( $this, 'generateDB' ) );
 			register_activation_hook( __FILE__, array( $this, 'generateDataset' ) );
-			//register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
+			register_deactivation_hook(__FILE__, array( $this, 'dropDB' ));
 			//register_uninstall_hook(__FILE__, array( $this, 'dropDB' ));
 		}
 
@@ -1501,7 +1530,10 @@ if ( !class_exists('VMS') ) {
 
 			$sql .= "CREATE TABLE $table_name (
   			id mediumint(9) NOT NULL AUTO_INCREMENT,
-  			name tinytext NOT NULL,
+  			it tinytext NOT NULL,
+				en tinytext NOT NULL,
+				gruppo tinytext NOT NULL,
+				sigla tinytext NOT NULL,
   			PRIMARY KEY  (id)
 			) $charset_collate;";
 
@@ -1537,7 +1569,10 @@ if ( !class_exists('VMS') ) {
 				$wpdb->insert(
 					$table_name,
 					array(
-						'name' => $category,
+						'gruppo' => ucfirst(strtolower($category['gruppo'])),
+						'sigla' => $category['sigla'],
+						'it' => ucfirst(strtolower($category['it'])),
+						'en' => ucfirst(strtolower($category['en']))
 					)
 				);
 			}

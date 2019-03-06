@@ -128,12 +128,29 @@
   padding: 2rem;
   background-color: #333;
   border-radius: 0.5rem;
-  border: 1px solid white; }
+  border: 1px solid white;
+  margin: 1rem 0; }
   .vms_user_dashboard h1 {
     padding: 0; }
   .vms_user_dashboard .vms_user_dashboard_buttons {
     text-align: right; }
     .vms_user_dashboard .vms_user_dashboard_buttons button {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      margin: 0 0.5rem; }
+
+.vms_models_dashboard {
+  padding: 2rem;
+  background-color: #333;
+  border-radius: 0.5rem;
+  border: 1px solid white;
+  margin: 1rem 0; }
+  .vms_models_dashboard h1 {
+    padding: 0; }
+  .vms_models_dashboard .vms_models_dashboard_buttons {
+    margin-top: 2rem;
+    text-align: center; }
+    .vms_models_dashboard .vms_models_dashboard_buttons button {
       padding: 0.75rem;
       font-size: 0.875rem;
       margin: 0 0.5rem; }
