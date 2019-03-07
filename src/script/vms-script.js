@@ -9,6 +9,7 @@
       $(this).parent().parent().siblings('.vms_form_error').removeClass('visible');
     });
 
+
     $('.vms_login_form').submit(function(event){
       event.preventDefault();
 
@@ -62,6 +63,7 @@
               var button = modal.find('.vms_modal_button');
 
               button.click( function(){
+                  modal.find('.vms_form_error').removeClass('visible');
                   modal.removeClass('visible');
                   $('html').removeClass('vms_lock');
               });
@@ -187,6 +189,7 @@
                 window.open( target, '_self');
               }
               else {
+                modal.find('.vms_form_error').removeClass('visible');
                 modal.removeClass('visible');
                 $('html').removeClass('vms_lock');
               }
@@ -324,6 +327,51 @@
     });
 
 
+    //Add model form
+    $('.vms_model_form').submit(function(event){
+
+      event.preventDefault();
+
+      var form = $(this);
+
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: ajax_login_object.ajaxurl,
+        data: {
+          'action': 'vms_model_action',
+          'id': form.attr("data-model-id"),
+          'title': form.find('input[name="title"]').val(),
+          'category': form.find('select[name="category"]').val(),
+          'security': form.find('input[name="vms-model-sec"]').val(),
+          'post_id': form.attr('post_id')
+        },
+        success: function(data){
+
+          if(data.errors) {
+
+            var errors = data.errors;
+
+            if(errors.title_missing_error){
+              var err = form.find('input[name="title"]').siblings('.vms_form_error');
+              err.text(errors.title_missing_error);
+              err.addClass('visible');
+            }
+            if(errors.category_missing_error){
+              var err = form.find('select[name="category"]').siblings('.vms_form_error');
+              err.text(errors.category_missing_error);
+              err.addClass('visible');
+            }
+          }
+          else {
+            location.reload(true);
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
 
 
 
@@ -338,6 +386,9 @@
       modal.find(".vms_update_user_form").css("display", "block");
 
       //reset values
+
+      modal.find('.vms_form_error').removeClass('visible');
+
       modal.find("input[type='text']").each(function(){
         var data = $(this).attr("data-value");
         if(data){
@@ -373,6 +424,8 @@
 
       modal.addClass("visible");
 
+      modal.find('.vms_form_error').removeClass('visible');
+
       var button = modal.find('.vms_modal_button');
       button.click(function(){
         modal.removeClass('visible');
@@ -381,7 +434,25 @@
     });
 
 
+    //Models dashboard
 
+    $('.vms_models_dashboard .vms_add_model_button').click(function(){
+
+      $('html').addClass('vms_lock');
+      var modal = $(this).parent().parent().find(".vms_modal");
+      modal.find(".vms_form").css("display", "none");
+      modal.find(".vms_model_form").css("display", "block");
+      
+      modal.find('.vms_form_error').removeClass('visible');
+
+      modal.addClass("visible");
+
+      var button = modal.find('.vms_modal_button');
+      button.click(function(){
+        modal.removeClass('visible');
+        $('html').removeClass('vms_lock');
+      });
+    });
 
   });
 

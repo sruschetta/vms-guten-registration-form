@@ -97,6 +97,8 @@
       text-decoration: underline; }
     .vms_modal .vms_modal_content a:hover {
       color: #bbb; }
+    .vms_modal .vms_modal_content .vms_modal_buttons {
+      margin: 1rem 0; }
     .vms_modal .vms_modal_content .vms_modal_button {
       color: black;
       border: 1px solid #bbb;

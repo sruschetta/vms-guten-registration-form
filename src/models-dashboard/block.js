@@ -44,14 +44,16 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 					{ placeholder: "Model ID label", attr: "model_id_label"},
 					{ placeholder: "Model title label", attr: "model_title_label"},
 					{ placeholder: "Model category label", attr: "model_category_label"},
+					{ placeholder: "Add model button label", attr: "add_button_label"}
 	      ];
-				var buttonsAttr = [
-				 { placeholder: "Add button label", attr: "add_button_label" }
-			 ];
+				var saveDialogAttr = [
+				  { placeholder: "Save button label", attr: "save_button_label" },
+					{ placeholder: "Cancel button label", attr: "cancel_button_label" },
+			  ];
 	      return (
 	        <div class="vms-form">
 	          <h3><b>VMS - Models dashboard</b></h3>
-	          <div>Placeholders</div>
+	          <div>Model table</div>
 	          {
 	            fieldsAttr.map( (item, index) => {
 	              return (
@@ -67,9 +69,13 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 									 		onChange={ this.handleChange("no_models_text") }
 									 		value={ this.props.attributes["no_models_text"] } />
 						<hr/>
-					 	<div>Buttons</div>
-	          {
-	            buttonsAttr.map( (item, index) => {
+						<div>Save/edit dialog</div>
+						<RichText type="text"
+											placeholder={ "Save/edit dialog header text" }
+											onChange={ this.handleChange("dialog_header_text") }
+											value={ this.props.attributes["dialog_header_text"] } />
+						{
+	            saveDialogAttr.map( (item, index) => {
 	              return (
 	                <TextControl type="text"
 	                       placeholder={ item.placeholder }
@@ -78,6 +84,26 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 	              )
 	            })
 	          }
+						<hr/>
+						<div>Delete dialog</div>
+						<RichText type="text"
+											placeholder={ "Delete dialog header text" }
+											onChange={ this.handleChange("delete_header_text") }
+											value={ this.props.attributes["delete_header_text"] } />
+            <TextControl type="text"
+                   placeholder={ "Delete button label" }
+                   onChange={ this.handleChange("delete_button_label") }
+                   value={ this.props.attributes["delete_button_label"] } />
+						<hr/>
+						<div>Errors</div>
+	          <TextControl type="text"
+	                  placeholder={ "Title missing error" }
+	                  onChange={ this.handleChange("title_missing_error") }
+	                  value={ this.props.attributes["title_missing_error"] } />
+						<TextControl type="text"
+	                  placeholder={ "Category missing error" }
+	                  onChange={ this.handleChange("category_missing_error") }
+	                  value={ this.props.attributes["category_missing_error"] } />
 				</div>
 			)
 	  }

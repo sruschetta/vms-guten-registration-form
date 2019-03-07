@@ -139,6 +139,17 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
+			register_meta( 'post', 'category_missing_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'title_missing_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
 		}
 
 		function registerBlocks() {
@@ -502,9 +513,43 @@ if ( !class_exists('VMS') ) {
 					'type' => 'string',
 					'default' => 'Aggiungi un modello'
 				),
+				'dialog_header_text' => array(
+					'type' => 'string',
+					'default' => 'Inserisci i dati del tuo modello.'
+				),
+				'save_button_label' => array(
+					'type' => 'string',
+					'default' => 'Salva'
+				),
+				'edit_button_label' => array(
+					'type' => 'string',
+					'default' => 'Modifica'
+				),
+				'cancel_button_label' => array(
+					'type' => 'string',
+					'default' => 'Annulla'
+				),
+				'delete_button_label' => array(
+					'type' => 'string',
+					'default' => 'Elimina'
+				),
+				'delete_header_text' => array(
+					'type' => 'string',
+					'default' => 'Sei sicuro di voler eliminare questo modello?'
+				),
 				'no_models_text' => array(
 					'type' => 'string',
 					'default' => 'Non hai ancora iscritto modelli. Premi "Aggiungi" per farlo.'
+				),
+				'title_missing_error' => array(
+					'type' => 'string',
+					'source' => 'meta',
+					'meta' => 'title_missing_error'
+				),
+				'category_missing_error' => array(
+					'type' => 'string',
+					'source' => 'meta',
+					'meta' => 'category_missing_error'
 				)
 		),
 		'editor_script' => 'vms_backend_script',
@@ -527,6 +572,7 @@ if ( !class_exists('VMS') ) {
 
 			add_action( 'wp_ajax_vms_update_user_action', array( $this, 'vms_update_user_action' ) );
 			add_action( 'wp_ajax_vms_update_password_action', array( $this, 'vms_update_password_action' ) );
+			add_action( 'wp_ajax_vms_model_action', array( $this, 'vms_model_action' ) );
 
 		}
 
@@ -836,10 +882,12 @@ if ( !class_exists('VMS') ) {
 												<span class="vms_form_error"></span>
 											</div>
 											<input type="hidden" name="vms-update-password-sec" value="' . $update_password_nonce . '">
-											<input type="submit" value="' . $attributes['save_button_label'] . '"/>
-											<button type="button" class="vms_modal_button">'
-											 . $attributes['cancel_button_label'] .
-											'</button>
+											<div class="vms_modal_buttons">
+												<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+												<button type="button" class="vms_modal_button">'
+												 . $attributes['cancel_button_label'] .
+												'</button>
+											</div>
 										</form>
 									</div>
 								</div>
@@ -905,13 +953,79 @@ if ( !class_exists('VMS') ) {
 				return ;
 			}
 
+			$user_data = wp_get_current_user();
+
+			//Categories
+			$categories = $this->get_categories_list();
+
+			$categories_html = '<select name="category">';
+			$categories_html .= '<option disabled selected value></option>';
+
+			foreach ($categories as $category) {
+				$categories_html .= '<option value="' . $category->id . '">' . $category->sigla. ' - ' . $category->name . '</option>';
+			}
+			$categories_html .= '</select>';
+
+			//Models
+			$models = $this->get_models_list_for_modelist($user_data->ID);
+
+			var_dump($models);
+
+			if(count($models) === 0) {
+				$models_html = '<div>'. $attributes['no_models_text'] . '</div>';
+			}
+			else {
+				$models_html = '<table style="border: 1px solid black">
+				<tr>
+					<th>
+					'. 'ID' .'
+					</th>
+					<th>
+					'.$attributes['model_title_label'].'
+					</th>
+					<th>
+					'.$attributes['model_category_label'].'
+					</th>
+				</tr>';
+				foreach ($models as $model) {
+					$models_html .= '<tr>
+					<td>' . $model->id . '</td>'.
+					'<td>' . $model->title . '</td>'.
+					'<td>' . $model->categoryId . '</td>
+					</tr>';
+				}
+				$models_html .= '</table>';
+			}
+
+			$model_nonce = wp_create_nonce('vms-model');
+
 			$html = '<div class="vms_models_dashboard">
-							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
-									<div>
-									'. $attributes['no_models_text'].'
+									<div class="vms_modal">
+										<div class="vms_modal_content">
+											<form class="vms_form vms_model_form" post_id=' . get_the_ID() .' autocomplete="off">
+												<div class="vms_form_field">'
+													. $attributes['model_title_label'] .
+													'<input type="text" name="title" autocomplete="new-password"/>
+													<span class="vms_form_error"></span>
+												</div>
+												<div class="vms_form_field">'
+													. $attributes['category_placeholder'] .$categories_html.
+													'<span class="vms_form_error"></span>
+												</div>
+												<input type="hidden" name="vms-model-sec" value="' . $model_nonce . '">
+												<div class="vms_modal_buttons">
+													<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+													<button type="button" class="vms_modal_button">'
+													 . $attributes['cancel_button_label'] .
+													'</button>
+												</div>
+											</form>
+										</div>
 									</div>
-									<div class="vms_models_dashboard_buttons">
-										<button class="vms_add_model">' . $attributes['add_button_label'] . '</button>
+							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>'
+									. $models_html .
+									'<div class="vms_models_dashboard_buttons">
+										<button class="vms_add_model_button">' . $attributes['add_button_label'] . '</button>
 									</div>
 							 </div>';
 
@@ -959,10 +1073,6 @@ if ( !class_exists('VMS') ) {
 
 					 if( !$hasError ) {
 
-						 //$user_data = get_user_by('email', $email);
-
-						 //if($user_data) {
-
 							 $credentials  = array(
 							 	'user_login'    => $email,
 	        			'user_password' => $password,
@@ -983,13 +1093,6 @@ if ( !class_exists('VMS') ) {
 									 'message' => $login->get_error_message(),
 								 );
 							 }
-					 	 /*}
-						 else {
-							 $res = array(
-								 'success' => false,
-								 'message' => $meta['user_not_found_error']
-							 );
-						 }*/
 					 }
 					 else {
 						 $res = array(
@@ -1341,6 +1444,64 @@ if ( !class_exists('VMS') ) {
 		}
 
 
+		//Add/Edit model
+
+		function vms_model_action() {
+
+			check_ajax_referer( 'vms-model', 'security' );
+
+			$post_id = $_POST['post_id'];
+
+			if(isset($post_id)){
+
+				$meta = get_post_meta($post_id);
+
+				//Title
+				if( trim($_POST['title']) === '' ) {
+					$errors['title_missing_error'] = $meta['title_missing_error'];
+					$hasError = true;
+				}
+
+				//Category
+				if( trim($_POST['category']) === '' ) {
+					$errors['category_missing_error'] = $meta['category_missing_error'];
+					$hasError = true;
+				}
+
+				if( !$hasError ) {
+
+					$current_user = wp_get_current_user();
+
+					if($_POST['id']){
+						//Model update
+
+					}
+					else {
+						//New Model
+						$model = $this->create_new_model($_POST['title'], $_POST['category'], $current_user->ID );
+					}
+
+					$res = array(
+						'success' => true,
+						'res' => $model
+					);
+
+					echo json_encode($res);
+				}
+				else {
+
+					$res = array(
+						'success' => false,
+						'errors' => $errors
+					);
+
+					echo json_encode($res);
+				}
+			}
+
+			die();
+		}
+
 
 		/**
 		* Custon Role - Partecipant
@@ -1537,6 +1698,19 @@ if ( !class_exists('VMS') ) {
   			PRIMARY KEY  (id)
 			) $charset_collate;";
 
+
+			$table_name = $wpdb->prefix . "vms_models";
+
+			$sql .= "CREATE TABLE $table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				title tinytext NOT NULL,
+				categoryId int,
+				modelistId int,
+				PRIMARY KEY  (id),
+				FOREIGN KEY (categoryId) REFERENCES ". $wpdb->prefix . "vms_categories(id),
+				FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
+			) $charset_collate;";
+
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $sql );
 		}
@@ -1642,6 +1816,35 @@ if ( !class_exists('VMS') ) {
 			return $nations;
 		}
 
+		function get_categories_list() {
+
+			global $wpdb;
+
+			$category_locale_id = (get_locale() == "it_IT")? "it" : "en";
+
+			$table_name = $wpdb->prefix . "vms_categories";
+			$categories = $wpdb->get_results("SELECT id, gruppo, sigla, " . $category_locale_id .  " AS name FROM " . $table_name );
+			return $categories;
+		}
+
+		function get_models_list_for_modelist($modelist_id) {
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . "vms_models";
+			$query = "SELECT id, title, categoryId, modelistId FROM " . $table_name . " WHERE modelistId=" . $modelist_id;
+			$models = $wpdb->get_results($query);
+			return $models;
+		}
+
+		function create_new_model( $title, $category_id, $modelist_id) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . "vms_models";
+
+			$query = "INSERT INTO ". $table_name .
+						"(title, categoryId, modelistId) VALUES ('". $title. "','" . $category_id . "','" . $modelist_id ."')";
+			$model = $wpdb->get_results( $query );
+			return $model;
+		}
 	}
 
 	//Plugin Execution
