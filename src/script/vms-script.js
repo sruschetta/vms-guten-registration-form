@@ -327,7 +327,7 @@
     });
 
 
-    //Add model form
+    //Add/Edit model form
     $('.vms_model_form').submit(function(event){
 
       event.preventDefault();
@@ -340,7 +340,7 @@
         url: ajax_login_object.ajaxurl,
         data: {
           'action': 'vms_model_action',
-          'id': form.attr("data-model-id"),
+          'model_id': form.attr("data-model-id"),
           'title': form.find('input[name="title"]').val(),
           'category': form.find('select[name="category"]').val(),
           'security': form.find('input[name="vms-model-sec"]').val(),
@@ -373,7 +373,34 @@
       });
     });
 
+    //Delete model form
+    $('.vms_model_delete_form').submit(function(event){
 
+      event.preventDefault();
+
+      var form = $(this);
+
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: ajax_login_object.ajaxurl,
+        data: {
+          'action': 'vms_model_delete_action',
+          'model_id': form.attr("data-model-id"),
+          'security': form.find('input[name="vms-model-delete-sec"]').val(),
+          'post_id': form.attr('post_id')
+        },
+        success: function(data){
+
+          if(data.success){
+            location.reload(true);
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
 
 
     //User dashboard
@@ -381,7 +408,7 @@
     $('.vms_user_dashboard .vms_open_user_update').click(function(){
 
       $('html').addClass('vms_lock');
-      var modal = $(this).parent().parent().find(".vms_modal");
+      var modal = $(this).closest(".vms_user_dashboard").children(".vms_modal");
       modal.find(".vms_form").css("display", "none");
       modal.find(".vms_update_user_form").css("display", "block");
 
@@ -417,7 +444,7 @@
     $('.vms_user_dashboard .vms_open_change_password').click(function(){
 
       $('html').addClass('vms_lock');
-      var modal = $(this).parent().parent().find(".vms_modal");
+      var modal = $(this).closest(".vms_user_dashboard").children(".vms_modal");
       modal.find(".vms_form").css("display", "none");
       modal.find(".vms_update_password_form").css("display", "block");
       modal.find("input[type='password']").val("");
@@ -439,11 +466,16 @@
     $('.vms_models_dashboard .vms_add_model_button').click(function(){
 
       $('html').addClass('vms_lock');
-      var modal = $(this).parent().parent().find(".vms_modal");
+      var modal = $(this).closest(".vms_models_dashboard").children(".vms_modal");
       modal.find(".vms_form").css("display", "none");
-      modal.find(".vms_model_form").css("display", "block");
-      
+      var modelForm = modal.find(".vms_model_form");
+      modelForm.css("display", "block");
+      modelForm.attr("data-model-id","");
+
       modal.find('.vms_form_error').removeClass('visible');
+
+      modal.find("input[type='text']").val('');
+      modal.find("select").val(0).prop('selected', true);
 
       modal.addClass("visible");
 
@@ -454,6 +486,68 @@
       });
     });
 
+
+    $('.vms_models_dashboard .vms_update_model_button').click(function(){
+
+      $('html').addClass('vms_lock');
+
+      var modal = $(this).closest(".vms_models_dashboard").children(".vms_modal");
+      modal.find(".vms_form").css("display", "none");
+
+      var modelForm = modal.find(".vms_model_form");
+
+      modelForm.css("display", "block");
+      modelForm.attr("data-model-id", $(this).attr("data-model-id"));
+
+      modal.find("input[name='title']").val($(this).attr("data-title"));
+      modal.find("select[name='category']").val($(this).attr("data-category-id")).prop('selected', true);
+
+      modal.find('.vms_form_error').removeClass('visible');
+
+      modal.find("input[type='text']").each(function(){
+        var data = $(this).attr("data-title");
+        if(data){
+          $(this).val(data);
+        }
+      });
+
+      modal.find("select").each(function(){
+        var data = $(this).attr("data-category-id");
+        if(data){
+          $(this).val(data).prop('selected', true);
+        }
+      });
+
+      modal.addClass("visible");
+
+      var button = modal.find('.vms_modal_button');
+      button.click(function(){
+        modal.removeClass('visible');
+        $('html').removeClass('vms_lock');
+      });
+    });
+
+
+    $('.vms_models_dashboard .vms_delete_model_button').click(function(){
+
+      $('html').addClass('vms_lock');
+
+      var modal = $(this).closest(".vms_models_dashboard").children(".vms_modal");
+      modal.find(".vms_form").css("display", "none");
+
+      var modelForm = modal.find(".vms_model_delete_form");
+
+      modelForm.css("display", "block");
+      modelForm.attr("data-model-id", $(this).attr("data-model-id"));
+
+      modal.addClass("visible");
+
+      var button = modal.find('.vms_modal_button');
+      button.click(function(){
+        modal.removeClass('visible');
+        $('html').removeClass('vms_lock');
+      });
+    });
   });
 
 })( jQuery );

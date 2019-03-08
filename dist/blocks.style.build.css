@@ -6,59 +6,61 @@
 .vms_lock {
   overflow: hidden; }
 
-.vms_form {
-  font-size: 0; }
-  .vms_form .vms_form_field {
-    display: block;
-    vertical-align: top;
+.vms_form .vms_form_text {
+  font-size: 1rem;
+  margin-bottom: 1rem; }
+
+.vms_form .vms_form_field {
+  display: block;
+  vertical-align: top;
+  width: 100%;
+  padding: 0.25rem;
+  font-size: 0.875rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
+  .vms_form .vms_form_field input, .vms_form .vms_form_field select {
     width: 100%;
-    padding: 0.25rem;
     font-size: 0.875rem;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box; }
-    .vms_form .vms_form_field input, .vms_form .vms_form_field select {
-      width: 100%;
-      font-size: 0.875rem;
-      padding: 0.375rem;
-      margin: 0.25rem 0; }
-    .vms_form .vms_form_field input[type="button"] {
-      padding: 0.75em 2em; }
-    .vms_form .vms_form_field .vms_date {
-      font-size: 0;
-      margin: 0 -5px; }
-      .vms_form .vms_form_field .vms_date span {
-        display: inline-block;
-        width: 33.33%;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        padding: 0 5px; }
-        @media screen and (max-width: 480px) {
-          .vms_form .vms_form_field .vms_date span {
-            width: 100%; } }
-    .vms_form .vms_form_field .vms_form_error {
-      display: block;
-      color: red;
-      font-size: 0.875rem;
-      min-height: 1.275rem;
-      visibility: hidden; }
-      .vms_form .vms_form_field .vms_form_error.visible {
-        visibility: visible; }
-    .vms_form .vms_form_field.textual {
-      position: relative; }
-      .vms_form .vms_form_field.textual input[type='checkbox'] {
-        width: auto;
-        -webkit-transform: scale(1.5);
-            -ms-transform: scale(1.5);
-                transform: scale(1.5);
-        position: absolute;
-        top: 0.875rem;
-        left: 0;
-        margin: 0; }
-      .vms_form .vms_form_field.textual span {
-        padding-left: 1.5rem;
-        display: block; }
-    .vms_form .vms_form_field input[type="submit"] {
-      margin-top: 1rem; }
+    padding: 0.375rem;
+    margin: 0.25rem 0; }
+  .vms_form .vms_form_field input[type="button"] {
+    padding: 0.75em 2em; }
+  .vms_form .vms_form_field .vms_date {
+    font-size: 0;
+    margin: 0 -5px; }
+    .vms_form .vms_form_field .vms_date span {
+      display: inline-block;
+      width: 33.33%;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      padding: 0 5px; }
+      @media screen and (max-width: 480px) {
+        .vms_form .vms_form_field .vms_date span {
+          width: 100%; } }
+  .vms_form .vms_form_field .vms_form_error {
+    display: block;
+    color: red;
+    font-size: 0.875rem;
+    min-height: 1.275rem;
+    visibility: hidden; }
+    .vms_form .vms_form_field .vms_form_error.visible {
+      visibility: visible; }
+  .vms_form .vms_form_field.textual {
+    position: relative; }
+    .vms_form .vms_form_field.textual input[type='checkbox'] {
+      width: auto;
+      -webkit-transform: scale(1.5);
+          -ms-transform: scale(1.5);
+              transform: scale(1.5);
+      position: absolute;
+      top: 0.875rem;
+      left: 0;
+      margin: 0; }
+    .vms_form .vms_form_field.textual span {
+      padding-left: 1.5rem;
+      display: block; }
+  .vms_form .vms_form_field input[type="submit"] {
+    margin-top: 1rem; }
 
 .vms_modal {
   display: none;
@@ -149,6 +151,19 @@
   margin: 1rem 0; }
   .vms_models_dashboard h1 {
     padding: 0; }
+  .vms_models_dashboard table {
+    color: white;
+    font-size: 0.875rem; }
+    .vms_models_dashboard table tr {
+      border: 1px solid white; }
+      .vms_models_dashboard table tr:nth-child(odd) {
+        background-color: #444; }
+    .vms_models_dashboard table td, .vms_models_dashboard table th {
+      padding: 1rem; }
+    .vms_models_dashboard table button {
+      margin: 0.125rem;
+      font-size: 0.75rem;
+      padding: 0.25rem; }
   .vms_models_dashboard .vms_models_dashboard_buttons {
     margin-top: 2rem;
     text-align: center; }

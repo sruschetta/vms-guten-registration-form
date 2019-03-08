@@ -10,7 +10,10 @@
 
  .vms_form {
 
-   font-size: 0;
+   .vms_form_text {
+     font-size: 1rem;
+     margin-bottom: 1rem;
+   }
 
    .vms_form_field {
      display: block;
@@ -184,6 +187,29 @@
 
    h1 {
      padding: 0;
+   }
+
+   table {
+     color: white;
+     font-size: 0.875rem;
+
+     tr {
+       border: 1px solid white;
+
+       &:nth-child(odd) {
+         background-color: #444;
+       }
+     }
+
+     td, th {
+      padding: 1rem;
+    }
+
+     button {
+       margin: 0.125rem;
+       font-size: 0.75rem;
+       padding: 0.25rem;
+     }
    }
 
    .vms_models_dashboard_buttons {

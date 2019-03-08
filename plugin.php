@@ -573,7 +573,7 @@ if ( !class_exists('VMS') ) {
 			add_action( 'wp_ajax_vms_update_user_action', array( $this, 'vms_update_user_action' ) );
 			add_action( 'wp_ajax_vms_update_password_action', array( $this, 'vms_update_password_action' ) );
 			add_action( 'wp_ajax_vms_model_action', array( $this, 'vms_model_action' ) );
-
+			add_action( 'wp_ajax_vms_model_delete_action', array( $this, 'vms_model_delete_action' ) );
 		}
 
 		/**
@@ -969,40 +969,44 @@ if ( !class_exists('VMS') ) {
 			//Models
 			$models = $this->get_models_list_for_modelist($user_data->ID);
 
-			var_dump($models);
-
 			if(count($models) === 0) {
 				$models_html = '<div>'. $attributes['no_models_text'] . '</div>';
 			}
 			else {
-				$models_html = '<table style="border: 1px solid black">
+				$models_html = '<table>
 				<tr>
-					<th>
-					'. 'ID' .'
-					</th>
-					<th>
-					'.$attributes['model_title_label'].'
-					</th>
-					<th>
-					'.$attributes['model_category_label'].'
-					</th>
+					<th>ID</th>
+					<th>' . $attributes['model_title_label'] . '</th>
+					<th>'. $attributes['model_category_label'] .'</th>
+					<th></th>
 				</tr>';
 				foreach ($models as $model) {
 					$models_html .= '<tr>
-					<td>' . $model->id . '</td>'.
+					<td>' . sprintf('%05d', $model->id) . '</td>'.
 					'<td>' . $model->title . '</td>'.
-					'<td>' . $model->categoryId . '</td>
+					'<td>' . $model->category . '</td>'.
+					'<td>
+						<button data-category-id="' . $model->categoryId .
+									 '"data-model-id="' . $model->id .
+									 '"data-title="' . $model->title .
+						'" class="vms_update_model_button">' . $attributes['edit_button_label'] . '</button>
+						<button class="vms_delete_model_button" data-model-id="' . $model->id .'">' . $attributes['delete_button_label'] . '</button>
+					</td>
 					</tr>';
 				}
 				$models_html .= '</table>';
 			}
 
 			$model_nonce = wp_create_nonce('vms-model');
+			$model_delete_nonce = wp_create_nonce('vms-model-delete');
 
 			$html = '<div class="vms_models_dashboard">
 									<div class="vms_modal">
 										<div class="vms_modal_content">
 											<form class="vms_form vms_model_form" post_id=' . get_the_ID() .' autocomplete="off">
+												<div class="vms_form_text">'
+													. $attributes['dialog_header_text'] .
+												'</div>
 												<div class="vms_form_field">'
 													. $attributes['model_title_label'] .
 													'<input type="text" name="title" autocomplete="new-password"/>
@@ -1015,6 +1019,18 @@ if ( !class_exists('VMS') ) {
 												<input type="hidden" name="vms-model-sec" value="' . $model_nonce . '">
 												<div class="vms_modal_buttons">
 													<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+													<button type="button" class="vms_modal_button">'
+													 . $attributes['cancel_button_label'] .
+													'</button>
+												</div>
+											</form>
+											<form class="vms_form vms_model_delete_form" post_id=' . get_the_ID() .' autocomplete="off">
+												<div class="vms_form_text">'
+													. $attributes['delete_header_text'] .
+												'</div>
+												<input type="hidden" name="vms-model-delete-sec" value="' . $model_delete_nonce . '">
+												<div class="vms_modal_buttons">
+													<input type="submit" value="' . $attributes['delete_button_label'] . '"/>
 													<button type="button" class="vms_modal_button">'
 													 . $attributes['cancel_button_label'] .
 													'</button>
@@ -1472,9 +1488,9 @@ if ( !class_exists('VMS') ) {
 
 					$current_user = wp_get_current_user();
 
-					if($_POST['id']){
+					if($_POST['model_id']){
 						//Model update
-
+						$model = $this->update_model( $_POST['model_id'], $_POST['title'], $_POST['category'] );
 					}
 					else {
 						//New Model
@@ -1501,6 +1517,45 @@ if ( !class_exists('VMS') ) {
 
 			die();
 		}
+
+		//Delete model
+
+		function vms_model_delete_action() {
+
+			check_ajax_referer( 'vms-model-delete', 'security' );
+
+			$post_id = $_POST['post_id'];
+
+			if(isset($post_id)){
+
+				if( trim($_POST['model_id']) === '' ) {
+					$hasError = true;
+				}
+
+				if( !$hasError ) {
+
+					$model = $this->delete_model( $_POST['model_id'] );
+
+					$res = array(
+						'success' => true,
+						'res' => $model
+					);
+
+					echo json_encode($res);
+				}
+				else {
+					$res = array(
+						'success' => false,
+					);
+
+					echo json_encode($res);
+				}
+			}
+
+			die();
+		}
+
+
 
 
 		/**
@@ -1830,8 +1885,17 @@ if ( !class_exists('VMS') ) {
 		function get_models_list_for_modelist($modelist_id) {
 			global $wpdb;
 
-			$table_name = $wpdb->prefix . "vms_models";
-			$query = "SELECT id, title, categoryId, modelistId FROM " . $table_name . " WHERE modelistId=" . $modelist_id;
+			$category_locale_id = (get_locale() == "it_IT")? "it" : "en";
+
+			$models_table = $wpdb->prefix . "vms_models";
+			$category_table = $wpdb->prefix . "vms_categories";
+
+			$query = "SELECT " . $models_table . ".id, " . $models_table .".title, " .
+			 									 $category_table . "." . $category_locale_id . " AS category, " .
+												 $models_table . ".categoryId" .
+												 " FROM " . $models_table .
+												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
+												 " WHERE modelistId=" . $modelist_id;
 			$models = $wpdb->get_results($query);
 			return $models;
 		}
@@ -1845,6 +1909,29 @@ if ( !class_exists('VMS') ) {
 			$model = $wpdb->get_results( $query );
 			return $model;
 		}
+
+		function update_model ( $model_id, $title, $category_id ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . "vms_models";
+
+			$query = 'UPDATE '. $table_name .
+							' SET title="' . $title . '", categoryId="' . $category_id .
+							' " WHERE id=' . $model_id;
+
+			$model = $wpdb->get_results( $query );
+			return $query;
+		}
+
+		function delete_model ( $model_id ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . "vms_models";
+			$query = 'DELETE FROM '. $table_name .
+							' WHERE id=' . $model_id;
+
+			$model = $wpdb->get_results( $query );
+			return $query;
+		}
+
 	}
 
 	//Plugin Execution

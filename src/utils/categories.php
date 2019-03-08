@@ -24,7 +24,7 @@
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVM1', 'it' =>	'Veicoli militari MASTER 1/72-1/48', 'en' =>	'MILITARY VEHICLES DIORAMAS MASTER 1/72-1/48'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVM2', 'it' =>	'Veicoli militari MASTER 1/35', 'en' =>	'MILITARY VEHICLES MASTER 1/35'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVMD1', 'it' =>	'Diorami militari MASTER 1/72-1/48', 'en' =>	'MILITARY VECHICLES DIORAMAS MASTER 1/72-1/48'),
-     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVMD2', 'it' =>	'Diorami militari MASTER 1/', 'en' =>	'MILITARY VECHICLES DIORAMAS MASTER 1/35'),
+     array( 'gruppo' => 'ORDNANCE', "sigla" => 'MVMD2', 'it' =>	'Diorami militari MASTER 1/35', 'en' =>	'MILITARY VECHICLES DIORAMAS MASTER 1/35'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'N1', 'it' =>	'Navi da scatola tutte le scale', 'en' =>	'BOX SHIPS ALL SCALES'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'N2', 'it' =>	'Navi autocostruite tutte le scale', 'en' =>	'SELFBUILT SHIPS ALL SCALES'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'ND', 'it' =>	'Diorami navali tutte le scale', 'en' =>	'NAVAL DIORAMAS ALL SCALES'),
