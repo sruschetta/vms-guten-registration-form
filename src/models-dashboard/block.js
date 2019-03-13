@@ -44,6 +44,7 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 					{ placeholder: "Model ID label", attr: "model_id_label"},
 					{ placeholder: "Model title label", attr: "model_title_label"},
 					{ placeholder: "Model category label", attr: "model_category_label"},
+					{ placeholder: "Model display label", attr: "model_display_label"},
 					{ placeholder: "Add model button label", attr: "add_button_label"}
 	      ];
 				var saveDialogAttr = [

@@ -126,6 +126,14 @@ registerBlockType( 'vms/vms-plugin-registration-form', {
 								})
 							}
 						</select>
+						<hr/>
+						<div>Registration email settings</div>
+						<TextControl placeholder={ "Registration email subject" }
+												 onChange={ this.handleChange('registration_email_subject') }
+												 value={ this.props.attributes['registration_email_subject'] }/>
+						<RichText placeholder={ "Registration email text" }
+											onChange={ this.handleChange('registration_email_text') }
+											value={ this.props.attributes['registration_email_text'] }/>
 	        </div>
 	      );
 	  }

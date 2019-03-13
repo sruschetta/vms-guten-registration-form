@@ -133,6 +133,18 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
+			register_meta( 'post', 'registration_email_subject', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
+			register_meta( 'post', 'registration_email_text', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
 			register_meta( 'post', 'user_not_found_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
@@ -370,6 +382,16 @@ if ( !class_exists('VMS') ) {
 							'type' => 'text',
 							'source' => 'meta',
 							'meta' => 'user_creation_successful_message'
+					),
+					'registration_email_subject' => array(
+						'type' => 'text',
+						'source' => 'meta',
+						'meta' => 'registration_email_subject'
+					),
+					'registration_email_text' => array(
+						'type' => 'text',
+						'source' => 'meta',
+						'meta' => 'registration_email_text'
 					)
 		 		),
 				'editor_script' => 'vms_backend_script',
@@ -504,6 +526,10 @@ if ( !class_exists('VMS') ) {
 				'model_title_label' => array(
 					'type' => 'string',
 					'default' => 'Titolo'
+				),
+				'model_display_label' => array(
+					'type' => 'string',
+					'default' => 'Display',
 				),
 				'model_category_label' => array(
 					'type' => 'string',
@@ -983,7 +1009,7 @@ if ( !class_exists('VMS') ) {
 				foreach ($models as $model) {
 					$models_html .= '<tr>
 					<td>' . sprintf('%05d', $model->id) . '</td>'.
-					'<td>' . $model->title . '</td>'.
+					'<td><b>' . $model->title . '</b></td>'.
 					'<td>' . $model->category . '</td>'.
 					'<td>
 						<button data-category-id="' . $model->categoryId .
@@ -1248,8 +1274,8 @@ if ( !class_exists('VMS') ) {
 									'target_page' => get_permalink($meta['target_page'][0])
 								);
 
-								wp_send_new_user_notifications( $user_id, 'both');
-
+								$headers = array('Content-Type: text/html; charset=UTF-8');
+								wp_mail( $email, $meta['registration_email_subject'][0], $meta['registration_email_text'][0], $headers);
 							}
 							else {
 								$res = array(
@@ -1753,7 +1779,6 @@ if ( !class_exists('VMS') ) {
   			PRIMARY KEY  (id)
 			) $charset_collate;";
 
-
 			$table_name = $wpdb->prefix . "vms_models";
 
 			$sql .= "CREATE TABLE $table_name (
@@ -1765,6 +1790,16 @@ if ( !class_exists('VMS') ) {
 				FOREIGN KEY (categoryId) REFERENCES ". $wpdb->prefix . "vms_categories(id),
 				FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
 			) $charset_collate;";
+
+			$table_name = $wpdb->prefix . "vms_displays";
+
+			$sql .= "CREATE TABLE $table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				modelistId int,
+				PRIMARY KEY (id),
+				FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
+			) $charset_collate;";
+
 
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 			dbDelta( $sql );
@@ -1819,6 +1854,16 @@ if ( !class_exists('VMS') ) {
 			$table_name = $wpdb->prefix . 'vms_categories';
 	 		$sql = "DELETE FROM $table_name";
 
+			$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_models';
+			$sql = "DELETE FROM $table_name";
+
+	 		$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_displays';
+			$sql = "DELETE FROM $table_name";
+
 	 		$wpdb->query($sql);
 		}
 
@@ -1833,7 +1878,17 @@ if ( !class_exists('VMS') ) {
 			$table_name = $wpdb->prefix . 'vms_categories';
 			$sql = "DROP TABLE IF EXISTS $table_name";
 
+			$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_models';
+			$sql = "DROP TABLE IF EXISTS $table_name";
+
 	 		$wpdb->query($sql);
+
+			$table_name = $wpdb->prefix . 'vms_displays';
+			$sql = "DROP TABLE IF EXISTS $table_name";
+
+			$wpdb->query($sql);
 		}
 
 
