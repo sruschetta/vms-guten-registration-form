@@ -12,9 +12,17 @@ TODOS:
   - Add
   - Delete
 
+- Responsive:
+  - User dashboard
+  - Model dashboard
+
 - Print Recap
+ - Check if need to print
+ - PDF rendering
 
 - Models managing from backoffice
+ - List
+ - Check
 
 - Reports:
   - All modelers

@@ -27,6 +27,7 @@ if ( !class_exists('VMS') ) {
 			$this->initDB();
 			$this->initRoles();
 			$this->initGutenbergBlocks();
+			$this->initAdminScripts();
     }
 
 
@@ -926,7 +927,6 @@ if ( !class_exists('VMS') ) {
 										<td>'
 										.	$user_data->first_name .
 										'</td>
-										<td>
 									</tr>
 									<tr>
 										<td>'
@@ -935,7 +935,6 @@ if ( !class_exists('VMS') ) {
 										<td>'
 										.	$user_data->last_name .
 										'</td>
-										<td>
 									</tr>
 									<tr>
 										<td>'
@@ -1713,6 +1712,34 @@ if ( !class_exists('VMS') ) {
 					</td>
 			</tr>
 			</table>
+			<h3><?php _e("Models", "blank"); ?></h3>
+		<?php
+			$models = $this->get_models_list_for_modelist($user->ID);
+		?>
+		<table>
+			<tr>
+				<th>ID</th>
+				<th>Titolo</th>
+				<th>Categoria</th>
+				<th></th>
+			</tr>
+		<?php
+			foreach ($models as $model) {
+		?>
+				<tr>
+					<td><?php echo sprintf('%05d', $model->id) ?></td>
+					<td><?php echo $model->title ?></td>
+					<td><?php echo $model->category ?></td>
+					<td>
+						<button data-category-id="<?php echo $model->categoryId ?>"
+									  data-model-id="<?php echo $model->id ?>"
+									  data-title="<?php echo $model->title ?>">Modifica</button>
+						<button data-model-id="<?php echo $model->id ?>">Elimina</button>
+				</tr>
+				<?php
+			}
+			?>
+			</table>
 		<?php
 		}
 
@@ -1761,9 +1788,9 @@ if ( !class_exists('VMS') ) {
 			$charset_collate = $wpdb->get_charset_collate();
 
 			$sql = "CREATE TABLE $table_name (
-  			id mediumint(9) NOT NULL AUTO_INCREMENT,
-  			it tinytext NOT NULL,
-				en tinytext NOT NULL,
+  			id MEDIUMINT(9) NOT NULL AUTO_INCREMENT,
+  			it TINYTEXT NOT NULL,
+				en TINYTEXT NOT NULL,
   			PRIMARY KEY  (id)
 			) $charset_collate;";
 
@@ -1784,8 +1811,9 @@ if ( !class_exists('VMS') ) {
 			$sql .= "CREATE TABLE $table_name (
 				id mediumint(9) NOT NULL AUTO_INCREMENT,
 				title tinytext NOT NULL,
-				categoryId int,
-				modelistId int,
+				categoryId INT,
+				modelistId INT,
+				needs_display BOOLEAN
 				PRIMARY KEY  (id),
 				FOREIGN KEY (categoryId) REFERENCES ". $wpdb->prefix . "vms_categories(id),
 				FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
@@ -1835,6 +1863,7 @@ if ( !class_exists('VMS') ) {
 					array(
 						'gruppo' => ucfirst(strtolower($category['gruppo'])),
 						'sigla' => $category['sigla'],
+						'needs_display' =>
 						'it' => ucfirst(strtolower($category['it'])),
 						'en' => ucfirst(strtolower($category['en']))
 					)
@@ -1985,6 +2014,15 @@ if ( !class_exists('VMS') ) {
 
 			$model = $wpdb->get_results( $query );
 			return $query;
+		}
+
+		function initAdminScripts() {
+			add_action( 'admin_enqueue_scripts', array( $this, 'vms_admin_script_and_style' ) );
+		}
+
+		function vms_admin_script_and_style() {
+			wp_enqueue_style('vms-admin-styles', plugins_url( 'src/style/vms-admin-style.scss', __FILE__ ));
+			wp_enqueue_script('vms-admin-script', plugins_url( 'src/script/vms-admin-script.js', __FILE__ ));
 		}
 
 	}
