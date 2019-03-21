@@ -1,14 +1,14 @@
 <?php
 
   $categories_array = array(
-     array( 'gruppo' => 'figurini', "sigla" => 'HSP', 'it' =>	'STORICO STANDARD PITTURA', 'en' =>	'HISTORY STANDARD PAINTING'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'HSO', 'it' =>	'STORICO STANDARD OPEN', 'en' =>	'HISTORY STANDARD OPEN'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMP', 'it' =>	'STORICO MASTER PITTURA', 'en' =>	'HISTORY MASTER PAINTING'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMO', 'it' =>	'STORICO MASTER OPEN', 'en' =>	'HISTORY MASTER OPEN'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSP', 'it' =>	'FANTASY STANDARD PITTURA', 'en' =>	'FANTASY STANDARD PAINTING'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSO', 'it' =>	'FANTASY STANDARD OPEN', 'en' =>	'FANTASY STANDARD OPEN'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMP', 'it' =>	'FANTASY MASTER PITTURA', 'en' =>	'FANTASY MASTER PAINTING'),
-     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMO', 'it' =>	'FANTASY MASTER OPEN', 'en' =>	'FANTASY MASTER OPEN'),
+     array( 'gruppo' => 'figurini', "sigla" => 'HSP', 'it' =>	'STORICO STANDARD PITTURA', 'en' =>	'HISTORY STANDARD PAINTING', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HSO', 'it' =>	'STORICO STANDARD OPEN', 'en' =>	'HISTORY STANDARD OPEN', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMP', 'it' =>	'STORICO MASTER PITTURA', 'en' =>	'HISTORY MASTER PAINTING', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'HMO', 'it' =>	'STORICO MASTER OPEN', 'en' =>	'HISTORY MASTER OPEN', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSP', 'it' =>	'FANTASY STANDARD PITTURA', 'en' =>	'FANTASY STANDARD PAINTING', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FSO', 'it' =>	'FANTASY STANDARD OPEN', 'en' =>	'FANTASY STANDARD OPEN', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMP', 'it' =>	'FANTASY MASTER PITTURA', 'en' =>	'FANTASY MASTER PAINTING', 'needs_display' => true),
+     array( 'gruppo' => 'FIGURINI', "sigla" => 'FMO', 'it' =>	'FANTASY MASTER OPEN', 'en' =>	'FANTASY MASTER OPEN', 'needs_display' => true),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'AS1', 'it' =>	'Aerei ed Elicotteri STANDARD 1/72', 'en' =>	'PLANES AND CHOPPERS STANDARD 1/72'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'AS2', 'it' =>	'Aerei ed Elicotteri STANDARD 1/48 – 1/32 – 1/35', 'en' =>	'PLANES AND CHOPPERS STANDARD 1/48 – 1/32 – 1/35'),
      array( 'gruppo' => 'ORDNANCE', "sigla" => 'ASD1', 'it' =>	'Diorami areonautici STANDARD 1/72', 'en' =>	'AEROSPACE DIORAMAS STANDARD 1/72'),

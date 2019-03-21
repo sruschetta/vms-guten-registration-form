@@ -20,9 +20,9 @@ if ( !class_exists('VMS') ) {
 
 		function __construct() {
 
-			/*if ( ! function_exists( 'register_block_type' ) ) {
+			if ( ! function_exists( 'register_block_type' ) ) {
 				return;
-			}*/
+			}
 
 			$this->initDB();
 			$this->initRoles();
@@ -36,12 +36,10 @@ if ( !class_exists('VMS') ) {
 		**/
 
 		function initGutenbergBlocks() {
-
 			$this->registerMeta();
 			$this->registerBlocks();
 			$this->registerActions();
 		}
-
 
 		function registerMeta() {
 			register_meta( 'post', 'email_missing_error', array(
@@ -609,6 +607,9 @@ if ( !class_exists('VMS') ) {
 
 		function renderLoginBlock( $attributes, $content ) {
 
+
+
+
 			if ( is_user_logged_in() ) {
 				return ;
 			}
@@ -1003,13 +1004,18 @@ if ( !class_exists('VMS') ) {
 					<th>ID</th>
 					<th>' . $attributes['model_title_label'] . '</th>
 					<th>'. $attributes['model_category_label'] .'</th>
+					<th>Display</th>
 					<th></th>
 				</tr>';
 				foreach ($models as $model) {
+
+					$display = isset( $model->display)?sprintf('%05d', $model->display):'';
+
 					$models_html .= '<tr>
-					<td>' . sprintf('%05d', $model->id) . '</td>'.
-					'<td><b>' . $model->title . '</b></td>'.
-					'<td>' . $model->category . '</td>'.
+					<td>' . sprintf('%05d', $model->id) . '</td>' .
+					'<td><b>' . $model->title . '</b></td>' .
+					'<td>' . $model->category . '</td>' .
+					'<td>' . $display . '</td>' .
 					'<td>
 						<button data-category-id="' . $model->categoryId .
 									 '"data-model-id="' . $model->id .
@@ -1547,6 +1553,10 @@ if ( !class_exists('VMS') ) {
 
 		function vms_model_delete_action() {
 
+			require_once('src/classes/pdf.php');
+			generatePDF();
+			die();
+
 			check_ajax_referer( 'vms-model-delete', 'security' );
 
 			$post_id = $_POST['post_id'];
@@ -1721,6 +1731,7 @@ if ( !class_exists('VMS') ) {
 				<th>ID</th>
 				<th>Titolo</th>
 				<th>Categoria</th>
+				<th>Display</th>
 				<th></th>
 			</tr>
 		<?php
@@ -1730,11 +1741,13 @@ if ( !class_exists('VMS') ) {
 					<td><?php echo sprintf('%05d', $model->id) ?></td>
 					<td><?php echo $model->title ?></td>
 					<td><?php echo $model->category ?></td>
+					<td><?php echo $model->display ?></td>
 					<td>
 						<button data-category-id="<?php echo $model->categoryId ?>"
 									  data-model-id="<?php echo $model->id ?>"
 									  data-title="<?php echo $model->title ?>">Modifica</button>
 						<button data-model-id="<?php echo $model->id ?>">Elimina</button>
+					</td>
 				</tr>
 				<?php
 			}
@@ -1803,6 +1816,7 @@ if ( !class_exists('VMS') ) {
 				en tinytext NOT NULL,
 				gruppo tinytext NOT NULL,
 				sigla tinytext NOT NULL,
+				needs_display boolean DEFAULT 0,
   			PRIMARY KEY  (id)
 			) $charset_collate;";
 
@@ -1813,7 +1827,6 @@ if ( !class_exists('VMS') ) {
 				title tinytext NOT NULL,
 				categoryId INT,
 				modelistId INT,
-				needs_display BOOLEAN
 				PRIMARY KEY  (id),
 				FOREIGN KEY (categoryId) REFERENCES ". $wpdb->prefix . "vms_categories(id),
 				FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
@@ -1857,13 +1870,17 @@ if ( !class_exists('VMS') ) {
 
 			$table_name = $wpdb->prefix . "vms_categories";
 
+
 			foreach ($categories_array as $category) {
+
+				$needs_display = ($category['needs_display'])?$category['needs_display']:false;
+
 				$wpdb->insert(
 					$table_name,
 					array(
 						'gruppo' => ucfirst(strtolower($category['gruppo'])),
 						'sigla' => $category['sigla'],
-						'needs_display' =>
+						'needs_display' => $needs_display,
 						'it' => ucfirst(strtolower($category['it'])),
 						'en' => ucfirst(strtolower($category['en']))
 					)
@@ -1966,6 +1983,14 @@ if ( !class_exists('VMS') ) {
 			return $categories;
 		}
 
+		function get_category_with_id($category_id) {
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . "vms_categories";
+			$category = $wpdb->get_row("SELECT * FROM " . $table_name . " WHERE id=" . $category_id );
+			return $category;
+		}
+
 		function get_models_list_for_modelist($modelist_id) {
 			global $wpdb;
 
@@ -1973,20 +1998,50 @@ if ( !class_exists('VMS') ) {
 
 			$models_table = $wpdb->prefix . "vms_models";
 			$category_table = $wpdb->prefix . "vms_categories";
+			$display_table = $wpdb->prefix . "vms_displays";
 
 			$query = "SELECT " . $models_table . ".id, " . $models_table .".title, " .
 			 									 $category_table . "." . $category_locale_id . " AS category, " .
-												 $models_table . ".categoryId" .
+												 $models_table . ".categoryId, " .
+												 "IF(" . $category_table . ".needs_display = 1, " . $display_table . ".id, null) AS display" .
 												 " FROM " . $models_table .
 												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
-												 " WHERE modelistId=" . $modelist_id;
+												 " INNER JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
+												 " WHERE " .  $models_table . ".modelistId=" . $modelist_id;
 			$models = $wpdb->get_results($query);
 			return $models;
+		}
+
+		function get_display_for_modelist($modelist_id) {
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . "vms_displays";
+			$display = $wpdb->get_row("SELECT * FROM " . $table_name . " WHERE modelistId=" . $modelist_id );
+
+			return $display;
+		}
+
+		function create_display_for_modelist($modelist_id) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . "vms_displays";
+
+			$query = "INSERT INTO ". $table_name .
+							 "(modelistId) VALUES ('" . $modelist_id ."')";
+			$display = $wpdb->get_results($query);
+			return $display;
 		}
 
 		function create_new_model( $title, $category_id, $modelist_id) {
 			global $wpdb;
 			$table_name = $wpdb->prefix . "vms_models";
+
+			$category = $this->get_category_with_id($category_id);
+
+			if($category->needs_display) {
+					if( !$this->get_display_for_modelist($modelist_id) ){
+						$this->create_display_for_modelist($modelist_id);
+					}
+			}
 
 			$query = "INSERT INTO ". $table_name .
 						"(title, categoryId, modelistId) VALUES ('". $title. "','" . $category_id . "','" . $modelist_id ."')";

@@ -390,17 +390,24 @@
           'security': form.find('input[name="vms-model-delete-sec"]').val(),
           'post_id': form.attr('post_id')
         },
-        success: function(data){
-
-          if(data.success){
-            location.reload(true);
-          }
+        hrFields: {
+            responseType: 'blob'
         },
-        error: function(error){
-          console.log(error);
+        success: function (data) {
+          console.log("asdasdasd");
+          var blob = new Blob([request.response], { type: 'application/pdf' });
+          var link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = filename;
+
+          document.body.appendChild(link);
+
+          link.click();
+
+          document.body.removeChild(link);
         }
-      });
     });
+});
 
 
     //User dashboard

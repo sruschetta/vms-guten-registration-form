@@ -7,11 +7,6 @@ import './models-dashboard/block.js';
 /*
 TODOS:
 
-- Display code
-  - Table
-  - Add
-  - Delete
-
 - Responsive:
   - User dashboard
   - Model dashboard
@@ -19,6 +14,7 @@ TODOS:
 - Print Recap
  - Check if need to print
  - PDF rendering
+ - Format
 
 - Models managing from backoffice
  - List
