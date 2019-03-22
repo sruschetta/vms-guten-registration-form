@@ -607,9 +607,6 @@ if ( !class_exists('VMS') ) {
 
 		function renderLoginBlock( $attributes, $content ) {
 
-
-
-
 			if ( is_user_logged_in() ) {
 				return ;
 			}
@@ -999,20 +996,44 @@ if ( !class_exists('VMS') ) {
 				$models_html = '<div>'. $attributes['no_models_text'] . '</div>';
 			}
 			else {
+				$models_html = '<div class="vms_models">';
+
+				foreach ($models as $model) {
+
+					$display = isset( $model->display)?sprintf('%03d', $model->display):'';
+
+					$models_html .= '<div class="vms_model_item">
+						<div><b>' . $attributes['model_title_label'] . ': </b>' . $model->title .'</div>
+						<div><span>' . $attributes['model_id_label'] . ': </span>' . sprintf('%04d', $model->id) .'</div>
+						<div><span>' . $attributes['model_category_label'] . ': </span>' . $model->category .'</div>
+						<div><span>' . $attributes['model_display_label'] . ': </span>' . $display .'</div>
+						<div>
+						<button data-category-id="' . $model->categoryId .
+									 '"data-model-id="' . $model->id .
+									 '"data-title="' . $model->title .
+						'" class="vms_update_model_button">' . $attributes['edit_button_label'] . '</button>
+						<button class="vms_delete_model_button" data-model-id="' . $model->id .'">' . $attributes['delete_button_label'] . '</button>
+						</div>
+					</div>';
+				}
+
+				$models_html .= '</div>';
+
+				/*
 				$models_html = '<table>
 				<tr>
 					<th>ID</th>
 					<th>' . $attributes['model_title_label'] . '</th>
-					<th>'. $attributes['model_category_label'] .'</th>
-					<th>Display</th>
+					<th>' . $attributes['model_category_label'] .'</th>
+					<th>' . $attributes['model_display_label'] . '</th>
 					<th></th>
 				</tr>';
 				foreach ($models as $model) {
 
-					$display = isset( $model->display)?sprintf('%05d', $model->display):'';
+					$display = isset( $model->display)?sprintf('%03d', $model->display):'';
 
 					$models_html .= '<tr>
-					<td>' . sprintf('%05d', $model->id) . '</td>' .
+					<td>' . sprintf('%04d', $model->id) . '</td>' .
 					'<td><b>' . $model->title . '</b></td>' .
 					'<td>' . $model->category . '</td>' .
 					'<td>' . $display . '</td>' .
@@ -1026,6 +1047,7 @@ if ( !class_exists('VMS') ) {
 					</tr>';
 				}
 				$models_html .= '</table>';
+				*/
 			}
 
 			$model_nonce = wp_create_nonce('vms-model');
@@ -1552,10 +1574,6 @@ if ( !class_exists('VMS') ) {
 		//Delete model
 
 		function vms_model_delete_action() {
-
-			require_once('src/classes/pdf.php');
-			generatePDF();
-			die();
 
 			check_ajax_referer( 'vms-model-delete', 'security' );
 

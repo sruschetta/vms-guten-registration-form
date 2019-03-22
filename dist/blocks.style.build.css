@@ -201,6 +201,15 @@
   margin: 1rem 0; }
   .vms_models_dashboard h1 {
     padding: 0; }
+  .vms_models_dashboard .vms_models .vms_model_item {
+    border: 1px solid white;
+    padding: 1rem; }
+    .vms_models_dashboard .vms_models .vms_model_item:nth-child(odd) {
+      background-color: #444; }
+    .vms_models_dashboard .vms_models .vms_model_item button {
+      text-align: right;
+      font-size: 0.75rem;
+      padding: 0.5rem; }
   .vms_models_dashboard table {
     color: white;
     font-size: 0.875rem; }

@@ -277,6 +277,25 @@
      padding: 0;
    }
 
+   .vms_models {
+
+     .vms_model_item {
+       border: 1px solid white;
+       padding: 1rem;
+
+       &:nth-child(odd) {
+         background-color: #444;
+       }
+
+       button {
+         text-align: right;
+         font-size: 0.75rem;
+         padding: 0.5rem;
+       }
+     }
+   }
+
+
    table {
      color: white;
      font-size: 0.875rem;
