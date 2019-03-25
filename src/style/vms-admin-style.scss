@@ -1,3 +1,72 @@
-h3{
-  color: red;
+
+.vms_lock{
+  overflow: hidden;
+}
+
+.vms_admin_table {
+  border-collapse: collapse;
+  border: 2px solid black;
+}
+
+.vms_admin_table select {
+}
+
+.vms_admin_table tbody>tr:nth-child(odd){
+  background-color: white;
+}
+
+.vms_admin_table th,td {
+  padding: 0.5rem 1rem;
+}
+
+.vms_admin_buttons {
+  margin: 1rem 0;
+  text-align: right;
+}
+
+.vms_admin_modal {
+  display: none;
+  position: fixed;
+  z-index: 100000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.8);
+  padding-top: 100px;
+
+  font-size: 12px;
+}
+
+.vms_admin_modal .vms_admin_modal_content {
+
+  position: relative;
+  background-color: #fefefe;
+  color: black;
+  margin: auto;
+  max-width: 740px;
+  padding: 2rem;
+  border-radius: 0.25rem;
+  width: 80%;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.vms_admin_modal.visible {
+  display: block;
+}
+
+.vms_admin_modal_buttons{
+  margin: 1rem 0;
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
 }

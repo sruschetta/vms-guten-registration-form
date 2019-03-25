@@ -66,6 +66,12 @@ registerBlockType( 'vms/vms-plugin-login-form', {
 	          }
 						<hr/>
 						<div>Redirect page</div>
+						<RichText type="text"
+											placeholder={ "Footer text" }
+											onChange={ this.handleChange("footer_text") }
+											value={ this.props.attributes["footer_text"] } />
+						<hr/>
+						<div>Redirect page</div>
 						<select onChange={ this.handleSelectChange('target_page') }>
 							{
 								pages.map( (item, index) => {

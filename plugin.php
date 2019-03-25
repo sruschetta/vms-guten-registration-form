@@ -241,6 +241,9 @@ if ( !class_exists('VMS') ) {
 							'type' => 'text',
 							'source' => 'meta',
 							'meta' => 'user_not_found_error'
+					),
+					'footer_text' => array(
+						'type' => 'string',
 					)
 				),
 				'editor_script' => 'vms_backend_script',
@@ -630,8 +633,13 @@ if ( !class_exists('VMS') ) {
 										'<input type="password" name="password" />
 										<span class="vms_form_error"></span>
 									</div>
-									<input type="submit" value="' . $attributes['submit_button_label'] . '">
-									<input type="hidden" name="vms-login-sec" value="' . $nonce . '">
+									<div class="vms_form_buttons">
+										<input type="submit" value="' . $attributes['submit_button_label'] . '">
+										<input type="hidden" name="vms-login-sec" value="' . $nonce . '">
+									</div>
+									<div class="vms_form_footer">'
+										. $attributes['footer_text'] .
+									'</div>
 								</form>';
 			return $html;
 		}
@@ -745,8 +753,10 @@ if ( !class_exists('VMS') ) {
 										'</span>
 										<span class="vms_form_error"></span>
 									</div>
-									<input type="submit" value="' . $attributes['submit_button_label'] . '"/>
-									<input type="hidden" name="vms-registration-sec" value="' . $nonce . '">
+									<div class="vms_form_buttons">
+										<input type="submit" value="' . $attributes['submit_button_label'] . '"/>
+										<input type="hidden" name="vms-registration-sec" value="' . $nonce . '">
+									</div>
 								</form>';
 			return $html;
 		}
@@ -996,6 +1006,7 @@ if ( !class_exists('VMS') ) {
 				$models_html = '<div>'. $attributes['no_models_text'] . '</div>';
 			}
 			else {
+				/*
 				$models_html = '<div class="vms_models">';
 
 				foreach ($models as $model) {
@@ -1018,8 +1029,8 @@ if ( !class_exists('VMS') ) {
 				}
 
 				$models_html .= '</div>';
+				*/
 
-				/*
 				$models_html = '<table>
 				<tr>
 					<th>ID</th>
@@ -1047,7 +1058,6 @@ if ( !class_exists('VMS') ) {
 					</tr>';
 				}
 				$models_html .= '</table>';
-				*/
 			}
 
 			$model_nonce = wp_create_nonce('vms-model');
@@ -1066,7 +1076,7 @@ if ( !class_exists('VMS') ) {
 													<span class="vms_form_error"></span>
 												</div>
 												<div class="vms_form_field">'
-													. $attributes['category_placeholder'] .$categories_html.
+													. $attributes['model_category_label'] . $categories_html.
 													'<span class="vms_form_error"></span>
 												</div>
 												<input type="hidden" name="vms-model-sec" value="' . $model_nonce . '">
@@ -1660,8 +1670,11 @@ if ( !class_exists('VMS') ) {
 			$user_day = trim( get_user_meta( $user->ID, 'day', true ));
 			$user_month = trim( get_user_meta( $user->ID, 'month', true ));
 			$user_year = trim( get_user_meta( $user->ID, 'year', true ));
+
+			$categories = $this->get_categories_list();
+
 			?>
-			<h3><?php _e("Extra profile information", "blank"); ?></h3>
+			<h2><?php _e("Extra profile information", "blank"); ?></h2>
 
 			<table class="form-table">
 			<tr>
@@ -1740,37 +1753,83 @@ if ( !class_exists('VMS') ) {
 					</td>
 			</tr>
 			</table>
-			<h3><?php _e("Models", "blank"); ?></h3>
 		<?php
 			$models = $this->get_models_list_for_modelist($user->ID);
+			if(count($models) == 0) return;
 		?>
-		<table>
-			<tr>
-				<th>ID</th>
-				<th>Titolo</th>
-				<th>Categoria</th>
-				<th>Display</th>
-				<th></th>
-			</tr>
-		<?php
-			foreach ($models as $model) {
-		?>
-				<tr>
-					<td><?php echo sprintf('%05d', $model->id) ?></td>
-					<td><?php echo $model->title ?></td>
-					<td><?php echo $model->category ?></td>
-					<td><?php echo $model->display ?></td>
-					<td>
-						<button data-category-id="<?php echo $model->categoryId ?>"
-									  data-model-id="<?php echo $model->id ?>"
-									  data-title="<?php echo $model->title ?>">Modifica</button>
-						<button data-model-id="<?php echo $model->id ?>">Elimina</button>
-					</td>
-				</tr>
-				<?php
-			}
+		<h2><?php _e("Models", "blank"); ?></h2>
+		<div class="vms_admin_models">
+			<table class="vms_admin_table">
+				<thead>
+					<tr>
+							<th>ID</th>
+							<th>Titolo</th>
+							<th>Categoria</th>
+							<th>Display</th>
+							<th></th>
+					</tr>
+				</thead>
+				<tbody>
+			<?php
+				foreach ($models as $model) {
+
+				$categories_html = '<select name="category">';
+
+				foreach ($categories as $category) {
+						if($nation->id == $user_nation) {
+							$categories_html .= '<option value="' . $category->id . '" selected>' . $category->sigla. ' - ' . $category->name . '</option>';
+						} else {
+							$categories_html .= '<option value="' . $category->id . '">' . $category->sigla. ' - ' . $category->name . '</option>';
+						}
+				}
+				$categories_html .= '</select>';
 			?>
-			</table>
+					<tr>
+						<td><?php echo sprintf('%05d', $model->id) ?></td>
+						<td><input type="text"  value="<?php echo $model->title ?>"/></td>
+						<td><?php echo $categories_html ?></td>
+						<td><?php echo $model->display ?></td>
+						<td class="buttons">
+							<button type="button"
+											class="button vms_admin_update_model_button"
+											data-category-id="<?php echo $model->categoryId ?>"
+										  data-model-id="<?php echo $model->id ?>"
+										  data-title="<?php echo $model->title ?>">Modifica</button>
+							<button type="button"
+											class="button vms_admin_delete_model_button"
+											data-model-id="<?php echo $model->id ?>">Elimina</button>
+						</td>
+					</tr>
+					<?php
+				}
+				?>
+				</tbody>
+				<tfooter>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>
+							<button class="button vms_admin_add_model_button" type="button">Aggiungi</button>
+						</td>
+					</tr>
+				</tfooter>
+				</table>
+				<div class="vms_admin_modal">
+					<div class="vms_admin_modal_content">
+						<form class="vms_admin_form vms_admin_delete_form">
+							<div>
+								<span>Vuoi eliminare il modello selezionato?</span>
+								<div class="vms_admin_modal_buttons">
+									<button type="button" class="button button-primary vms_admin_delete_model_button">Elimina</button>
+									<button type="button" class="button vms_admin_close_button">Annulla</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 		<?php
 		}
 
@@ -1899,8 +1958,8 @@ if ( !class_exists('VMS') ) {
 						'gruppo' => ucfirst(strtolower($category['gruppo'])),
 						'sigla' => $category['sigla'],
 						'needs_display' => $needs_display,
-						'it' => ucfirst(strtolower($category['it'])),
-						'en' => ucfirst(strtolower($category['en']))
+						'it' => $category['it'],
+						'en' => $category['en']
 					)
 				);
 			}
@@ -2024,7 +2083,7 @@ if ( !class_exists('VMS') ) {
 												 "IF(" . $category_table . ".needs_display = 1, " . $display_table . ".id, null) AS display" .
 												 " FROM " . $models_table .
 												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
-												 " INNER JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
+												 " LEFT JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
 												 " WHERE " .  $models_table . ".modelistId=" . $modelist_id;
 			$models = $wpdb->get_results($query);
 			return $models;
@@ -2094,8 +2153,13 @@ if ( !class_exists('VMS') ) {
 		}
 
 		function vms_admin_script_and_style() {
+
 			wp_enqueue_style('vms-admin-styles', plugins_url( 'src/style/vms-admin-style.scss', __FILE__ ));
 			wp_enqueue_script('vms-admin-script', plugins_url( 'src/script/vms-admin-script.js', __FILE__ ));
+
+			wp_localize_script( 'vms-admin-script', 'ajax_login_object', array(
+					'ajaxurl' => admin_url( 'admin-ajax.php' )
+			));
 		}
 
 	}

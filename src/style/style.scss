@@ -10,9 +10,19 @@
 
  .vms_form {
 
+   text-align: left;
+
    .vms_form_text {
      font-size: 1rem;
      margin-bottom: 1rem;
+   }
+
+   .vms_form_footer {
+     margin: 2rem 0;
+   }
+
+   .vms_form_buttons {
+     //text-align: center;
    }
 
    .vms_form_field {
