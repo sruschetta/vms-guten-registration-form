@@ -38,9 +38,6 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 		 	render() {
 				const { className } = this.props;
 
-				console.log(this.props.attributes);
-
-
 				var fieldsAttr = [
 				 { placeholder: "First name placeholder", attr: "firstname_placeholder" },
 				 { placeholder: "Last name placeholder", attr: "lastname_placeholder" },
@@ -58,6 +55,7 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 				var buttonAttr = [
 					{ placeholder: "Save button label", attr: "save_button_label" },
 					{ placeholder: "Cancel button label", attr: "cancel_button_label" },
+					{ placeholder: "Logout button label", attr: "logout_button_label" },
 				];
 
 				var errorAttr = [
@@ -69,7 +67,8 @@ registerBlockType( 'vms/vms-plugin-user-dashboard', {
 					{ placeholder: "Password missing error", attr: "password_missing_error" },
 					{ placeholder: "Old password invalid error", attr: "password_invalid_error" },
 					{ placeholder: "New password format error", attr: "password_format_error" },
-					{ placeholder: "New passwords match error", attr: "password_match_error" }
+					{ placeholder: "New passwords match error", attr: "password_match_error" },
+					{ placeholder: "Different passwords error", attr: "password_different_error" }
 				];
 
 				return (

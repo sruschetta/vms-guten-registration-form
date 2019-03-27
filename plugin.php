@@ -102,6 +102,12 @@ if ( !class_exists('VMS') ) {
 					'single' => true,
 			) );
 
+			register_meta( 'post', 'password_different_error', array(
+					'show_in_rest' => true,
+					'type' => 'string',
+					'single' => true,
+			) );
+
 			register_meta( 'post', 'nation_missing_error', array(
 					'show_in_rest' => true,
 					'type' => 'string',
@@ -459,6 +465,10 @@ if ( !class_exists('VMS') ) {
 					'type' => 'string',
 					'default' => 'Annulla',
 				 ),
+				 "logout_button_label" => array(
+					 'type' => 'string',
+				 	'default' => 'Logout',
+				 ),
 				 'first_name_missing_error' => array(
 					 'type' => 'string',
 					 'source' => 'meta',
@@ -504,7 +514,12 @@ if ( !class_exists('VMS') ) {
 					 'type' => 'string',
 					 'source' => 'meta',
 					 'meta' => 'password_match_error'
-				 )
+				 ),
+				 'password_different_error' => array(
+					 'type' => 'string',
+					 'source' => 'meta',
+					 'meta' => 'password_different_error'
+				 ),
 		 ),
 		 'editor_script' => 'vms_backend_script',
 		 'editor_style' => 'vms_backend_style',
@@ -536,6 +551,10 @@ if ( !class_exists('VMS') ) {
 				'model_category_label' => array(
 					'type' => 'string',
 					'default' => 'Categoria'
+				),
+				'model_category_abbreviation_label' => array(
+					'type' => 'string',
+					'default' => 'Sigla'
 				),
 				'add_button_label' => array(
 					'type' => 'string',
@@ -578,6 +597,16 @@ if ( !class_exists('VMS') ) {
 					'type' => 'string',
 					'source' => 'meta',
 					'meta' => 'category_missing_error'
+				),
+				'receipt_download_button_label' => array(
+					'type' => 'string',
+					'default' => 'Scarica ricevuta'
+				),
+				'header_text' => array(
+					'type' => 'string',
+				),
+				'receipt_download_text' => array(
+					'type' => 'string',
 				)
 		),
 		'editor_script' => 'vms_backend_script',
@@ -602,6 +631,13 @@ if ( !class_exists('VMS') ) {
 			add_action( 'wp_ajax_vms_update_password_action', array( $this, 'vms_update_password_action' ) );
 			add_action( 'wp_ajax_vms_model_action', array( $this, 'vms_model_action' ) );
 			add_action( 'wp_ajax_vms_model_delete_action', array( $this, 'vms_model_delete_action' ) );
+
+			add_action( 'wp_ajax_vms_logout_action', array( $this, 'vms_logout_action' ) );
+
+			add_action ( 'wp_ajax_vms_admin_model_delete_action', array( $this, 'vms_admin_model_delete_action') );
+			add_action ( 'wp_ajax_vms_admin_model_action', array( $this, 'vms_admin_model_action') );
+
+			add_action ( 'admin_post_vms_receipt_download_action', array( $this, 'vms_receipt_download_action') );
 		}
 
 		/**
@@ -895,7 +931,7 @@ if ( !class_exists('VMS') ) {
 												<span class="vms_form_error"></span>
 											</div>
 											<input type="hidden" name="vms-update-user-sec" value="' . $update_user_nonce . '">
-											<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+											<input type="submit" class="vms_modal_submit_button" value="' . $attributes['save_button_label'] . '"/>
 											<button type="button" class="vms_modal_button">'
 											 . $attributes['cancel_button_label'] .
 											'</button>
@@ -918,7 +954,7 @@ if ( !class_exists('VMS') ) {
 											</div>
 											<input type="hidden" name="vms-update-password-sec" value="' . $update_password_nonce . '">
 											<div class="vms_modal_buttons">
-												<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+												<input type="submit" class="vms_modal_submit_button" value="' . $attributes['save_button_label'] . '"/>
 												<button type="button" class="vms_modal_button">'
 												 . $attributes['cancel_button_label'] .
 												'</button>
@@ -927,54 +963,34 @@ if ( !class_exists('VMS') ) {
 									</div>
 								</div>
 								<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
-								<table>
-									<tr>
-										<td>'
-										.	$attributes['firstname_placeholder'] .
-										':</td>
-										<td>'
-										.	$user_data->first_name .
-										'</td>
-									</tr>
-									<tr>
-										<td>'
-										.	$attributes['lastname_placeholder'] .
-										':</td>
-										<td>'
-										.	$user_data->last_name .
-										'</td>
-									</tr>
-									<tr>
-										<td>'
-										.	$attributes['email_placeholder'] .
-										':</td>
-										<td>'
-										.	$user_data->user_email .
-										'</td>
-									</tr>
-									<tr>
-										<td>'
-										.	$attributes['nation_placeholder'] .
-										':</td>
-										<td>'
-										. $nation_name->name .
-										'</td>
-									</tr>
-									<tr>
-										<td>'
-										.	$attributes['birthdate_placeholder'] .
-										':</td>
-										<td>'
-										. $birthdate .
-										'</td>
-									</tr>
-								</table>
+								<div class="vms_user_dashboard_data">
+									<div class="vms_user_dashboard_data_item">
+										<div class="vms_user_dashboard_data_title">' . $attributes['firstname_placeholder'] . '</div>
+										<div class="vms_user_dashboard_data_content">' . $user_data->first_name . '</div>
+									</div>
+									<div class="vms_user_dashboard_data_item">
+										<div class="vms_user_dashboard_data_title">' .	$attributes['lastname_placeholder'] . '</div>
+										<div class="vms_user_dashboard_data_content">' .	$user_data->last_name . '</div>
+									</div>
+									<div class="vms_user_dashboard_data_item">
+										<div class="vms_user_dashboard_data_title">' .	$attributes['email_placeholder'] . '</div>
+										<div class="vms_user_dashboard_data_content">' . $user_data->user_email . '</div>
+									</div>
+									<div class="vms_user_dashboard_data_item">
+										<div class="vms_user_dashboard_data_title">' .	$attributes['nation_placeholder'] . '</div>
+										<div class="vms_user_dashboard_data_content">' .	$nation_name->name . '</div>
+									</div>
+									<div class="vms_user_dashboard_data_item">
+										<div class="vms_user_dashboard_data_title">' .	$attributes['birthdate_placeholder'] . '</div>
+										<div class="vms_user_dashboard_data_content">' . $birthdate . '</div>
+									</div>
+								</div>
 								<div class="vms_user_dashboard_buttons">
 									<button class="vms_open_user_update">' . $attributes['update_button_label'] . '</button>
 									<button class="vms_open_change_password">' . $attributes['password_change_button_label'] . '</button>
+									<button class="vms_logout_button">' . $attributes['logout_button_label'] . '</button>
 								</div>
-							</div>
-			';
+							</div>';
 
 			return $html;
 		}
@@ -1006,6 +1022,43 @@ if ( !class_exists('VMS') ) {
 				$models_html = '<div>'. $attributes['no_models_text'] . '</div>';
 			}
 			else {
+
+				$models_html = '<div class="vms_models">';
+
+				foreach ($models as $model) {
+
+					$models_html .= '<div class="vms_model_item">
+						<div class="vms_model_title">' . ucfirst($model->title) . '</div>
+						<div class="vms_model_info">
+							<div class="vms_model_info_title">' . $attributes['model_id_label'] . '</div>
+							<div class="vms_model_info_text">' . sprintf('%04d', $model->id) . '</div>
+						</div>
+						<div class="vms_model_info">
+							<div class="vms_model_info_title">' . $attributes['model_category_label'] . '</div>
+							<div class="vms_model_info_text">' . $model->category . '</div>
+						</div>
+						<div class="vms_model_info">
+							<div class="vms_model_info_title">' . $attributes['model_category_abbreviation_label'] . '</div>
+							<div class="vms_model_info_text">' . $model->sigla . '</div>
+						</div>';
+
+					if(isset( $model->display)) {
+						$models_html .= '<div class="vms_model_info">
+								<div class="vms_model_info_title">' . $attributes['model_display_label'] . '</div>
+								<div class="vms_model_info_text">' . sprintf('%03d', $model->display) . '</div>
+							</div>';
+					}
+					$models_html .= '<div class="vms_model_buttons">
+							<button data-category-id="' . $model->categoryId .
+										 '"data-model-id="' . $model->id .
+										 '"data-title="' . $model->title .
+							'" class="vms_update_model_button">' . $attributes['edit_button_label'] . '</button>
+							<button class="vms_delete_model_button" data-model-id="' . $model->id .'">' . $attributes['delete_button_label'] . '</button>
+						</div>
+					</div>';
+				}
+
+				$models_html .= '</div>';
 				/*
 				$models_html = '<div class="vms_models">';
 
@@ -1030,12 +1083,13 @@ if ( !class_exists('VMS') ) {
 
 				$models_html .= '</div>';
 				*/
-
+				/*
 				$models_html = '<table>
 				<tr>
-					<th>ID</th>
+					<th>' . $attributes['model_id_label'] . '</th>
 					<th>' . $attributes['model_title_label'] . '</th>
 					<th>' . $attributes['model_category_label'] .'</th>
+					<th>' . $attributes['model_category_abbreviation_label'] .'</th>
 					<th>' . $attributes['model_display_label'] . '</th>
 					<th></th>
 				</tr>';
@@ -1047,6 +1101,7 @@ if ( !class_exists('VMS') ) {
 					<td>' . sprintf('%04d', $model->id) . '</td>' .
 					'<td><b>' . $model->title . '</b></td>' .
 					'<td>' . $model->category . '</td>' .
+					'<td>' . $model->sigla . '</td>' .
 					'<td>' . $display . '</td>' .
 					'<td>
 						<button data-category-id="' . $model->categoryId .
@@ -1058,10 +1113,24 @@ if ( !class_exists('VMS') ) {
 					</tr>';
 				}
 				$models_html .= '</table>';
+				*/
 			}
 
 			$model_nonce = wp_create_nonce('vms-model');
 			$model_delete_nonce = wp_create_nonce('vms-model-delete');
+
+
+			$user_data = wp_get_current_user();
+			$user_last_update = trim( get_user_meta( $user_data->ID, 'last_update', true ));
+			$user_last_receipt_download = trim( get_user_meta( $user_data->ID, 'last_receipt_download', true ));
+
+			if( $user_last_receipt_download > $user_last_update) {
+				$receipt_html = '<button type="submit">' . $attributes['receipt_download_button_label'] . '</button>';
+			}
+			else {
+				$receipt_html = '<button class="red" type="submit">' . $attributes['receipt_download_button_label'] . '</button>
+												 <div>' . $attributes['receipt_download_text'] . '</div>';
+			}
 
 			$html = '<div class="vms_models_dashboard">
 									<div class="vms_modal">
@@ -1081,7 +1150,7 @@ if ( !class_exists('VMS') ) {
 												</div>
 												<input type="hidden" name="vms-model-sec" value="' . $model_nonce . '">
 												<div class="vms_modal_buttons">
-													<input type="submit" value="' . $attributes['save_button_label'] . '"/>
+													<input class="vms_modal_submit_button" type="submit" value="' . $attributes['save_button_label'] . '"/>
 													<button type="button" class="vms_modal_button">'
 													 . $attributes['cancel_button_label'] .
 													'</button>
@@ -1092,16 +1161,18 @@ if ( !class_exists('VMS') ) {
 													. $attributes['delete_header_text'] .
 												'</div>
 												<input type="hidden" name="vms-model-delete-sec" value="' . $model_delete_nonce . '">
-												<div class="vms_modal_buttons">
-													<input type="submit" value="' . $attributes['delete_button_label'] . '"/>
-													<button type="button" class="vms_modal_button">'
-													 . $attributes['cancel_button_label'] .
-													'</button>
-												</div>
+												<div class="vms_modal_buttons">'
+													 . $receipt_html .
+												'</div>
 											</form>
 										</div>
 									</div>
-							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>'
+							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
+									<form class="vms_models_receipt" method="post" formtarget="_blank" action="' . admin_url( 'admin-post.php' ) . '">
+									  <input type="hidden" name="action" value="vms_receipt_download_action">
+										' . $attributes['header_text'] .'
+										<div class="vms_models_receipt_buttons">'. $receipt_html . '</div>
+									</form>'
 									. $models_html .
 									'<div class="vms_models_dashboard_buttons">
 										<button class="vms_add_model_button">' . $attributes['add_button_label'] . '</button>
@@ -1110,8 +1181,6 @@ if ( !class_exists('VMS') ) {
 
 			return $html;
 		}
-
-
 
 
 		/**
@@ -1313,6 +1382,14 @@ if ( !class_exists('VMS') ) {
 
 								$headers = array('Content-Type: text/html; charset=UTF-8');
 								wp_mail( $email, $meta['registration_email_subject'][0], $meta['registration_email_text'][0], $headers);
+
+								$credentials  = array(
+	 							 	'user_login'    => $email,
+	 	        			'user_password' => $password,
+	 	        			'remember'      => false
+	 							);
+
+	 							$login =  wp_signon( $credentials, true );
 							}
 							else {
 								$res = array(
@@ -1409,6 +1486,8 @@ if ( !class_exists('VMS') ) {
 							update_user_meta( $user_id, 'day', $day );
 							update_user_meta( $user_id, 'month', $month );
 							update_user_meta( $user_id, 'year', $year );
+							update_user_meta( $user_id, 'last_update', date('Y-m-d h:i:sa') );
+
 							$res = array(
 								'success' => true,
 							);
@@ -1488,7 +1567,12 @@ if ( !class_exists('VMS') ) {
 
 					//Repeat password
 					if( $password ) {
-						if( ( trim($_POST['new_password2']) === '' ) || ( $_POST['new_password2'] !== $password ) )  {
+
+						if( $password === trim($_POST['old_password']) ) {
+							$errors['password_different_error'] = $meta['password_different_error'];
+							$hasError = true;
+						}
+						else if( ( trim($_POST['new_password2']) === '' ) || ( $_POST['new_password2'] !== $password ) )  {
 							$errors['new_password_match_error'] = $meta['password_match_error'];
 							$hasError = true;
 						}
@@ -1553,12 +1637,14 @@ if ( !class_exists('VMS') ) {
 
 					if($_POST['model_id']){
 						//Model update
-						$model = $this->update_model( $_POST['model_id'], $_POST['title'], $_POST['category'] );
+						$model = $this->update_model( $_POST['model_id'], $_POST['title'], $_POST['category'], $current_user->ID );
 					}
 					else {
 						//New Model
 						$model = $this->create_new_model($_POST['title'], $_POST['category'], $current_user->ID );
 					}
+
+					update_user_meta( $current_user->ID, 'last_update', date('Y-m-d h:i:sa') );
 
 					$res = array(
 						'success' => true,
@@ -1599,6 +1685,9 @@ if ( !class_exists('VMS') ) {
 
 					$model = $this->delete_model( $_POST['model_id'] );
 
+					$current_user = wp_get_current_user();
+					update_user_meta( $current_user->ID, 'last_update', date('Y-m-d h:i:sa') );
+
 					$res = array(
 						'success' => true,
 						'res' => $model
@@ -1618,7 +1707,117 @@ if ( !class_exists('VMS') ) {
 			die();
 		}
 
+		//Logout
 
+		function vms_logout_action() {
+
+			$current_user = wp_get_current_user();
+
+			if($current_user) {
+				wp_logout();
+
+				$res = array(
+					'success' => true,
+				);
+
+				echo json_encode($res);
+			}
+			die();
+		}
+
+
+		//Admin - Delete model
+
+		function vms_admin_model_delete_action() {
+
+			if( trim($_POST['model_id']) === '' ) {
+				$hasError = true;
+			}
+
+			if( !$hasError ) {
+
+				$model = $this->delete_model( $_POST['model_id'] );
+
+				$res = array(
+					'success' => true,
+					'res' => $model
+				);
+
+				echo json_encode($res);
+			}
+			else {
+				$res = array(
+					'success' => false,
+				);
+
+				echo json_encode($res);
+			}
+			die();
+
+		}
+
+
+		//Admin - Add/Edit model
+
+		function vms_admin_model_action() {
+
+				//Title
+				if( trim($_POST['title']) === '' ) {
+					$errors['title_missing_error'] = "Il campo Titolo è obbligatorio.";
+					$hasError = true;
+				}
+
+				//Category
+				if( trim($_POST['category']) === '' ) {
+					$errors['category_missing_error'] = "Il campo Categoria è obbligatorio.";
+					$hasError = true;
+				}
+
+				if( !$hasError ) {
+
+					$current_user = wp_get_current_user();
+
+					if($_POST['model_id']){
+						//Model update
+						$model = $this->update_model( $_POST['model_id'], $_POST['title'], $_POST['category'], $_POST['user_id'] );
+					}
+					else {
+						//New Model
+						$model = $this->create_new_model($_POST['title'], $_POST['category'], $_POST['user_id'] );
+					}
+
+					$res = array(
+						'success' => true,
+						'res' => $model
+					);
+
+					echo json_encode($res);
+				}
+				else {
+
+					$res = array(
+						'success' => false,
+						'errors' => $errors
+					);
+
+					echo json_encode($res);
+
+			}
+
+			die();
+		}
+
+
+		//Receipt action
+
+		function vms_receipt_download_action() {
+			$current_user = wp_get_current_user();
+
+			update_user_meta( $current_user->ID, 'last_receipt_download', date('Y-m-d h:i:sa') );
+
+			require_once (plugin_dir_path(__FILE__). './src/classes/pdf.php');
+			generatePDF();
+		}
 
 
 		/**
@@ -1675,7 +1874,6 @@ if ( !class_exists('VMS') ) {
 
 			?>
 			<h2><?php _e("Extra profile information", "blank"); ?></h2>
-
 			<table class="form-table">
 			<tr>
 					<th><label for="nation"><?php _e("Nazione"); ?></label></th>
@@ -1755,7 +1953,14 @@ if ( !class_exists('VMS') ) {
 			</table>
 		<?php
 			$models = $this->get_models_list_for_modelist($user->ID);
-			if(count($models) == 0) return;
+
+			$categories_html = '<select name="category">';
+			$categories_html .= '<option disabled selected value></option>';
+
+			foreach ($categories as $category) {
+				$categories_html .= '<option value="' . $category->id . '">' . $category->sigla. ' - ' . $category->name . '</option>';
+			}
+			$categories_html .= '</select>';
 		?>
 		<h2><?php _e("Models", "blank"); ?></h2>
 		<div class="vms_admin_models">
@@ -1765,6 +1970,7 @@ if ( !class_exists('VMS') ) {
 							<th>ID</th>
 							<th>Titolo</th>
 							<th>Categoria</th>
+							<th>Sigla</th>
 							<th>Display</th>
 							<th></th>
 					</tr>
@@ -1772,29 +1978,20 @@ if ( !class_exists('VMS') ) {
 				<tbody>
 			<?php
 				foreach ($models as $model) {
-
-				$categories_html = '<select name="category">';
-
-				foreach ($categories as $category) {
-						if($nation->id == $user_nation) {
-							$categories_html .= '<option value="' . $category->id . '" selected>' . $category->sigla. ' - ' . $category->name . '</option>';
-						} else {
-							$categories_html .= '<option value="' . $category->id . '">' . $category->sigla. ' - ' . $category->name . '</option>';
-						}
-				}
-				$categories_html .= '</select>';
-			?>
+					?>
 					<tr>
 						<td><?php echo sprintf('%05d', $model->id) ?></td>
-						<td><input type="text"  value="<?php echo $model->title ?>"/></td>
-						<td><?php echo $categories_html ?></td>
+						<td><?php echo $model->title ?></td>
+						<td><?php echo $model->category ?></td>
+						<td><?php echo $model->sigla ?></td>
 						<td><?php echo $model->display ?></td>
 						<td class="buttons">
 							<button type="button"
 											class="button vms_admin_update_model_button"
 											data-category-id="<?php echo $model->categoryId ?>"
 										  data-model-id="<?php echo $model->id ?>"
-										  data-title="<?php echo $model->title ?>">Modifica</button>
+										  data-title="<?php echo $model->title ?>"
+											data-user="<?php echo $user->ID ?>">Modifica</button>
 							<button type="button"
 											class="button vms_admin_delete_model_button"
 											data-model-id="<?php echo $model->id ?>">Elimina</button>
@@ -1804,21 +2001,23 @@ if ( !class_exists('VMS') ) {
 				}
 				?>
 				</tbody>
-				<tfooter>
+				<tfoot>
 					<tr>
 						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
+						<td></td>
 						<td>
-							<button class="button vms_admin_add_model_button" type="button">Aggiungi</button>
+							<button class="button vms_admin_add_model_button button-primary"
+											type="button">Aggiungi</button>
 						</td>
 					</tr>
-				</tfooter>
+				</tfoot>
 				</table>
 				<div class="vms_admin_modal">
 					<div class="vms_admin_modal_content">
-						<form class="vms_admin_form vms_admin_delete_form">
+						<div class="vms_admin_form vms_admin_delete_form">
 							<div>
 								<span>Vuoi eliminare il modello selezionato?</span>
 								<div class="vms_admin_modal_buttons">
@@ -1826,7 +2025,22 @@ if ( !class_exists('VMS') ) {
 									<button type="button" class="button vms_admin_close_button">Annulla</button>
 								</div>
 							</div>
-						</form>
+						</div>
+						<div class="vms_admin_form vms_admin_model_form" data-user="<?php echo $user->ID ?>" >
+							<div class="vms_admin_form_text">Inserisci i dati del modello.</div>
+							<div class="vms_admin_form_field">
+								Titolo
+								<input type="text" name="title" autocomplete="new-password"/>
+								<span class="vms_admin_form_error"></span>
+							</div>
+							<div class="vms_admin_form_field">Categoria <?php echo $categories_html ?>
+								<span class="vms_admin_form_error"></span>
+							</div>
+							<div class="vms_admin_modal_buttons">
+								<button type="button" class="button button-primary vms_admin_model_button">Salva</button>
+								<button type="button" class="button vms_admin_close_button">Annulla</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -2079,6 +2293,7 @@ if ( !class_exists('VMS') ) {
 
 			$query = "SELECT " . $models_table . ".id, " . $models_table .".title, " .
 			 									 $category_table . "." . $category_locale_id . " AS category, " .
+												 $category_table . ".sigla AS sigla, " .
 												 $models_table . ".categoryId, " .
 												 "IF(" . $category_table . ".needs_display = 1, " . $display_table . ".id, null) AS display" .
 												 " FROM " . $models_table .
@@ -2126,16 +2341,24 @@ if ( !class_exists('VMS') ) {
 			return $model;
 		}
 
-		function update_model ( $model_id, $title, $category_id ) {
+		function update_model ( $model_id, $title, $category_id, $modelist_id ) {
 			global $wpdb;
 			$table_name = $wpdb->prefix . "vms_models";
 
+			$category = $this->get_category_with_id($category_id);
+
+			if($category->needs_display) {
+					if( !$this->get_display_for_modelist($modelist_id) ){
+						$this->create_display_for_modelist($modelist_id);
+					}
+			}
+
 			$query = 'UPDATE '. $table_name .
 							' SET title="' . $title . '", categoryId="' . $category_id .
-							' " WHERE id=' . $model_id;
+							' " WHERE id=' . $model_id ;
 
 			$model = $wpdb->get_results( $query );
-			return $query;
+			return $model;
 		}
 
 		function delete_model ( $model_id ) {
@@ -2145,7 +2368,8 @@ if ( !class_exists('VMS') ) {
 							' WHERE id=' . $model_id;
 
 			$model = $wpdb->get_results( $query );
-			return $query;
+
+			return $model;
 		}
 
 		function initAdminScripts() {

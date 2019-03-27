@@ -44,8 +44,10 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 					{ placeholder: "Model ID label", attr: "model_id_label"},
 					{ placeholder: "Model title label", attr: "model_title_label"},
 					{ placeholder: "Model category label", attr: "model_category_label"},
+					{ placeholder: "Model category abbreviation label", attr: "model_category_abbreviation_label"},
 					{ placeholder: "Model display label", attr: "model_display_label"},
-					{ placeholder: "Add model button label", attr: "add_button_label"}
+					{ placeholder: "Add model button label", attr: "add_button_label"},
+					{ placeholder: "Receipt download label", attr: "receipt_download_button_label"}
 	      ];
 				var saveDialogAttr = [
 				  { placeholder: "Save button label", attr: "save_button_label" },
@@ -65,6 +67,16 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 	              )
 	            })
 	          }
+						<hr/>
+						<div>Texts</div>
+						<RichText type="text"
+									 		placeholder={ "Header text" }
+									 		onChange={ this.handleChange("header_text") }
+									 		value={ this.props.attributes["header_text"] } />
+						<RichText type="text"
+											placeholder={ "New receipt download needed" }
+											onChange={ this.handleChange("receipt_download_text") }
+											value={ this.props.attributes["receipt_download_text"] } />
 						<RichText type="text"
 									 		placeholder={ "No models text" }
 									 		onChange={ this.handleChange("no_models_text") }

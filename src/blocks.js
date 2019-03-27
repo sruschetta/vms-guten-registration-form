@@ -5,23 +5,17 @@ import './models-dashboard/block.js';
 
 
 /*
-TODOS:
 
-- Responsive:
-  - User dashboard
-  - Model dashboard
+TODOS:
 
 - Print Recap
  - Check if need to print
  - PDF rendering
  - Format
 
-- Models managing from backoffice
- - List
- - Check
-
 - Reports:
   - All modelers
   - All Models
   - All Modelers with relative model
+  
 */

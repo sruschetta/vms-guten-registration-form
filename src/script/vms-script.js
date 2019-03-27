@@ -315,6 +315,11 @@
               err.text(errors.new_password_match_error);
               err.addClass('visible');
             }
+            if(errors.password_different_error){
+              var err = form.find('input[name="new_password"]').siblings('.vms_form_error');
+              err.text(errors.password_different_error);
+              err.addClass('visible');
+            }
           }
           else {
             location.reload(true);
@@ -548,6 +553,28 @@
         $('html').removeClass('vms_lock');
       });
     });
+
+    $('.vms_user_dashboard .vms_logout_button').click(function(){
+
+      $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: ajax_login_object.ajaxurl,
+        data: {
+          'action': 'vms_logout_action',
+        },
+        success: function(data){
+          if(data.success){
+            location.reload(true);
+          }
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+
+    });
+
   });
 
 })( jQuery );
