@@ -28,6 +28,7 @@ if ( !class_exists('VMS') ) {
 			$this->initRoles();
 			$this->initGutenbergBlocks();
 			$this->initAdminScripts();
+
     }
 
 
@@ -1119,7 +1120,6 @@ if ( !class_exists('VMS') ) {
 			$model_nonce = wp_create_nonce('vms-model');
 			$model_delete_nonce = wp_create_nonce('vms-model-delete');
 
-
 			$user_data = wp_get_current_user();
 			$user_last_update = trim( get_user_meta( $user_data->ID, 'last_update', true ));
 			$user_last_receipt_download = trim( get_user_meta( $user_data->ID, 'last_receipt_download', true ));
@@ -1161,16 +1161,19 @@ if ( !class_exists('VMS') ) {
 													. $attributes['delete_header_text'] .
 												'</div>
 												<input type="hidden" name="vms-model-delete-sec" value="' . $model_delete_nonce . '">
-												<div class="vms_modal_buttons">'
-													 . $receipt_html .
-												'</div>
+												<div class="vms_modal_buttons">
+													<input class="vms_modal_submit_button" type="submit" value="' . $attributes['delete_button_label'] . '"/>
+											 		<button type="button" class="vms_modal_button">'
+														. $attributes['cancel_button_label'] .
+											 		'</button>
+												</div>
 											</form>
 										</div>
 									</div>
 							 		<h1><b>' . $attributes['dashboard_title'] . '</b></h1>
-									<form class="vms_models_receipt" method="post" formtarget="_blank" action="' . admin_url( 'admin-post.php' ) . '">
+									<form class="vms_models_receipt" method="post" action="' . admin_url( 'admin-post.php' ) . '">
 									  <input type="hidden" name="action" value="vms_receipt_download_action">
-										' . $attributes['header_text'] .'
+										' . $attributes['header_text'] . '
 										<div class="vms_models_receipt_buttons">'. $receipt_html . '</div>
 									</form>'
 									. $models_html .
@@ -1812,11 +1815,10 @@ if ( !class_exists('VMS') ) {
 
 		function vms_receipt_download_action() {
 			$current_user = wp_get_current_user();
-
 			update_user_meta( $current_user->ID, 'last_receipt_download', date('Y-m-d h:i:sa') );
 
 			require_once (plugin_dir_path(__FILE__). './src/classes/pdf.php');
-			generatePDF();
+			generatePDF($current_user, $this->get_models_list_for_modelist($current_user->ID));
 		}
 
 
@@ -1842,10 +1844,10 @@ if ( !class_exists('VMS') ) {
 			}
 		}
 		function block_wp_admin() {
-			if ( is_admin() && ! current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-				wp_safe_redirect( home_url() );
-				exit;
-			}
+			//if ( is_admin() && ! current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			//	wp_safe_redirect( home_url() );
+			//	exit;
+			//}
 		}
 
 		function add_partecipant_role() {
@@ -2374,6 +2376,8 @@ if ( !class_exists('VMS') ) {
 
 		function initAdminScripts() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'vms_admin_script_and_style' ) );
+
+			add_action( 'admin_menu', array( $this, 'vms_reports_menu') );
 		}
 
 		function vms_admin_script_and_style() {
@@ -2384,6 +2388,19 @@ if ( !class_exists('VMS') ) {
 			wp_localize_script( 'vms-admin-script', 'ajax_login_object', array(
 					'ajaxurl' => admin_url( 'admin-ajax.php' )
 			));
+		}
+
+		function vms_reports_menu() {
+			add_menu_page( 'Reports', 'Reports', 'manage_options', 'vms_reports', array( $this, 'vms_report_options' ));
+		}
+
+		function vms_report_options() {
+			if ( !current_user_can( 'manage_options' ) )  {
+				wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+			}
+			echo '<div class="wrap">';
+			echo '<p>Here is where the form would go if I actually had options.</p>';
+			echo '</div>';
 		}
 
 	}
