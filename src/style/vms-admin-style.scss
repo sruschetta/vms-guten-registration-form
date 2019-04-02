@@ -118,3 +118,10 @@
 .vms_admin_form_error.visible {
   visibility: visible;
 }
+
+@media screen and (min-width: 782px) {
+  .form-table input[type="text"],
+  .form-table textarea {
+    min-width: 400px;
+  }
+}
