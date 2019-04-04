@@ -366,8 +366,7 @@ if ( !class_exists('VMS_Admin') ) {
       ?>
         <form method="post" action="options.php">
           <?php
-          settings_fields( 'vms_receipt_it_section' );
-          settings_fields( 'vms_receipt_en_section' );
+          settings_fields( 'vms_receipt_section' );
           do_settings_sections( 'vms_admin_render' );
           ?>
           <input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
@@ -383,21 +382,23 @@ if ( !class_exists('VMS_Admin') ) {
       add_settings_field( 'vms_receipt_subtitle_it', 'Sottotitolo ricevuta', array( $this, 'vms_receipt_subtitle_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_top_text_it', 'Testo superiore', array( $this, 'vms_receipt_top_text_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_bottom_text_it', 'Testo inferiore', array( $this, 'vms_receipt_bottom_text_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
+      add_settings_field( 'vms_receipt_labels_text_it', 'Testo etichette', array( $this, 'vms_receipt_labels_text_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_model_id_it', 'ID tabella modelli', array( $this, 'vms_receipt_model_id_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_model_title_it', 'Titolo tabella modelli', array( $this, 'vms_receipt_model_title_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_model_sigla_it', 'Sigla tabella modelli', array( $this, 'vms_receipt_model_sigla_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_model_category_it', 'Categoria tabella modelli', array( $this, 'vms_receipt_model_category_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
       add_settings_field( 'vms_receipt_model_display_it', 'Display tabella modelli', array( $this, 'vms_receipt_model_display_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
 
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_title_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_subtitle_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_top_text_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_bottom_text_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_model_id_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_model_title_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_model_sigla_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_model_category_it' );
-      register_setting( 'vms_receipt_it_section', 'vms_receipt_model_display_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_title_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_subtitle_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_top_text_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_bottom_text_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_labels_text_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_id_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_title_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_sigla_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_category_it' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_display_it' );
 
       add_settings_section( 'vms_receipt_en_section', 'VMS Ricevuta - English', null, 'vms_admin_render' );
 
@@ -405,21 +406,23 @@ if ( !class_exists('VMS_Admin') ) {
       add_settings_field( 'vms_receipt_subtitle_en', 'Sottotitolo ricevuta', array( $this, 'vms_receipt_subtitle_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_top_text_en', 'Testo superiore', array( $this, 'vms_receipt_top_text_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_bottom_text_en', 'Testo inferiore', array( $this, 'vms_receipt_bottom_text_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
+      add_settings_field( 'vms_receipt_labels_text_en', 'Testo etichette', array( $this, 'vms_receipt_labels_text_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_model_id_en', 'ID tabella modelli', array( $this, 'vms_receipt_model_id_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_model_title_en', 'Titolo tabella modelli', array( $this, 'vms_receipt_model_title_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_model_sigla_en', 'Sigla tabella modelli', array( $this, 'vms_receipt_model_sigla_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_model_category_en', 'Categoria tabella modelli', array( $this, 'vms_receipt_model_category_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
       add_settings_field( 'vms_receipt_model_display_en', 'Display tabella modelli', array( $this, 'vms_receipt_model_display_en_callback'), 'vms_admin_render', 'vms_receipt_en_section' );
 
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_title_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_subtitle_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_top_text_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_bottom_text_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_model_id_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_model_title_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_model_sigla_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_model_category_en' );
-      register_setting( 'vms_receipt_en_section', 'vms_receipt_model_display_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_title_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_subtitle_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_top_text_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_bottom_text_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_labels_text_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_id_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_title_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_sigla_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_category_en' );
+      register_setting( 'vms_receipt_section', 'vms_receipt_model_display_en' );
     }
 
 
@@ -441,6 +444,11 @@ if ( !class_exists('VMS_Admin') ) {
     function vms_receipt_bottom_text_it_callback() {
     ?>
         <textarea type="text" id="vms_receipt_bottom_text_it" name="vms_receipt_bottom_text_it"><?php echo get_option( 'vms_receipt_bottom_text_it' ); ?></textarea>
+    <?php
+    }
+    function vms_receipt_labels_text_it_callback() {
+    ?>
+        <textarea type="text" id="vms_receipt_labels_text_it" name="vms_receipt_labels_text_it"><?php echo get_option( 'vms_receipt_labels_text_it' ); ?></textarea>
     <?php
     }
     function vms_receipt_model_id_it_callback() {
@@ -488,6 +496,11 @@ if ( !class_exists('VMS_Admin') ) {
         <textarea type="text" id="vms_receipt_bottom_text_en" name="vms_receipt_bottom_text_en"><?php echo get_option( 'vms_receipt_bottom_text_en' ); ?></textarea>
     <?php
     }
+    function vms_receipt_labels_text_en_callback() {
+    ?>
+        <textarea type="text" id="vms_receipt_labels_text_en" name="vms_receipt_labels_text_en"><?php echo get_option( 'vms_receipt_labels_text_en' ); ?></textarea>
+    <?php
+    }
     function vms_receipt_model_id_en_callback() {
     ?>
         <input type="text" id="vms_receipt_model_id_en" name="vms_receipt_model_id_en" value="<?php echo get_option( 'vms_receipt_model_id_en' ); ?>">
@@ -513,10 +526,6 @@ if ( !class_exists('VMS_Admin') ) {
         <input type="text" id="vms_receipt_model_display_en" name="vms_receipt_model_display_en" value="<?php echo get_option( 'vms_receipt_model_display_en' ); ?>">
     <?php
     }
-
-
-
-
   }
 }
 

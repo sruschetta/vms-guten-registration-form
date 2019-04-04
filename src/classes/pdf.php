@@ -58,6 +58,7 @@
       $subtitle = "vms_receipt_subtitle_it";
       $toptext = "vms_receipt_top_text_it";
       $bottomtext = "vms_receipt_bottom_text_it";
+      $labelstext = "vms_receipt_labels_text_it";
       $model_id = "vms_receipt_model_id_it";
       $model_title = "vms_receipt_model_title_it";
       $model_sigla = "vms_receipt_model_sigla_it";
@@ -70,6 +71,7 @@
       $subtitle = "vms_receipt_subtitle_en";
       $toptext = "vms_receipt_top_text_en";
       $bottomtext = "vms_receipt_bottom_text_en";
+      $labelstext = "vms_receipt_labels_text_en";
       $model_id = "vms_receipt_model_id_en";
       $model_title = "vms_receipt_model_title_en";
       $model_sigla = "vms_receipt_model_sigla_en";
@@ -114,10 +116,10 @@
           }
           .logo {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 266px;
-            height: 200px;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
           }
         </style>
         </head>
@@ -158,6 +160,7 @@
           <div class="labels">
             <div class="text">' . get_option( $bottomtext ) . '</div>
             <div class="line"></div>
+            <div class="text"><i>' . get_option( $labelstext ) . '</i></div>
             <table>
               <tbody>' . $labels . '</tbody>
             </table>
