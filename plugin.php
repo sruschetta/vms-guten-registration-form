@@ -35,7 +35,6 @@ if ( !class_exists('VMS') ) {
 
 
 
-
 			//Register Blocks and Meta
 
 			require_once(plugin_dir_path(__FILE__). './php/blocks.php');

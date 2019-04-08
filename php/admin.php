@@ -364,7 +364,7 @@ if ( !class_exists('VMS_Admin') ) {
        wp_die( __( 'You do not have sufficient permissions to access this page.', 'sffi' ) );
       }
       ?>
-        <form method="post" action="options.php">
+        <form method="post" action="options.php" enctype="multipart/form-data">
           <?php
           settings_fields( 'vms_receipt_section' );
           do_settings_sections( 'vms_admin_render' );
@@ -375,6 +375,13 @@ if ( !class_exists('VMS_Admin') ) {
     }
 
     function vms_options() {
+
+      add_settings_section( 'vms_receipt_logo_section', 'Logo', null, 'vms_admin_render' );
+
+      add_settings_field( 'vms_receipt_logo', 'Logo', array( $this, 'vms_receipt_logo_callback'), 'vms_admin_render', 'vms_receipt_logo_section' );
+
+      register_setting( 'vms_receipt_section', 'vms_receipt_logo', array( $this, 'handle_file_upload') );
+
 
       add_settings_section( 'vms_receipt_it_section', 'VMS Ricevuta - Italiano', null, 'vms_admin_render' );
 
@@ -426,6 +433,22 @@ if ( !class_exists('VMS_Admin') ) {
     }
 
 
+    function handle_file_upload($option) {
+      if(!empty($_FILES["vms_receipt_logo"]["tmp_name"])) {
+        $urls = wp_handle_upload($_FILES["vms_receipt_logo"], array('test_form' => FALSE));
+        $temp = $urls["url"];
+        return $temp;
+      }
+
+      return $option;
+    }
+
+    function vms_receipt_logo_callback() {
+    ?>
+        <input type="file" id='vms_receipt_logo' accept='image/*' name='vms_receipt_logo' />
+        <?php echo get_option('vms_receipt_logo'); ?>
+    <?php
+    }
     function vms_receipt_title_it_callback() {
     ?>
         <input type="text" id="vms_receipt_title_it" name="vms_receipt_title_it" value="<?php echo get_option( 'vms_receipt_title_it' ); ?>">

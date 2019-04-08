@@ -7,47 +7,43 @@
 
     $models = "";
 
-    for ($i = 1; $i <= 10; $i++) {
-      foreach ($models_list as $model) {
+    foreach ($models_list as $model) {
 
-        $display = isset( $model->display)?sprintf('%03d', $model->display):'';
+      $display = isset( $model->display)?sprintf('%03d', $model->display):'';
 
-        $models .= '<tr>
-          <td>' . $model->title . '</td>
-          <td>' . sprintf('%04d', $model->id) . '</td>
-          <td>' . $model->sigla . '</td>
-          <td>' . $model->category . '</td>
-          <td>' . $display . '</td>
-        </tr>';
-      }
+      $models .= '<tr>
+        <td>' . sprintf('%04d', $model->id) . '</td>
+        <td>' . $model->title . '</td>
+        <td>' . $model->sigla . '</td>
+        <td>' . $model->category . '</td>
+        <td>' . $display . '</td>
+      </tr>';
     }
-
 
     $labels = "";
     $row = "";
     $cell_count = 0;
 
-    for ($i = 1; $i <= 10; $i++) {
+    foreach ($models_list as $model) {
 
-      foreach ($models_list as $model) {
+      $display = isset( $model->display)?( ' - DISP' . sprintf('%03d', $model->display)):'';
+      $row .= '<td>' . $model->sigla . $display .' - MOD' .  sprintf('%04d', $model->id) . '</td>';
 
-        $display = isset( $model->display)?( ' - ' . sprintf('%03d', $model->display)):'';
-        $row .= '<td>' . $model->sigla . ' - ' .  sprintf('%04d', $model->id) . $display . '</td>';
+      $cell_count++;
 
-        $cell_count++;
-
-        if($cell_count == 3) {
-          $cell_count = 0;
-          $labels .= '<tr>'. $row .'</tr>';
-          $row = '';
-        }
+      if($cell_count == 3) {
+        $cell_count = 0;
+        $labels .= '<tr>'. $row .'</tr>';
+        $row = '';
       }
     }
 
     if($cell_count != 0) {
-      while($cell_count < 3) {
-        $row .= '<td></td>';
-        $cell_count ++;
+      if (count($models_list) > 3) {
+        while($cell_count < 3) {
+          $row .= '<td></td>';
+          $cell_count ++;
+        }
       }
       $labels .= '<tr>'. $row .'</tr>';
     }
@@ -91,7 +87,7 @@
             margin-bottom: 50px;
             margin-left: auto;
             margin-right: auto;
-            width: 75%;
+            width: 100%;
           }
           .text {
             margin: 50px 0;
@@ -113,6 +109,14 @@
           .labels {
             text-align:center;
             page-break-inside: avoid;
+          }
+          .labels table {
+            width: 100%;
+          }
+          .labels table td {
+            width: 33%;
+            font-size: 12px;
+            text-align: center;
           }
           .logo {
             position: absolute;
@@ -138,7 +142,7 @@
                   $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
               }
           </script>
-          <img class="logo" src="' . plugin_dir_url(__FILE__) . 'logo.jpg"/>
+          <img class="logo" src="' . get_option('vms_receipt_logo') . '"/>
           <h1>' . get_option( $title ) . '</h1>
           <h3>' . get_option( $subtitle ) . '</h3>
           <div>' . date('d/m/Y - H:s') . '</div>
