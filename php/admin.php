@@ -36,11 +36,14 @@ if ( !class_exists('VMS_Admin') ) {
         show_admin_bar(false);
       }
     }
+
     function block_wp_admin() {
-      //if ( is_admin() && ! current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-      //	wp_safe_redirect( home_url() );
-      //	exit;
-      //}
+      if ( is_admin() && ! current_user_can( 'administrator' )
+                      && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+                      && $_POST["action"] != 'vms_receipt_download_action' ) {
+      	wp_safe_redirect( home_url() );
+      	die();
+      }
     }
 
     function add_partecipant_role() {

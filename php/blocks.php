@@ -1019,12 +1019,14 @@ if ( !class_exists('VMS_Blocks') ) {
       $user_last_update = trim( get_user_meta( $user_data->ID, 'last_update', true ));
       $user_last_receipt_download = trim( get_user_meta( $user_data->ID, 'last_receipt_download', true ));
 
-      if( $user_last_receipt_download > $user_last_update) {
-        $receipt_html = '<button type="submit">' . $attributes['receipt_download_button_label'] . '</button>';
-      }
-      else {
-        $receipt_html = '<button class="red" type="submit">' . $attributes['receipt_download_button_label'] . '</button>
-                         <div>' . $attributes['receipt_download_text'] . '</div>';
+      if( count($models) > 0 ) {
+        if( $user_last_receipt_download > $user_last_update) {
+          $receipt_html = '<button type="submit">' . $attributes['receipt_download_button_label'] . '</button>';
+        }
+        else {
+          $receipt_html = '<button class="red" type="submit">' . $attributes['receipt_download_button_label'] . '</button>
+                           <div>' . $attributes['receipt_download_text'] . '</div>';
+        }
       }
 
       $html = '<div class="vms_models_dashboard">
