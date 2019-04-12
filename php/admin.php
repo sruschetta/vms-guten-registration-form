@@ -297,69 +297,40 @@ if ( !class_exists('VMS_Admin') ) {
 
     function vms_admin_page() {
       add_menu_page( 'VMS Settings', 'VMS Settings', 'manage_options', 'vms-settings', array($this, 'vms_admin_render') );
-      add_submenu_page( 'vms-settings', 'Report - Modelli per utente', 'Report - Modelli per utente', 'manage_options', 'vms-report-iscritti', array($this, 'vms_report_iscritti_render') );
+      add_submenu_page( 'vms-settings', 'Report', 'Report', 'manage_options', 'vms-report-iscritti', array($this, 'vms_report_iscritti_render') );
     }
 
     function vms_report_iscritti_render() {
-
-
-      $users = get_users(array(
-              'role' => 'iscritto'
-      ));
-
-      foreach( $users as $user) {
-
-        $models = VMS_DB::getInstance()->get_models_list_for_modelist($user->ID);
-
-        if(count($models) > 0) {
-          ?>
-          <table>
-            <tr>
-              <th>Nome</th>
-              <td>
-                <?php echo $user->first_name; ?>
-              </td>
-            </tr>
-            <tr>
-              <th>Cognome</th>
-              <td>
-                <?php echo $user->last_name; ?>
-              </td>
-            </tr>
-          </table>
-          <table class="vms_admin_table">
-            <thead>
-              <tr>
-                  <th>ID</th>
-                  <th>Titolo</th>
-                  <th>Categoria</th>
-                  <th>Sigla</th>
-                  <th>Display</th>
-              </tr>
-            </thead>
-            <tbody>
+      ?>
+      <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+        <h2>Report Modelli</h2>
+        <input type="hidden" name="action" value="vms_models_report_action">
+        <button name="vms-models-report" type="submit">Scarica</button>
+      </form>
+      <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+        <h2>Report Categoria</h2>
+        <select name="category">
+          <option disabled selected value></option>
+          <option value="all">Tutte le categorie</option>
           <?php
-            foreach ($models as $model) {
+          $categories = VMS_DB::getInstance()->get_categories_list();
 
-              $display = isset( $model->display)?sprintf('%03d', $model->display):'';
-              ?>
-              <tr>
-                <td><?php echo sprintf('%05d', $model->id) ?></td>
-                <td><?php echo $model->title ?></td>
-                <td><?php echo $model->category ?></td>
-                <td><?php echo $model->sigla ?></td>
-                <td><?php echo $display ?></td>
-              </tr>
-              <?php
-            }
+          foreach ($categories as $category) {
             ?>
-            </tbody>
-            <tfoot>
-            </tfoot>
-          </table>
-          <?php
-        }
-      }
+            <option value=<?php echo $category->id ?>><?php echo $category->sigla ?> - <?php echo $category->name ?></option>
+            <?php
+          }
+          ?>
+        </select>
+        <input type="hidden" name="action" value="vms_category_report_action">
+        <button name="vms-category-report" type="submit">Scarica</button>
+      </form>
+      <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+        <h2>Moduli Display</h2>
+        <input type="hidden" name="action" value="vms_display_download_action">
+        <button name="vms-display-report" type="submit">Scarica</button>
+      </form>
+      <?php
     }
 
     function vms_admin_render() {
@@ -551,6 +522,13 @@ if ( !class_exists('VMS_Admin') ) {
     ?>
         <input type="text" id="vms_receipt_model_display_en" name="vms_receipt_model_display_en" value="<?php echo get_option( 'vms_receipt_model_display_en' ); ?>">
     <?php
+    }
+
+
+    //Extra CSS
+
+    function initExtraCSS() {
+      wp_enqueue_style('vms-extra-style', plugins_url( '../css/vms-style.css', __FILE__ ), 11);
     }
   }
 }

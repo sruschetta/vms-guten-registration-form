@@ -35,6 +35,10 @@ if ( !class_exists('VMS_Actions') ) {
       add_action ( 'wp_ajax_vms_admin_model_action', array( $this, 'vms_admin_model_action') );
 
       add_action ( 'admin_post_vms_receipt_download_action', array( $this, 'vms_receipt_download_action') );
+
+      add_action ( 'admin_post_vms_models_report_action', array( $this, 'vms_models_report_action') );
+      add_action ( 'admin_post_vms_category_report_action', array( $this, 'vms_category_report_action') );
+      add_action ( 'admin_post_vms_display_download_action', array( $this, 'vms_display_download_action') );
     }
 
 
@@ -664,10 +668,30 @@ if ( !class_exists('VMS_Actions') ) {
       $current_user = wp_get_current_user();
       update_user_meta( $current_user->ID, 'last_receipt_download', date('Y-m-d h:i:sa') );
 
-      require_once (plugin_dir_path(__FILE__). '../src/classes/pdf.php');
+      require_once (plugin_dir_path(__FILE__). '../php/classes/pdf.php');
       generatePDF($current_user, $_POST['locale'], VMS_DB::getInstance()->get_models_list_for_modelist($current_user->ID));
 
       die();
+    }
+
+
+    //Models report
+
+    function vms_models_report_action() {
+      die("Models report");
+    }
+
+
+    //Category report
+
+    function vms_category_report_action() {
+      die("Category report");
+    }
+
+    //Display pdf
+
+    function vms_display_download_action() {
+      die("Display report");
     }
   }
 }

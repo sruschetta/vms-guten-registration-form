@@ -78,12 +78,6 @@
       <head>
         <meta http-equiv="Content-Type" content="charset=utf-8" />
         <style type="text/css">
-          @font-face {
-              font-family: "Andes";
-              src: local("Andes"), url("lib/fonts/Andes.ttf") format("truetype");
-              font-weight: normal;
-              font-style: normal;
-          }
           h1{
             font-family: "Andes";
           }

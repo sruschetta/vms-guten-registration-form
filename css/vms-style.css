@@ -1,0 +1,14 @@
+@font-face {
+    font-family: Andes;
+    src: url(../font/Andes.ttf);
+    font-weight: normal;
+}
+
+.site-branding {
+  padding: 20em 0 5em 0 !important;
+}
+
+.site-title {
+  font-family: Andes;
+  text-transform: lowercase !important;
+}

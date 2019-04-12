@@ -82,7 +82,6 @@ if ( !class_exists('VMS_DB') ) {
 
 	      require_once (plugin_dir_path(__FILE__). '../src/utils/nations.php');
 
-
 	      foreach ($nations_array as $nation) {
 	        $wpdb->insert(
 	          $table_name,

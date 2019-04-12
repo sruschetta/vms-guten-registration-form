@@ -61,6 +61,7 @@ if ( !class_exists('VMS') ) {
 			$vms_admin->initRoles();
 			$vms_admin->initAdminScripts();
 			$vms_admin->initSettingsPage();
+			$vms_admin->initExtraCSS();
     }
 	}
 
