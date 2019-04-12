@@ -31,9 +31,7 @@ if ( !class_exists('VMS') ) {
 
 			register_activation_hook( __FILE__, array( $vms_db, 'generateDB' ) );
 			register_activation_hook( __FILE__, array( $vms_db, 'generateDataset' ) );
-			register_deactivation_hook( __FILE__, array( $vms_db, 'dropDB' ) );
-
-
+			//register_deactivation_hook( __FILE__, array( $vms_db, 'dropDB' ) );
 
 			//Register Blocks and Meta
 

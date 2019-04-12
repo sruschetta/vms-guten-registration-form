@@ -74,42 +74,51 @@ if ( !class_exists('VMS_DB') ) {
     function generateDataset() {
       global $wpdb;
 
-      //Nations
-      require_once (plugin_dir_path(__FILE__). '../src/utils/nations.php');
+			//Nations
 
-      $table_name = $wpdb->prefix . "vms_nations";
+			$table_name = $wpdb->prefix . "vms_nations";
+			$count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table_name );
+			if($count == 0) {
 
-      foreach ($nations_array as $nation) {
-        $wpdb->insert(
-          $table_name,
-          array(
-            'it' => $nation['it'],
-            'en' => $nation['en']
-          )
-        );
-      }
+	      require_once (plugin_dir_path(__FILE__). '../src/utils/nations.php');
+
+
+	      foreach ($nations_array as $nation) {
+	        $wpdb->insert(
+	          $table_name,
+	          array(
+	            'it' => $nation['it'],
+	            'en' => $nation['en']
+	          )
+	        );
+	      }
+			}
 
       //Categories
-      require_once (plugin_dir_path(__FILE__). '../src/utils/categories.php');
 
       $table_name = $wpdb->prefix . "vms_categories";
+			$count = $wpdb->get_var("SELECT COUNT(*) FROM " . $table_name );
 
+			if($count == 0) {
 
-      foreach ($categories_array as $category) {
+				require_once (plugin_dir_path(__FILE__). '../src/utils/categories.php');
 
-        $needs_display = ($category['needs_display'])?$category['needs_display']:false;
+	      foreach ($categories_array as $category) {
 
-        $wpdb->insert(
-          $table_name,
-          array(
-            'gruppo' => ucfirst(strtolower($category['gruppo'])),
-            'sigla' => $category['sigla'],
-            'needs_display' => $needs_display,
-            'it' => $category['it'],
-            'en' => $category['en']
-          )
-        );
-      }
+	        $needs_display = ($category['needs_display'])?$category['needs_display']:false;
+
+	        $wpdb->insert(
+	          $table_name,
+	          array(
+	            'gruppo' => ucfirst(strtolower($category['gruppo'])),
+	            'sigla' => $category['sigla'],
+	            'needs_display' => $needs_display,
+	            'it' => $category['it'],
+	            'en' => $category['en']
+	          )
+	        );
+	      }
+			}
     }
 
     function clearDB() {
