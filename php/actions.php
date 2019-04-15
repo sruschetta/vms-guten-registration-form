@@ -678,22 +678,101 @@ if ( !class_exists('VMS_Actions') ) {
     //Models report
 
     function vms_models_report_action() {
-      die("Models report");
+
+      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID Modello\n";
+
+      $users = get_users(array(
+                'role' => 'iscritto',
+                ));
+
+      $vms_db = VMS_DB::getInstance();
+
+      foreach ( $users as $user ) {
+        $user_data = get_user_meta($user->ID);
+        $models = $vms_db->get_models_list_for_modelist($user->ID);
+
+        foreach( $models as $model ) {
+          $data .= $user->user_email . ";" . $user_data['first_name'][0] . ";" . $user_data['last_name'][0] . ";"
+                 . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . "\n";
+        }
+      }
+
+      header('Content-Type: application/csv');
+      header('Content-Disposition: attachment; filename="ModelsReport_' . date("d_m_Y_H_i") . '.csv"');
+      echo $data;
+
+      die();
     }
 
 
     //Category report
 
     function vms_category_report_action() {
-      die("Category report");
+
+      $cat = $_POST["category"];
+
+      $vms_db = VMS_DB::getInstance();
+
+      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID Modello\n";
+
+      if($cat == "all") {
+        $all_cat = $vms_db->get_categories_list();
+        foreach ($all_cat as $cat) {
+
+          $models = $vms_db->get_models_list_for_category($cat->id);
+          foreach ($models as $model) {
+
+            $user = get_userdata($model->modelistId);
+            $user_data = get_user_meta($user->ID);
+            $data .= $user->user_email . ";" . $user_data['first_name'][0] . ";" . $user_data['last_name'][0] . ";"
+                   . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . "\n";
+          }
+        }
+      }
+      else {
+        $models = $vms_db->get_models_list_for_category($cat);
+        foreach ($models as $model) {
+
+          $user = get_userdata($model->modelistId);
+          $user_data = get_user_meta($user->ID);
+          $data .= $user->user_email . ";" . $user_data['first_name'][0] . ";" . $user_data['last_name'][0] . ";"
+                 . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . "\n";
+        }
+      }
+      header('Content-Type: application/csv');
+      header('Content-Disposition: attachment; filename="CategoryReport_' . date("d_m_Y_H_i") . '.csv"');
+      echo $data;
+
+      die();
     }
 
     //Display pdf
 
     function vms_display_download_action() {
-      die("Display report");
+
+      $vms_db = VMS_DB::getInstance();
+      $displays = $vms_db->get_displays_list();
+
+      $res = array();
+
+      foreach ($displays as $display) {
+
+        $user = get_user_meta($display->modelistId);
+        $models = $vms_db->get_models_for_display($display->id);
+        if(count($models) > 0){
+          $current = array(
+            "name" => $user['first_name'][0] . " " . $user['last_name'][0],
+            "id" => $display->id,
+            "models" => $models
+          );
+
+          array_push($res, $current);
+        }
+      }
+
+      require_once (plugin_dir_path(__FILE__). '../php/classes/pdf.php');
+      generateDisplays($res);
     }
   }
 }
-
 ?>

@@ -12,8 +12,10 @@
    border-radius: 5px;
 
    input, select {
-     width: 100%;
-     margin: 0.5rem 0;
+     not([type="checkbox"]) {
+       width: 100%;
+       margin: 0.5rem 0;
+     }
    }
 }
 

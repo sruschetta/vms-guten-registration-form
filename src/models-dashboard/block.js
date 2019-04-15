@@ -11,7 +11,7 @@ import '../style/editor.scss';
 const { registerBlockType } = wp.blocks;
 const { Component } = wp.element;
 const { getCurrentPostId } = wp.data.select("core/editor");
-const { TextControl } = wp.components;
+const { TextControl, CheckboxControl } = wp.components;
 const RichText = wp.editor.RichText;
 
 registerBlockType( 'vms/vms-plugin-models-dashboard', {
@@ -117,6 +117,13 @@ registerBlockType( 'vms/vms-plugin-models-dashboard', {
 	                  placeholder={ "Category missing error" }
 	                  onChange={ this.handleChange("category_missing_error") }
 	                  value={ this.props.attributes["category_missing_error"] } />
+						<hr/>
+						<div>Close contest</div>
+				    <CheckboxControl
+				        heading="Close"
+				        checked={ this.props.attributes["subscription_closed"] }
+				        onChange={ this.handleChange("subscription_closed")}
+				    />
 				</div>
 			)
 	  }

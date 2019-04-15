@@ -584,7 +584,10 @@ if ( !class_exists('VMS_Blocks') ) {
         ),
         'receipt_download_text' => array(
           'type' => 'string',
-        )
+        ),
+        'subscription_closed' => array(
+          'type' => 'boolean',
+        ),
       ),
       'editor_script' => 'vms_backend_script',
       'editor_style' => 'vms_backend_style',
@@ -999,14 +1002,16 @@ if ( !class_exists('VMS_Blocks') ) {
                 <div class="vms_model_info_text">' . sprintf('%03d', $model->display) . '</div>
               </div>';
           }
-          $models_html .= '<div class="vms_model_buttons">
-              <button data-category-id="' . $model->categoryId .
-                     '"data-model-id="' . $model->id .
-                     '"data-title="' . $model->title .
-              '" class="vms_update_model_button">' . $attributes['edit_button_label'] . '</button>
-              <button class="vms_delete_model_button" data-model-id="' . $model->id .'">' . $attributes['delete_button_label'] . '</button>
-            </div>
-          </div>';
+          if(!$attributes['subscription_closed']) {
+            $models_html .= '<div class="vms_model_buttons">
+                <button data-category-id="' . $model->categoryId .
+                       '"data-model-id="' . $model->id .
+                       '"data-title="' . $model->title .
+                '" class="vms_update_model_button">' . $attributes['edit_button_label'] . '</button>
+                <button class="vms_delete_model_button" data-model-id="' . $model->id .'">' . $attributes['delete_button_label'] . '</button>
+              </div>
+            </div>';
+          }
         }
 
         $models_html .= '</div>';
@@ -1074,11 +1079,17 @@ if ( !class_exists('VMS_Blocks') ) {
                     ' . $attributes['header_text'] . '
                     <div class="vms_models_receipt_buttons">'. $receipt_html . '</div>
                   </form>'
-                  . $models_html .
-                  '<div class="vms_models_dashboard_buttons">
-                    <button class="vms_add_model_button">' . $attributes['add_button_label'] . '</button>
-                  </div>
-               </div>';
+                  . $models_html;
+
+                  if(!$attributes['subscription_closed']) {
+                    $html .= '<div class="vms_models_dashboard_buttons">
+                                <button class="vms_add_model_button">' . $attributes['add_button_label'] . '</button>
+                              </div>
+                            </div>';
+                  }
+                  else {
+                    $html .= '</div>';
+                  }
 
       return $html;
     }

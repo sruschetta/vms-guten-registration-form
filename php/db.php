@@ -240,6 +240,30 @@ if ( !class_exists('VMS_DB') ) {
 			return $models;
 		}
 
+		function get_models_list_for_category($category_id) {
+			global $wpdb;
+
+			$category_locale_id = (get_locale() == "it_IT")? "it" : "en";
+
+			$models_table = $wpdb->prefix . "vms_models";
+			$category_table = $wpdb->prefix . "vms_categories";
+			$display_table = $wpdb->prefix . "vms_displays";
+
+			$query = "SELECT " . $models_table . ".id, " . $models_table .".title, " .
+												 $category_table . "." . $category_locale_id . " AS category, " .
+												 $category_table . ".sigla AS sigla, " .
+												 $models_table . ".modelistId," .
+												 $models_table . ".categoryId, " .
+												 "IF(" . $category_table . ".needs_display = 1, " . $display_table . ".id, null) AS display" .
+												 " FROM " . $models_table .
+												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
+												 " LEFT JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
+												 " WHERE " .  $models_table . ".categoryId=" . $category_id;
+			$models = $wpdb->get_results($query);
+			return $models;
+		}
+
+
 		function get_display_for_modelist($modelist_id) {
 			global $wpdb;
 
@@ -247,6 +271,33 @@ if ( !class_exists('VMS_DB') ) {
 			$display = $wpdb->get_row("SELECT * FROM " . $table_name . " WHERE modelistId=" . $modelist_id );
 
 			return $display;
+		}
+
+		function get_displays_list() {
+			global $wpdb;
+			$table_name = $wpdb->prefix . "vms_displays";
+
+			$display = $wpdb->get_results("SELECT * FROM " . $table_name );
+			return $display;
+		}
+
+
+		function get_models_for_display($display_id) {
+			global $wpdb;
+
+			$models_table = $wpdb->prefix . "vms_models";
+			$category_table = $wpdb->prefix . "vms_categories";
+			$display_table = $wpdb->prefix . "vms_displays";
+
+			$query = "SELECT " . $models_table .".title, " .
+												 $category_table . ".sigla AS sigla" .
+												 " FROM " . $models_table .
+												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
+												 " LEFT JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table . ".modelistId" .
+												 " WHERE " .  $display_table . ".id=" . $display_id;
+												 
+			$models = $wpdb->get_results($query);
+			return $models;
 		}
 
 		function create_display_for_modelist($modelist_id) {

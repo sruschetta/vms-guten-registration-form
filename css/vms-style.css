@@ -5,7 +5,24 @@
 }
 
 .site-branding {
-  padding: 20em 0 5em 0 !important;
+  padding: 18em 0 5em 0 !important;
+}
+
+.wp-custom-header img {
+  object-position: top center;
+}
+
+@media screen and (max-width: 900px) {
+  .site-branding {
+    padding: 18em 0 9em 0 !important;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .site-branding {
+    padding: 5em 0 2em 0 !important;
+  }
 }
 
 .site-title {

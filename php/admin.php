@@ -297,7 +297,7 @@ if ( !class_exists('VMS_Admin') ) {
 
     function vms_admin_page() {
       add_menu_page( 'VMS Settings', 'VMS Settings', 'manage_options', 'vms-settings', array($this, 'vms_admin_render') );
-      add_submenu_page( 'vms-settings', 'Report', 'Report', 'manage_options', 'vms-report-iscritti', array($this, 'vms_report_iscritti_render') );
+      add_submenu_page( 'vms-settings', 'Reports', 'Reports', 'manage_options', 'vms-report-iscritti', array($this, 'vms_report_iscritti_render') );
     }
 
     function vms_report_iscritti_render() {
@@ -355,8 +355,7 @@ if ( !class_exists('VMS_Admin') ) {
       add_settings_field( 'vms_receipt_logo', 'Logo', array( $this, 'vms_receipt_logo_callback'), 'vms_admin_render', 'vms_receipt_logo_section' );
 
       register_setting( 'vms_receipt_section', 'vms_receipt_logo', array( $this, 'handle_file_upload') );
-
-
+      
       add_settings_section( 'vms_receipt_it_section', 'VMS Ricevuta - Italiano', null, 'vms_admin_render' );
 
       add_settings_field( 'vms_receipt_title_it', 'Titolo ricevuta', array( $this, 'vms_receipt_title_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );

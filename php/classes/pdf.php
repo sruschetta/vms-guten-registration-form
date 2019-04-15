@@ -78,9 +78,6 @@
       <head>
         <meta http-equiv="Content-Type" content="charset=utf-8" />
         <style type="text/css">
-          h1{
-            font-family: "Andes";
-          }
           body {
             text-align: center;
           }
@@ -187,5 +184,73 @@
 
     unset($dompdf);
   }
+
+  function generateDisplays($displays) {
+
+    $html = '<html>
+              <head>
+                <meta http-equiv="Content-Type" content="charset=utf-8" />
+                <style type="text/css">
+                  .container{
+                    width: 100%;
+                    height: 100vh;
+                  }
+                  table {
+                    border-collapse: collapse;
+                    width: 100%;
+                  }
+                  td, th {
+                    padding: 5px;
+                    border: 1px solid black;
+                  }
+                  th {
+                    font-size:20px;
+                    padding: 5px 20px;
+                  }
+                </style>
+              </head>
+              <body>';
+
+            foreach ($displays as $display) {
+              $html .= '<div class="container">
+                          <table>
+                            <tbody>
+                              <tr>
+                                <th>' . $display['id'] . '</th>
+                                <th>' . $display['name'] . '</th>
+                              </tr>
+                              <tr>
+                                <td colspan="2">
+                                <ul data-columns="2">';
+
+                $models = $display['models'];
+                if($models){
+                  foreach( $models as $model) {
+                    $html .= '<li>' . $model->sigla . " - " . $model->title . "</li>";
+                  }
+                }
+
+                $html .= '</ul>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>';
+            }
+            $html .= '</body>
+                    </html>';
+
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($html);
+
+    $dompdf->setPaper('A5', 'landscape');
+
+    $dompdf->render();
+
+    $dompdf->stream( 'Displays_' . date("d_m_Y_H_i") . '.pdf');
+
+    unset($dompdf);
+  }
+
 
 ?>
