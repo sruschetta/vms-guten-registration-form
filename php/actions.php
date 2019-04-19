@@ -679,7 +679,7 @@ if ( !class_exists('VMS_Actions') ) {
 
     function vms_models_report_action() {
 
-      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID Modello\n";
+      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID ModelloID Display;\n";
 
       $users = get_users(array(
                 'role' => 'iscritto',
@@ -692,8 +692,16 @@ if ( !class_exists('VMS_Actions') ) {
         $models = $vms_db->get_models_list_for_modelist($user->ID);
 
         foreach( $models as $model ) {
+
+          if(isset( $model->display)) {
+            $display = sprintf('%03d', $model->display);
+          }
+          else {
+            $display = "";
+          }
+
           $data .= $user->user_email . ";" . $user_data['first_name'][0] . ";" . $user_data['last_name'][0] . ";"
-                 . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . "\n";
+                 . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . ";" . $display ."\n";
         }
       }
 
@@ -713,7 +721,7 @@ if ( !class_exists('VMS_Actions') ) {
 
       $vms_db = VMS_DB::getInstance();
 
-      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID Modello\n";
+      $data = "Email;Nome;Cognome;Nome Modello;Categoria Modello;ID ModelloID Display;\n";
 
       if($cat == "all") {
         $all_cat = $vms_db->get_categories_list();
@@ -722,10 +730,17 @@ if ( !class_exists('VMS_Actions') ) {
           $models = $vms_db->get_models_list_for_category($cat->id);
           foreach ($models as $model) {
 
+            if(isset( $model->display)) {
+              $display = sprintf('%03d', $model->display);
+            }
+            else {
+              $display = "";
+            }
+
             $user = get_userdata($model->modelistId);
             $user_data = get_user_meta($user->ID);
             $data .= $user->user_email . ";" . $user_data['first_name'][0] . ";" . $user_data['last_name'][0] . ";"
-                   . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . "\n";
+                   . $model->title . ";" . $model->category . ";" . sprintf('%04d', $model->id) . ";" . $display ."\n";
           }
         }
       }

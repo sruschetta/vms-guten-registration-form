@@ -39,11 +39,9 @@
     }
 
     if($cell_count != 0) {
-      if (count($models_list) > 3) {
-        while($cell_count < 3) {
-          $row .= '<td></td>';
-          $cell_count ++;
-        }
+      while($cell_count < 3) {
+        $row .= '<td class="no-border"></td>';
+        $cell_count ++;
       }
       $labels .= '<tr>'. $row .'</tr>';
     }
@@ -100,6 +98,9 @@
             padding: 10px;
             border: 1px solid black;
           }
+          .no-border {
+            border: none;
+          }
           .line {
             display: block;
             height: 1px;
@@ -144,7 +145,8 @@
           </script>
           <img class="logo" src="' . get_option('vms_receipt_logo') . '"/>
           <h1>' . get_option( $title ) . '</h1>
-          <h3>' . get_option( $subtitle ) . '</h3>
+          <h2>' . get_option( $subtitle ) . '</h2>
+          <h3>' . trim($user_data->first_name) . " " . trim($user_data->last_name) . '</h3>
           <div>' . date('d/m/Y - H:s') . '</div>
           <div class="text">' . get_option( $toptext ) . '</div>
           <table>
@@ -180,7 +182,8 @@
 
     $dompdf->render();
 
-    $dompdf->stream( trim($user_data->last_name) . '_' . trim($user_data->first_name) . '.pdf');
+    $dompdf->stream( trim($user_data->last_name) . '_' . trim($user_data->first_name) . '.pdf' );
+    header('Refresh: 0; url=http://stackoverflow.com/');
 
     unset($dompdf);
   }

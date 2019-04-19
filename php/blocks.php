@@ -1030,7 +1030,7 @@ if ( !class_exists('VMS_Blocks') ) {
         }
         else {
           $receipt_html = '<button class="red" type="submit">' . $attributes['receipt_download_button_label'] . '</button>
-                           <div>' . $attributes['receipt_download_text'] . '</div>';
+                           <div class="vms_receipt_reminder_text">' . $attributes['receipt_download_text'] . '</div>';
         }
       }
 

@@ -355,7 +355,7 @@ if ( !class_exists('VMS_Admin') ) {
       add_settings_field( 'vms_receipt_logo', 'Logo', array( $this, 'vms_receipt_logo_callback'), 'vms_admin_render', 'vms_receipt_logo_section' );
 
       register_setting( 'vms_receipt_section', 'vms_receipt_logo', array( $this, 'handle_file_upload') );
-      
+
       add_settings_section( 'vms_receipt_it_section', 'VMS Ricevuta - Italiano', null, 'vms_admin_render' );
 
       add_settings_field( 'vms_receipt_title_it', 'Titolo ricevuta', array( $this, 'vms_receipt_title_it_callback'), 'vms_admin_render', 'vms_receipt_it_section' );
@@ -407,18 +407,19 @@ if ( !class_exists('VMS_Admin') ) {
 
 
     function handle_file_upload($option) {
+
       if(!empty($_FILES["vms_receipt_logo"]["tmp_name"])) {
         $urls = wp_handle_upload($_FILES["vms_receipt_logo"], array('test_form' => FALSE));
         $temp = $urls["url"];
         return $temp;
       }
 
-      return $option;
+      return get_option( 'vms_receipt_logo' );
     }
 
     function vms_receipt_logo_callback() {
     ?>
-        <input type="file" id='vms_receipt_logo' accept='image/*' name='vms_receipt_logo' />
+        <input type="file" id='vms_receipt_logo' accept='image/*' name='vms_receipt_logo' value="<?php echo get_option( 'vms_receipt_logo' ); ?>"/>
         <?php echo get_option('vms_receipt_logo'); ?>
     <?php
     }

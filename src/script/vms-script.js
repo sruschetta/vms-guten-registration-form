@@ -408,6 +408,14 @@
     });
 
 
+    //Receipt form
+    
+    $('.vms_models_receipt').submit(function(event){
+      $('.red').removeClass("red");
+      $('.vms_receipt_reminder_text').remove();
+    });
+
+
     //User dashboard
 
     $('.vms_user_dashboard .vms_open_user_update').click(function(){
