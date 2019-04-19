@@ -61,8 +61,10 @@ if ( !class_exists('VMS_DB') ) {
       $sql .= "CREATE TABLE $table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         modelistId int,
+				categoryId int,
         PRIMARY KEY (id),
-        FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID)
+        FOREIGN KEY (modelistId) REFERENCES ". $wpdb->prefix . "users(ID),
+				FOREIGN KEY (categoryId) REFERENCES ". $wpdb->prefix . "vms_categories(id)
       ) $charset_collate;";
 
 
@@ -233,9 +235,9 @@ if ( !class_exists('VMS_DB') ) {
 												 $models_table . ".categoryId, " .
 												 "IF(" . $category_table . ".needs_display = 1, " . $display_table . ".id, null) AS display" .
 												 " FROM " . $models_table .
-												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
-												 " LEFT JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
-												 " WHERE " .  $models_table . ".modelistId=" . $modelist_id;
+												 " LEFT JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
+												 " INNER JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table.".modelistId" .
+												 " WHERE " .  $models_table . ".modelistId=" . $modelist_id ;
 			$models = $wpdb->get_results($query);
 			return $models;
 		}
@@ -264,11 +266,11 @@ if ( !class_exists('VMS_DB') ) {
 		}
 
 
-		function get_display_for_modelist($modelist_id) {
+		function get_display_for_modelist($modelist_id, $category_id) {
 			global $wpdb;
 
 			$table_name = $wpdb->prefix . "vms_displays";
-			$display = $wpdb->get_row("SELECT * FROM " . $table_name . " WHERE modelistId=" . $modelist_id );
+			$display = $wpdb->get_row("SELECT * FROM " . $table_name . " WHERE modelistId=" . $modelist_id . " AND categoryId=" . $category_id );
 
 			return $display;
 		}
@@ -295,17 +297,17 @@ if ( !class_exists('VMS_DB') ) {
 												 " INNER JOIN " . $category_table . " ON " . $models_table .".categoryId=" . $category_table.".ID" .
 												 " LEFT JOIN " . $display_table . " ON " . $models_table .".modelistId=" . $display_table . ".modelistId" .
 												 " WHERE " .  $display_table . ".id=" . $display_id;
-												 
+
 			$models = $wpdb->get_results($query);
 			return $models;
 		}
 
-		function create_display_for_modelist($modelist_id) {
+		function create_display_for_modelist($modelist_id, $category_id) {
 			global $wpdb;
 			$table_name = $wpdb->prefix . "vms_displays";
 
 			$query = "INSERT INTO ". $table_name .
-							 "(modelistId) VALUES ('" . $modelist_id ."')";
+							 "(modelistId, categoryId) VALUES ('" . $modelist_id ."','" . $category_id . "')";
 			$display = $wpdb->get_results($query);
 			return $display;
 		}
@@ -317,8 +319,8 @@ if ( !class_exists('VMS_DB') ) {
 			$category = $this->get_category_with_id($category_id);
 
 			if($category->needs_display) {
-					if( !$this->get_display_for_modelist($modelist_id) ){
-						$this->create_display_for_modelist($modelist_id);
+					if( !$this->get_display_for_modelist($modelist_id, $category_id) ){
+						$this->create_display_for_modelist($modelist_id, $category_id);
 					}
 			}
 
